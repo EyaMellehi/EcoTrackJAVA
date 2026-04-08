@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.Controllers.User.RegisterController"
+      prefWidth="900" prefHeight="500">
+
+    <!-- LEFT -->
+    <StackPane prefWidth="450">
+        <children>
+
+            <Pane style="-fx-background-image: url('/images/nat.jpg');
+                      -fx-background-size: cover;
+                      -fx-background-repeat: no-repeat;
+                      -fx-background-position: center center;"/>
+
+            <Pane style="-fx-background-color: rgba(46,125,50,0.35);"/>
+
+            <VBox alignment="BOTTOM_LEFT" spacing="10">
+                <padding>
+                    <Insets top="30" right="30" bottom="30" left="30"/>
+                </padding>
+
+                <Label text="EcoTrack"
+                       style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+                <Label text="Create your account ✨"
+                       style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+
+                <Label text="Start earning points and tracking impact."
+                       style="-fx-text-fill: white;"/>
+            </VBox>
+
+        </children>
+    </StackPane>
+
+    <!-- RIGHT -->
+    <VBox alignment="CENTER" spacing="12" prefWidth="450" style="-fx-background-color: white;">
+
+        <Label text="Sign up"
+               style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+
+        <TextField fx:id="tfName" promptText="Your full name" prefWidth="250"/>
+        <TextField fx:id="tfPhone" promptText="8 digits" prefWidth="250"/>
+        <TextField fx:id="tfEmail" promptText="name@example.com" prefWidth="250"/>
+        <ComboBox fx:id="cbRegion" promptText="Select your region" prefWidth="250"/>
+        <PasswordField fx:id="pfPassword" promptText="Password" prefWidth="250"/>
+
+        <Button text="Create account"
+                onAction="#register"
+                style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-background-radius: 10;"/>
+
+        <HBox spacing="5" alignment="CENTER">
+            <Label text="Already have an account?"/>
+            <Hyperlink text="Login" onAction="#goToLogin"/>
+        </HBox>
+
+    </VBox>
+
+</HBox>
