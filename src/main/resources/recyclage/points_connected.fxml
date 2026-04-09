@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.PointsConnectedController"
+            prefWidth="1500" prefHeight="900"
+            style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <VBox>
+            <children>
+
+                <!-- NAVBAR -->
+                <HBox alignment="CENTER_LEFT"
+                      style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <children>
+                                <ImageView fitWidth="55" fitHeight="55" preserveRatio="true">
+                                    <image>
+                                        <Image url="@/images/logoeco.png"/>
+                                    </image>
+                                </ImageView>
+
+                                <Label text="EcoTrack"
+                                       style="-fx-text-fill: #2e7d32; -fx-font-size: 26px; -fx-font-weight: bold;"/>
+                            </children>
+                        </HBox>
+
+                        <Pane HBox.hgrow="ALWAYS"/>
+
+                        <HBox alignment="CENTER" spacing="25">
+                            <Button text="Home" onAction="#goToHomeConnected"
+                                    style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+                            <Button text="Report"
+                                    style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+                            <Button text="Blogs"
+                                    style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+                            <Button text="Associations"
+                                    style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+                            <Button text="Recycling"
+                                    style="-fx-background-color: transparent; -fx-text-fill: #2e7d32; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                            <Button text="Events"
+                                    style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+                        </HBox>
+
+                        <Region prefWidth="20"/>
+
+                        <MenuButton text="🔔"
+                                    style="-fx-background-color: #eef7ee; -fx-font-size: 16px;">
+                            <items>
+                                <MenuItem text="No new notifications"/>
+                            </items>
+                        </MenuButton>
+
+                        <MenuButton text="👤"
+                                    style="-fx-background-color: #4da64f; -fx-text-fill: white; -fx-font-size: 16px;">
+                            <items>
+                                <MenuItem text="Profile"/>
+                                <MenuItem text="My donations"/>
+                                <MenuItem text="Logout"/>
+                            </items>
+                        </MenuButton>
+                    </children>
+                </HBox>
+
+                <!-- HERO -->
+                <StackPane prefHeight="220">
+                    <children>
+                        <Pane style="-fx-background-image: url('/images/carousel-1.jpg');
+                                     -fx-background-size: cover;
+                                     -fx-background-repeat: no-repeat;
+                                     -fx-background-position: center center;"/>
+                        <Pane style="-fx-background-color: rgba(0,0,0,0.45);"/>
+                        <VBox alignment="CENTER" spacing="10">
+                            <Label text="Points de recyclage"
+                                   style="-fx-text-fill: white; -fx-font-size: 44px; -fx-font-weight: bold;"/>
+                            <Label text="Déclarez vos matériaux à recycler et suivez le traitement par les agents terrain."
+                                   style="-fx-text-fill: white; -fx-font-size: 16px;"/>
+                        </VBox>
+                    </children>
+                </StackPane>
+
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="24" style="-fx-padding: 28; -fx-background-color: #f6f7f6;">
+
+                    <!-- CONSIGNES -->
+                    <VBox alignment="CENTER" spacing="10">
+                        <Label text="Consignes recyclage"
+                               style="-fx-text-fill: #2e7d32; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                        <Label text="Avant de déclarer un point"
+                               style="-fx-text-fill: #123524; -fx-font-size: 38px; -fx-font-weight: bold;"/>
+                        <Label text="Quelques règles simples pour accélérer la validation et la collecte."
+                               style="-fx-text-fill: #6b7280; -fx-font-size: 15px;"/>
+                    </VBox>
+
+                    <HBox alignment="CENTER" spacing="18">
+                        <children>
+                            <VBox prefWidth="300" spacing="8" style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 10;">
+                                <Label text="Nettoyez &amp; Séchez" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                                <Label text="Rincez les plastiques/boîtes et laissez sécher pour éviter les odeurs."
+                                       wrapText="true" style="-fx-text-fill: #6b7280;"/>
+                            </VBox>
+
+                            <VBox prefWidth="300" spacing="8" style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 10;">
+                                <Label text="Triez par catégorie" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                                <Label text="Plastique, papier, métal… (idéalement un point par catégorie)."
+                                       wrapText="true" style="-fx-text-fill: #6b7280;"/>
+                            </VBox>
+
+                            <VBox prefWidth="300" spacing="8" style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 10;">
+                                <Label text="Localisation précise" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                                <Label text="Adresse claire + coordonnées pour retrouver facilement."
+                                       wrapText="true" style="-fx-text-fill: #6b7280;"/>
+                            </VBox>
+                        </children>
+                    </HBox>
+
+                    <HBox alignment="CENTER" spacing="18">
+                        <children>
+                            <VBox prefWidth="560" spacing="14" style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 10;">
+                                <HBox>
+                                    <children>
+                                        <VBox spacing="6">
+                                            <Label text="Guide" style="-fx-text-fill: #2e7d32; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                            <Label text="Comment ça marche ?" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                                        </VBox>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                        <Button text="+ Nouveau point"
+                                                onAction="#goToAddPoint"
+                                                style="-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8;"/>
+                                    </children>
+                                </HBox>
+
+                                <HBox spacing="12">
+                                    <children>
+                                        <VBox prefWidth="165" spacing="6" style="-fx-background-color: #edf7ee; -fx-padding: 14; -fx-background-radius: 8;">
+                                            <Label text="Étape 1" style="-fx-text-fill: #6b7280;"/>
+                                            <Label text="Déclaration" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                            <Label text="Catégorie + quantité + adresse + localisation."
+                                                   wrapText="true"/>
+                                        </VBox>
+
+                                        <VBox prefWidth="165" spacing="6" style="-fx-background-color: #edf7ee; -fx-padding: 14; -fx-background-radius: 8;">
+                                            <Label text="Étape 2" style="-fx-text-fill: #6b7280;"/>
+                                            <Label text="Traitement" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                            <Label text="Assignation à un agent terrain (IN_PROGRESS)."
+                                                   wrapText="true"/>
+                                        </VBox>
+
+                                        <VBox prefWidth="165" spacing="6" style="-fx-background-color: #edf7ee; -fx-padding: 14; -fx-background-radius: 8;">
+                                            <Label text="Étape 3" style="-fx-text-fill: #6b7280;"/>
+                                            <Label text="Collecte" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                            <Label text="Statut COLLECTE + rapport de recyclage."
+                                                   wrapText="true"/>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+
+                                <VBox spacing="6" style="-fx-background-color: #edf7ee; -fx-padding: 14; -fx-background-radius: 8;">
+                                    <Label text="Astuce" style="-fx-font-weight: bold;"/>
+                                    <Label text="Un point bien décrit (adresse + description + catégorie correcte) est traité plus rapidement."
+                                           wrapText="true"/>
+                                </VBox>
+                            </VBox>
+
+                            <VBox prefWidth="360" spacing="12"
+                                  style="-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.55)), #8b8b8b; -fx-padding: 22; -fx-background-radius: 10;">
+                                <Pane VBox.vgrow="ALWAYS"/>
+                                <VBox spacing="8" style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 8;">
+                                    <Label text="Interdits" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+                                    <Label text="• Déchets dangereux (piles, solvants, médicaments...)" wrapText="true"/>
+                                    <Label text="• Déchets organiques (restes alimentaires)" wrapText="true"/>
+                                    <Label text="• Objets tranchants non protégés" wrapText="true"/>
+                                    <Label text="Ces éléments nécessitent un traitement spécifique."
+                                           wrapText="true" style="-fx-text-fill: #6b7280;"/>
+                                </VBox>
+                            </VBox>
+                        </children>
+                    </HBox>
+
+                    <!-- STATS -->
+                    <HBox spacing="18">
+                        <children>
+                            <VBox prefWidth="220" spacing="6" style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 10;">
+                                <Label text="Total"/>
+                                <Label fx:id="lblTotal" text="0" style="-fx-font-size: 34px; -fx-font-weight: bold;"/>
+                            </VBox>
+                            <VBox prefWidth="220" spacing="6" style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 10;">
+                                <Label text="PENDING"/>
+                                <Label fx:id="lblPending" text="0" style="-fx-font-size: 34px; -fx-font-weight: bold;"/>
+                            </VBox>
+                            <VBox prefWidth="220" spacing="6" style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 10;">
+                                <Label text="IN_PROGRESS"/>
+                                <Label fx:id="lblInProgress" text="0" style="-fx-font-size: 34px; -fx-font-weight: bold;"/>
+                            </VBox>
+                            <VBox prefWidth="220" spacing="6" style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 10;">
+                                <Label text="COLLECTE"/>
+                                <Label fx:id="lblCollecte" text="0" style="-fx-font-size: 34px; -fx-font-weight: bold;"/>
+                            </VBox>
+                        </children>
+                    </HBox>
+
+                    <!-- TOOLBAR -->
+                    <HBox spacing="12" alignment="CENTER_LEFT"
+                          style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 10;">
+                        <children>
+                            <TextField fx:id="tfSearch" promptText="Rechercher par adresse, catégorie, statut..."
+                                       prefWidth="420"
+                                       style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+                            <ComboBox fx:id="cbStatus" promptText="Tous les statuts" prefWidth="220"
+                                      style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+                            <Button text="Filtrer" onAction="#filterPoints"
+                                    style="-fx-background-color: white; -fx-border-color: #2f9e44; -fx-text-fill: #2f9e44; -fx-font-weight: bold;"/>
+                            <Button text="Reset" onAction="#resetFilter"
+                                    style="-fx-background-color: white; -fx-border-color: #9ca3af; -fx-text-fill: #374151;"/>
+                            <Pane HBox.hgrow="ALWAYS"/>
+                            <Button text="+ Nouveau point" onAction="#goToAddPoint"
+                                    style="-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8;"/>
+                        </children>
+                    </HBox>
+
+                    <!-- TABLE -->
+                    <VBox spacing="12" style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 10;">
+                        <children>
+                            <TableView fx:id="tablePoints" prefHeight="500">
+                                <columns>
+                                    <TableColumn fx:id="colId" text="#" prefWidth="70"/>
+                                    <TableColumn fx:id="colCategorie" text="Catégorie" prefWidth="150"/>
+                                    <TableColumn fx:id="colQuantite" text="Quantité" prefWidth="110"/>
+                                    <TableColumn fx:id="colAddress" text="Adresse" prefWidth="380"/>
+                                    <TableColumn fx:id="colDate" text="Date" prefWidth="130"/>
+                                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="140"/>
+                                    <TableColumn fx:id="colActions" text="Actions" prefWidth="240"/>
+                                </columns>
+                            </TableView>
+                        </children>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

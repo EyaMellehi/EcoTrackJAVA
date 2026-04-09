@@ -122,4 +122,16 @@ public class AdminDashboardController {
             e.printStackTrace();
         }
     }
+    @FXML
+    void goToCategories() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/admin/categories.fxml"));
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Catégories");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

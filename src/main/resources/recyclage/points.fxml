@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.PointsRecyclageController"
+            prefWidth="1500" prefHeight="900"
+            style="-fx-background-color: #f5f7fb;">
+
+    <top>
+        <VBox spacing="16" style="-fx-padding: 24; -fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;">
+            <children>
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <VBox spacing="6">
+                            <Label text="Points de recyclage"
+                                   style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                            <Label text="Déclarez vos matériaux à recycler et suivez leur traitement."
+                                   style="-fx-font-size: 14px; -fx-text-fill: #6b7280;"/>
+                        </VBox>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button text="+ Nouveau point"
+                                onAction="#goToAddPoint"
+                                style="-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8;"/>
+                    </children>
+                </HBox>
+
+                <HBox spacing="18">
+                    <children>
+                        <VBox prefWidth="220" spacing="6"
+                              style="-fx-background-color: #ffffff; -fx-padding: 18; -fx-background-radius: 12; -fx-border-color: #dbe5dc; -fx-border-radius: 12;">
+                            <Label text="Total" style="-fx-text-fill: #374151;"/>
+                            <Label fx:id="lblTotal" text="0" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                        </VBox>
+
+                        <VBox prefWidth="220" spacing="6"
+                              style="-fx-background-color: #ffffff; -fx-padding: 18; -fx-background-radius: 12; -fx-border-color: #dbe5dc; -fx-border-radius: 12;">
+                            <Label text="PENDING" style="-fx-text-fill: #374151;"/>
+                            <Label fx:id="lblPending" text="0" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                        </VBox>
+
+                        <VBox prefWidth="220" spacing="6"
+                              style="-fx-background-color: #ffffff; -fx-padding: 18; -fx-background-radius: 12; -fx-border-color: #dbe5dc; -fx-border-radius: 12;">
+                            <Label text="IN_PROGRESS" style="-fx-text-fill: #374151;"/>
+                            <Label fx:id="lblInProgress" text="0" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                        </VBox>
+
+                        <VBox prefWidth="220" spacing="6"
+                              style="-fx-background-color: #ffffff; -fx-padding: 18; -fx-background-radius: 12; -fx-border-color: #dbe5dc; -fx-border-radius: 12;">
+                            <Label text="COLLECTE" style="-fx-text-fill: #374151;"/>
+                            <Label fx:id="lblCollecte" text="0" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="18" style="-fx-padding: 24;">
+            <children>
+
+                <HBox spacing="12" alignment="CENTER_LEFT"
+                      style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 12; -fx-border-color: #dbe5dc; -fx-border-radius: 12;">
+                    <children>
+                        <TextField fx:id="tfSearch"
+                                   promptText="Rechercher par adresse, catégorie, statut..."
+                                   prefWidth="420"
+                                   style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+
+                        <ComboBox fx:id="cbStatus"
+                                  promptText="Tous les statuts"
+                                  prefWidth="220"
+                                  style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+
+                        <Button text="Filtrer"
+                                onAction="#filterPoints"
+                                style="-fx-background-color: white; -fx-border-color: #2f9e44; -fx-text-fill: #2f9e44; -fx-font-weight: bold; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+
+                        <Button text="Reset"
+                                onAction="#resetFilter"
+                                style="-fx-background-color: white; -fx-border-color: #9ca3af; -fx-text-fill: #374151; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+                    </children>
+                </HBox>
+
+                <VBox spacing="12"
+                      style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 12; -fx-border-color: #dbe5dc; -fx-border-radius: 12;">
+                    <children>
+                        <TableView fx:id="tablePoints" prefHeight="560">
+                            <columns>
+                                <TableColumn fx:id="colId" text="#" prefWidth="70"/>
+                                <TableColumn fx:id="colCategorie" text="Catégorie" prefWidth="180"/>
+                                <TableColumn fx:id="colQuantite" text="Quantité" prefWidth="120"/>
+                                <TableColumn fx:id="colAddress" text="Adresse" prefWidth="430"/>
+                                <TableColumn fx:id="colDate" text="Date" prefWidth="140"/>
+                                <TableColumn fx:id="colStatut" text="Statut" prefWidth="170"/>
+                            </columns>
+                        </TableView>
+
+                        <HBox spacing="10" alignment="CENTER_RIGHT">
+                            <children>
+                                <Button text="Voir"
+                                        onAction="#showSelectedPoint"
+                                        style="-fx-background-color: white; -fx-border-color: #111827; -fx-text-fill: #111827; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+
+                                <Button text="Modifier"
+                                        onAction="#editSelectedPoint"
+                                        style="-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-background-radius: 8;"/>
+
+                                <Button text="Supprimer"
+                                        onAction="#deleteSelectedPoint"
+                                        style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-background-radius: 8;"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

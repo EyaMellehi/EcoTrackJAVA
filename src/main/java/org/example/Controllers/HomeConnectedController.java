@@ -103,4 +103,16 @@ public class HomeConnectedController {
             e.printStackTrace();
         }
     }
+    @FXML
+    void goToRecycling() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/recyclage/points_connected.fxml"));
+            Stage stage = (Stage) btnRecycling.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Points de recyclage");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
