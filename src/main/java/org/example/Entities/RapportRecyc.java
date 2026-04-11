@@ -55,4 +55,5 @@ public class RapportRecyc {
 
     public User getAgentTerrain() { return agentTerrain; }
     public void setAgentTerrain(User agentTerrain) { this.agentTerrain = agentTerrain; }
+    /*bonbon*/
 }

@@ -126,4 +126,5 @@ public class PointRecyclage {
                 ", categorie=" + (categorie != null ? categorie.getNom() : "null") +
                 '}';
     }
+    /*bonbon*/
 }
