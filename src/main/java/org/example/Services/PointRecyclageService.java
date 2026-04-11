@@ -373,4 +373,5 @@ public class PointRecyclageService {
         ResultSet rs = ps.executeQuery();
         return rs.next() ? rs.getInt(1) : 0;
     }
+    /*bonbon*/
 }
