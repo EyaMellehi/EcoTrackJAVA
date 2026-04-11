@@ -75,7 +75,7 @@
                     style="-fx-background-color: #4da64f; -fx-text-fill: white; -fx-font-size: 16px;">
             <items>
                 <MenuItem text="Profile" onAction="#goToProfile"/>
-                <MenuItem text="My donations" onAction="#goToDonations"/>
+                <MenuItem fx:id="menuDonations" text="My donations" onAction="#goToDonations"/>
                 <MenuItem text="Logout" onAction="#logout"/>
             </items>
         </MenuButton>

@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.example.Controllers.HomeConnectedController;
 import org.example.Controllers.User.ProfileController;
@@ -21,6 +22,8 @@ public class NavbarCitoyenController {
     @FXML private Button btnRecycling;
     @FXML private Button btnEvents;
 
+    @FXML private MenuItem menuDonations;
+
     private User loggedUser;
 
     public void setLoggedUser(User user) {
@@ -28,6 +31,7 @@ public class NavbarCitoyenController {
 
         if (user == null || user.getRoles() == null) {
             applyStandardNavbar();
+            hideDonations();
             return;
         }
 
@@ -35,8 +39,16 @@ public class NavbarCitoyenController {
 
         if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
             applyMunicipalNavbar();
+            hideDonations();
+        } else if (roles.contains("ROLE_CITOYEN")) {
+            applyStandardNavbar();
+            showDonations();
+        } else if (roles.contains("ROLE_AGENT_TERRAIN")) {
+            applyStandardNavbar();
+            hideDonations();
         } else {
             applyStandardNavbar();
+            hideDonations();
         }
     }
 
@@ -58,6 +70,20 @@ public class NavbarCitoyenController {
         btnEvents.setText("Events Management");
     }
 
+    private void showDonations() {
+        if (menuDonations != null) {
+            menuDonations.setVisible(true);
+            menuDonations.setDisable(false);
+        }
+    }
+
+    private void hideDonations() {
+        if (menuDonations != null) {
+            menuDonations.setVisible(false);
+            menuDonations.setDisable(true);
+        }
+    }
+
     private void navigate(String fxmlPath, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
@@ -75,6 +101,10 @@ public class NavbarCitoyenController {
 
             if (controller instanceof TerrainPointsController terrainController) {
                 terrainController.setLoggedUser(loggedUser);
+            }
+
+            if (controller instanceof ProfileController profileController) {
+                profileController.setUser(loggedUser);
             }
 
             Stage stage = (Stage) btnHome.getScene().getWindow();
@@ -99,12 +129,7 @@ public class NavbarCitoyenController {
 
     @FXML
     void goToBlogs() {
-        if (loggedUser != null && loggedUser.getRoles() != null &&
-                loggedUser.getRoles().contains("ROLE_AGENT_MUNICIPAL")) {
-            System.out.println("Open announcements management");
-        } else {
-            System.out.println("Open blogs");
-        }
+        System.out.println("Open blogs");
     }
 
     @FXML
@@ -138,36 +163,20 @@ public class NavbarCitoyenController {
 
     @FXML
     void goToEvents() {
-        if (loggedUser != null && loggedUser.getRoles() != null &&
-                loggedUser.getRoles().contains("ROLE_AGENT_MUNICIPAL")) {
-            System.out.println("Open events management");
-        } else {
-            System.out.println("Open events");
-        }
+        System.out.println("Open events");
     }
 
     @FXML
     void goToProfile() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/profile.fxml"));
-            Parent root = loader.load();
-
-            ProfileController controller = loader.getController();
-            controller.setUser(loggedUser);
-
-            Stage stage = (Stage) btnHome.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("My Profile");
-            stage.show();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        navigate("/user/profile.fxml", "My Profile");
     }
 
     @FXML
     void goToDonations() {
-        System.out.println("Open donations");
+        if (loggedUser != null && loggedUser.getRoles() != null &&
+                loggedUser.getRoles().contains("ROLE_CITOYEN")) {
+            System.out.println("Open donations");
+        }
     }
 
     @FXML

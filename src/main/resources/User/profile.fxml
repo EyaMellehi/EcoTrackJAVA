@@ -12,7 +12,15 @@
             style="-fx-background-color: #f6f7f6;">
 
     <top>
-        <fx:include fx:id="navbar" source="/components/navbar_citoyen.fxml"/>
+        <StackPane>
+            <children>
+
+                <fx:include fx:id="navbarCitoyen" source="/components/navbar_citoyen.fxml"/>
+
+                <fx:include fx:id="navbarMunicipal" source="/components/navbar_municipal.fxml"/>
+
+            </children>
+        </StackPane>
     </top>
 
     <center>
