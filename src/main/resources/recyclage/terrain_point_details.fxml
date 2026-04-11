@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.TerrainPointDetailsController"
+            prefWidth="1500" prefHeight="950"
+            style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <StackPane prefHeight="220"
+                   style="-fx-background-color: linear-gradient(to right, #335c38, #6a8f70);">
+            <children>
+                <VBox alignment="CENTER" spacing="10">
+                    <children>
+                        <Label text="Agent de terrain"
+                               style="-fx-text-fill: #6ed46e; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        <Label text="Détails du point"
+                               style="-fx-text-fill: white; -fx-font-size: 46px; -fx-font-weight: bold;"/>
+                        <Label fx:id="lblPointIdTop"
+                               text="Point: #0"
+                               style="-fx-text-fill: #dcefdc; -fx-font-size: 18px;"/>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true">
+            <content>
+                <VBox spacing="20" style="-fx-padding: 30; -fx-background-color: #f6f7f6;">
+
+                    <VBox spacing="6">
+                        <Label fx:id="lblPointTitle"
+                               text="Point #0"
+                               style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                        <Label fx:id="lblAddress"
+                               text="Adresse"
+                               wrapText="true"
+                               style="-fx-font-size: 15px; -fx-text-fill: #666;"/>
+                    </VBox>
+
+                    <HBox spacing="10">
+                        <children>
+                            <Button text="← Retour" onAction="#goBack"/>
+                            <Button text="Open in Google Maps" onAction="#openGoogleMaps"/>
+                        </children>
+                    </HBox>
+
+                    <VBox spacing="18"
+                          style="-fx-background-color: white; -fx-padding: 28; -fx-background-radius: 16;">
+
+                        <HBox alignment="CENTER_LEFT">
+                            <children>
+                                <Label fx:id="lblStatus" text="IN_PROGRESS"/>
+                                <Pane HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblAiPriority"
+                                       text="None"
+                                       style="-fx-background-color: #eef7ee; -fx-padding: 6 12; -fx-background-radius: 16; -fx-font-weight: bold;"/>
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="80">
+                            <children>
+                                <VBox spacing="14">
+                                    <Label fx:id="lblCategory" text="Catégorie : -"/>
+                                    <Label fx:id="lblDate" text="Date : -"/>
+                                    <Label fx:id="lblDescription" text="Description : -" wrapText="true"/>
+                                </VBox>
+
+                                <VBox spacing="14">
+                                    <Label fx:id="lblQuantity" text="Quantité déclarée : -"/>
+                                </VBox>
+                            </children>
+                        </HBox>
+
+                        <VBox spacing="10"
+                              style="-fx-background-color: #eef7ee; -fx-padding: 14; -fx-background-radius: 10;">
+                            <Label text="Localisation" style="-fx-text-fill: #666;"/>
+                            <WebView fx:id="webMap" prefHeight="360"/>
+                            <Label fx:id="lblCoordinates" text="Coordonnées : -"/>
+                        </VBox>
+
+                        <Label text="Estimation IA :" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="lblFieldAgent" text="Not assigned"/>
+
+                        <Separator/>
+
+                        <HBox spacing="12">
+                            <children>
+                                <Button fx:id="btnCreateReport"
+                                        text="+ Créer le rapport de collecte"
+                                        onAction="#createReport"
+                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+                                <Button fx:id="btnViewReport"
+                                        text="Voir le rapport"
+                                        onAction="#viewReport"
+                                        style="-fx-background-color: #1e88e5; -fx-text-fill: white;"/>
+                            </children>
+                        </HBox>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

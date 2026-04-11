@@ -12,27 +12,9 @@
             style="-fx-background-color: #f6f7f6;">
 
     <top>
-        <HBox alignment="CENTER_LEFT"
-              style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
-            <children>
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                    <children>
-                        <ImageView fitWidth="55" fitHeight="55" preserveRatio="true">
-                            <image>
-                                <Image url="@/images/logoeco.png"/>
-                            </image>
-                        </ImageView>
-                        <Label text="EcoTrack"
-                               style="-fx-text-fill: #2e7d32; -fx-font-size: 26px; -fx-font-weight: bold;"/>
-                    </children>
-                </HBox>
-                <Pane HBox.hgrow="ALWAYS"/>
-                <Button text="Retour à la liste"
-                        onAction="#backToList"
-                        style="-fx-background-color: white; -fx-border-color: #2e7d32; -fx-text-fill: #2e7d32; -fx-font-size: 16px; -fx-padding: 10 18;"/>
-            </children>
-        </HBox>
+        <fx:include fx:id="navbar" source="/components/navbar_citoyen.fxml"/>
     </top>
+
 
     <center>
         <StackPane style="-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.45), rgba(0,0,0,0.45)), #5f6f52;">

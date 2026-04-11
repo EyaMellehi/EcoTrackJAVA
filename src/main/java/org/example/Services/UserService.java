@@ -289,4 +289,33 @@ public class UserService {
 
         ps.executeUpdate();
     }
+
+
+    public List<User> getFieldAgentsByDelegation(String delegation) throws SQLException {
+        List<User> users = new ArrayList<>();
+
+        String sql = "SELECT * FROM `user` WHERE roles LIKE '%ROLE_AGENT_TERRAIN%' AND delegation = ? ORDER BY id ASC";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setString(1, delegation);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            User user = new User();
+            user.setId(rs.getInt("id"));
+            user.setEmail(rs.getString("email"));
+            user.setRoles(rs.getString("roles"));
+            user.setPassword(rs.getString("password"));
+            user.setName(rs.getString("name"));
+            user.setPhone(rs.getString("phone"));
+            user.setRegion(rs.getString("region"));
+            user.setDelegation(rs.getString("delegation"));
+            user.setPoints(rs.getInt("points"));
+            user.setActive(rs.getBoolean("is_active"));
+            user.setImage(rs.getString("image"));
+
+            users.add(user);
+        }
+
+        return users;
+    }
 }

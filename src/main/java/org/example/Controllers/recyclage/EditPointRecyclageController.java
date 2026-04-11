@@ -10,8 +10,10 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import netscape.javascript.JSObject;
+import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.Categorie;
 import org.example.Entities.PointRecyclage;
+import org.example.Entities.User;
 import org.example.Services.CategorieService;
 import org.example.Services.PointRecyclageService;
 
@@ -34,15 +36,27 @@ public class EditPointRecyclageController {
     @FXML private TextArea taDescription;
     @FXML private Label lblPickInfo;
     @FXML private WebView mapView;
+    @FXML private NavbarCitoyenController navbarController;
 
     private final CategorieService categorieService = new CategorieService();
     private final PointRecyclageService pointService = new PointRecyclageService();
 
     private PointRecyclage point;
+    private User loggedUser;
+
+    public void setLoggedUser(User user) {
+        this.loggedUser = user;
+        if (navbarController != null) {
+            navbarController.setLoggedUser(user);
+        }
+    }
 
     @FXML
     public void initialize() {
         loadCategories();
+        if (navbarController != null && loggedUser != null) {
+            navbarController.setLoggedUser(loggedUser);
+        }
     }
 
     public void setPointId(int id) {
@@ -192,9 +206,18 @@ public class EditPointRecyclageController {
 
     @FXML
     void updatePoint() {
-        if (point == null) return;
+        if (point == null || loggedUser == null) return;
 
         try {
+            if (point.getCitoyen() == null || point.getCitoyen().getId() != loggedUser.getId()) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Accès refusé");
+                a.setHeaderText(null);
+                a.setContentText("Tu ne peux modifier que tes propres points.");
+                a.showAndWait();
+                return;
+            }
+
             point.setCategorie(cbCategorie.getValue());
             point.setQuantite(Double.parseDouble(tfQuantite.getText().trim()));
             point.setAddress(tfAddress.getText().trim());
@@ -225,7 +248,12 @@ public class EditPointRecyclageController {
     @FXML
     void backToList() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/recyclage/points_connected.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/points_connected.fxml"));
+            Parent root = loader.load();
+
+            PointsConnectedController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
             Stage stage = (Stage) cbCategorie.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Points de recyclage");

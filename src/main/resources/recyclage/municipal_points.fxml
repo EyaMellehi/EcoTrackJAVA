@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.MunicipalPointsController"
+            prefWidth="1500" prefHeight="900"
+            style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <VBox spacing="0">
+            <children>
+
+                <fx:include fx:id="navbarInclude" source="/components/navbar_municipal.fxml"/>
+
+                <StackPane prefHeight="230">
+                    <children>
+
+                        <ImageView fitHeight="230" preserveRatio="false" StackPane.alignment="CENTER">
+                            <image>
+                                <Image url="@/images/carousel-1.jpg"/>
+                            </image>
+                            <viewport>
+                                <javafx.geometry.Rectangle2D width="1500" height="230"/>
+                            </viewport>
+                        </ImageView>
+
+                        <Pane style="-fx-background-color: rgba(0,0,0,0.45);"/>
+
+                        <VBox alignment="CENTER" spacing="10">
+                            <children>
+                                <Label text="Municipality"
+                                       style="-fx-text-fill: #6ed46e; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                                <Label text="Recycling Points"
+                                       style="-fx-text-fill: white; -fx-font-size: 50px; -fx-font-weight: bold;"/>
+                                <Label fx:id="lblDelegation"
+                                       text="Delegation: -"
+                                       style="-fx-text-fill: #dcefdc; -fx-font-size: 18px;"/>
+                            </children>
+                        </VBox>
+
+                    </children>
+                </StackPane>
+
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="25" style="-fx-padding: 30; -fx-background-color: #f6f7f6;">
+
+                    <HBox spacing="20" alignment="CENTER">
+                        <children>
+                            <VBox prefWidth="240" spacing="8" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                                <Label text="Total" style="-fx-font-size: 16px; -fx-text-fill: #555;"/>
+                                <Label fx:id="lblTotal" text="0" style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                            </VBox>
+
+                            <VBox prefWidth="240" spacing="8" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                                <Label text="Pending" style="-fx-font-size: 16px; -fx-text-fill: #555;"/>
+                                <Label fx:id="lblPending" text="0" style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                            </VBox>
+
+                            <VBox prefWidth="240" spacing="8" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                                <Label text="In progress" style="-fx-font-size: 16px; -fx-text-fill: #555;"/>
+                                <Label fx:id="lblInProgress" text="0" style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                            </VBox>
+
+                            <VBox prefWidth="240" spacing="8" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                                <Label text="Collected" style="-fx-font-size: 16px; -fx-text-fill: #555;"/>
+                                <Label fx:id="lblCollected" text="0" style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                            </VBox>
+                        </children>
+                    </HBox>
+
+                    <VBox spacing="12" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                        <children>
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <children>
+                                    <TextField fx:id="txtSearch"
+                                               promptText="Search: citizen, category, address, status..."
+                                               prefWidth="420"
+                                               style="-fx-background-color: #eef7ee;"/>
+
+                                    <ComboBox fx:id="cbStatus" prefWidth="180"/>
+                                    <ComboBox fx:id="cbPriority" prefWidth="180"/>
+
+                                    <Pane HBox.hgrow="ALWAYS"/>
+
+                                    <Label fx:id="lblAssigned"
+                                           text="Assigned: 0/0"
+                                           style="-fx-background-color: #eef7ee; -fx-padding: 8 14; -fx-background-radius: 20; -fx-text-fill: #104b2c;"/>
+
+                                    <Button text="Refresh"
+                                            onAction="#refreshTable"
+                                            style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+                                </children>
+                            </HBox>
+                        </children>
+                    </VBox>
+
+                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                        <children>
+                            <TableView fx:id="tablePoints" prefHeight="540">
+                                <columns>
+                                    <TableColumn fx:id="colId" text="#" prefWidth="60"/>
+                                    <TableColumn fx:id="colCitizen" text="Citizen" prefWidth="140"/>
+                                    <TableColumn fx:id="colCategory" text="Category" prefWidth="120"/>
+                                    <TableColumn fx:id="colQuantity" text="Quantity" prefWidth="100"/>
+                                    <TableColumn fx:id="colAddress" text="Address" prefWidth="280"/>
+                                    <TableColumn fx:id="colDate" text="Date" prefWidth="110"/>
+                                    <TableColumn fx:id="colStatus" text="Status" prefWidth="120"/>
+                                    <TableColumn fx:id="colPriority" text="Priority" prefWidth="100"/>
+                                    <TableColumn fx:id="colAssignment" text="Assignment" prefWidth="180"/>
+                                    <TableColumn fx:id="colActions" text="Actions" prefWidth="180"/>
+                                </columns>
+                            </TableView>
+                        </children>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

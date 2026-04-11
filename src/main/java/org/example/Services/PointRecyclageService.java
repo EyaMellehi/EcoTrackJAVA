@@ -6,6 +6,7 @@ import org.example.Entities.User;
 import org.example.Utils.MyConnection;
 
 import java.sql.*;
+import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -213,6 +214,85 @@ public class PointRecyclageService {
         return rs.next() ? rs.getInt(1) : 0;
     }
 
+    public List<PointRecyclage> getPointsForMunicipal(User municipalUser) throws SQLException {
+        List<PointRecyclage> allPoints = getAllPoints();
+        List<PointRecyclage> result = new ArrayList<>();
+
+        if (municipalUser == null) {
+            return result;
+        }
+
+        String delegation = normalizeText(municipalUser.getDelegation());
+
+        for (PointRecyclage p : allPoints) {
+            String address = normalizeText(p.getAddress());
+
+            if (!delegation.isEmpty() && address.contains(delegation)) {
+                result.add(p);
+            }
+        }
+
+        return result;
+    }
+
+    public void assignPointToFieldAgent(int pointId, int fieldAgentId) throws SQLException {
+        String sql = "UPDATE point_recyclage " +
+                "SET agent_terrain_id = ?, statut = ?, assigned_at = ? " +
+                "WHERE id = ?";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, fieldAgentId);
+        ps.setString(2, "IN_PROGRESS");
+        ps.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+        ps.setInt(4, pointId);
+        ps.executeUpdate();
+    }
+
+    public void refusePointByMunicipal(int pointId) throws SQLException {
+        String sql = "UPDATE point_recyclage " +
+                "SET statut = ?, agent_terrain_id = NULL, assigned_at = NULL " +
+                "WHERE id = ?";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setString(1, "REFUSE");
+        ps.setInt(2, pointId);
+        ps.executeUpdate();
+    }
+
+    public List<PointRecyclage> getPointsForFieldAgent(User fieldAgent) throws SQLException {
+        List<PointRecyclage> points = new ArrayList<>();
+
+        String sql = "SELECT p.*, " +
+                "c.id AS c_id, c.nom AS c_nom, c.description AS c_description, c.coef_points AS c_coef, " +
+                "u.id AS u_id, u.name AS u_name, u.email AS u_email, " +
+                "a.id AS a_id, a.name AS a_name, a.email AS a_email " +
+                "FROM point_recyclage p " +
+                "JOIN categorie c ON p.categorie_id = c.id " +
+                "JOIN user u ON p.citoyen_id = u.id " +
+                "LEFT JOIN user a ON p.agent_terrain_id = a.id " +
+                "WHERE p.agent_terrain_id = ? " +
+                "ORDER BY p.id DESC";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, fieldAgent.getId());
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            points.add(mapResultSetToPoint(rs));
+        }
+
+        return points;
+    }
+
+    public void markPointCollected(int pointId) throws SQLException {
+        String sql = "UPDATE point_recyclage SET statut = ? WHERE id = ?";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setString(1, "COLLECTE");
+        ps.setInt(2, pointId);
+        ps.executeUpdate();
+    }
+
     private PointRecyclage mapResultSetToPoint(ResultSet rs) throws SQLException {
         Categorie categorie = new Categorie();
         categorie.setId(rs.getInt("c_id"));
@@ -271,5 +351,26 @@ public class PointRecyclageService {
         }
 
         return p;
+    }
+
+    private String normalizeText(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        String normalized = Normalizer.normalize(value, Normalizer.Form.NFD);
+        normalized = normalized.replaceAll("\\p{M}", "");
+        normalized = normalized.toLowerCase().trim();
+        normalized = normalized.replaceAll("[^a-z0-9 ]", " ");
+        normalized = normalized.replaceAll("\\s+", " ").trim();
+
+        return normalized;
+    }
+    public int countInProgressPointsForFieldAgent(int fieldAgentId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM point_recyclage WHERE agent_terrain_id = ? AND statut = 'IN_PROGRESS'";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, fieldAgentId);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() ? rs.getInt(1) : 0;
     }
 }

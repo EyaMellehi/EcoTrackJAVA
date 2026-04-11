@@ -6,10 +6,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import netscape.javascript.JSObject;
+import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.Categorie;
 import org.example.Entities.PointRecyclage;
 import org.example.Entities.User;
@@ -35,9 +37,22 @@ public class AddPointRecyclageController {
     @FXML private TextArea taDescription;
     @FXML private Label lblPickInfo;
     @FXML private WebView mapView;
+    @FXML private NavbarCitoyenController navbarController;
+
+    @FXML private HBox navbar;
+
 
     private final CategorieService categorieService = new CategorieService();
     private final PointRecyclageService pointService = new PointRecyclageService();
+
+    private User loggedUser;
+
+    public void setLoggedUser(User user) {
+        this.loggedUser = user;
+        if (navbarController != null) {
+            navbarController.setLoggedUser(user);
+        }
+    }
 
     @FXML
     public void initialize() {
@@ -47,6 +62,10 @@ public class AddPointRecyclageController {
         tfLongitude.setText("10.181500");
         lblPickInfo.setText("Point : 36.806500, 10.181500");
         loadAddressFromCoordinates(36.8065, 10.1815);
+
+        if (navbarController != null && loggedUser != null) {
+            navbarController.setLoggedUser(loggedUser);
+        }
     }
 
     private void loadCategories() {
@@ -181,6 +200,11 @@ public class AddPointRecyclageController {
         String longitudeText = tfLongitude.getText().trim();
         String description = taDescription.getText().trim();
 
+        if (loggedUser == null) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun utilisateur connecté.");
+            return;
+        }
+
         if (categorie == null) {
             showAlert(Alert.AlertType.WARNING, "Validation", "La catégorie est obligatoire.");
             return;
@@ -238,11 +262,7 @@ public class AddPointRecyclageController {
             point.setDescription(description.isEmpty() ? null : description);
             point.setDateDec(LocalDate.now());
             point.setStatut("PENDING");
-
-            User citoyen = new User();
-            citoyen.setId(1); // à remplacer plus tard par l'utilisateur connecté
-            point.setCitoyen(citoyen);
-
+            point.setCitoyen(loggedUser);
             point.setAgentTerrain(null);
 
             pointService.addPoint(point);
@@ -259,7 +279,12 @@ public class AddPointRecyclageController {
     @FXML
     void backToList() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/recyclage/points_connected.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/points_connected.fxml"));
+            Parent root = loader.load();
+
+            PointsConnectedController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
             Stage stage = (Stage) cbCategorie.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Points de recyclage");

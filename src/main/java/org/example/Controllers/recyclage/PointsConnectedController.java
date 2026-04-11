@@ -10,7 +10,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import org.example.Controllers.HomeConnectedController;
+import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.PointRecyclage;
+import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
 
 import java.io.IOException;
@@ -37,8 +40,20 @@ public class PointsConnectedController {
     @FXML private TableColumn<PointRecyclage, String> colStatut;
     @FXML private TableColumn<PointRecyclage, Void> colActions;
 
+    @FXML private HBox navbar;
+    @FXML private NavbarCitoyenController navbarController;
+
     private final PointRecyclageService pointService = new PointRecyclageService();
     private List<PointRecyclage> masterList;
+    private User loggedUser;
+
+    public void setLoggedUser(User user) {
+        this.loggedUser = user;
+        if (navbarController != null) {
+            navbarController.setLoggedUser(user);
+        }
+        loadPoints();
+    }
 
     @FXML
     public void initialize() {
@@ -56,7 +71,10 @@ public class PointsConnectedController {
                         : "-"));
 
         addActionsColumn();
-        loadPoints();
+
+        if (navbarController != null && loggedUser != null) {
+            navbarController.setLoggedUser(loggedUser);
+        }
     }
 
     private void addActionsColumn() {
@@ -96,8 +114,17 @@ public class PointsConnectedController {
     }
 
     private void loadPoints() {
+        if (loggedUser == null) {
+            tablePoints.setItems(FXCollections.observableArrayList());
+            updateStats(List.of());
+            return;
+        }
+
         try {
-            masterList = pointService.getAllPoints();
+            masterList = pointService.getAllPoints().stream()
+                    .filter(p -> p.getCitoyen() != null && p.getCitoyen().getId() == loggedUser.getId())
+                    .collect(Collectors.toList());
+
             tablePoints.setItems(FXCollections.observableArrayList(masterList));
             updateStats(masterList);
         } catch (SQLException e) {
@@ -114,6 +141,8 @@ public class PointsConnectedController {
 
     @FXML
     void filterPoints() {
+        if (masterList == null) return;
+
         String keyword = tfSearch.getText() == null ? "" : tfSearch.getText().toLowerCase().trim();
         String status = cbStatus.getValue();
 
@@ -148,19 +177,47 @@ public class PointsConnectedController {
 
     @FXML
     void goToAddPoint() {
-        navigate("/recyclage/add_point_connected.fxml", "Créer un point");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/add_point_connected.fxml"));
+            Parent root = loader.load();
+
+            AddPointRecyclageController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
+            Stage stage = (Stage) tablePoints.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Créer un point");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void goToHomeConnected() {
-        navigate("/Home_Connected.fxml", "Home");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Home_Connected.fxml"));
+            Parent root = loader.load();
+
+            HomeConnectedController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
+            Stage stage = (Stage) tablePoints.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Home");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void openShow(int id) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/show_point_connected.fxml"));
             Parent root = loader.load();
+
             ShowPointRecyclageController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
             controller.setPointId(id);
 
             Stage stage = (Stage) tablePoints.getScene().getWindow();
@@ -176,7 +233,9 @@ public class PointsConnectedController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/edit_point_connected.fxml"));
             Parent root = loader.load();
+
             EditPointRecyclageController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
             controller.setPointId(id);
 
             Stage stage = (Stage) tablePoints.getScene().getWindow();
@@ -196,23 +255,21 @@ public class PointsConnectedController {
 
         if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             try {
-                pointService.deletePoint(id);
-                loadPoints();
+                PointRecyclage selected = pointService.getPointById(id);
+                if (selected != null && selected.getCitoyen() != null && loggedUser != null
+                        && selected.getCitoyen().getId() == loggedUser.getId()) {
+                    pointService.deletePoint(id);
+                    loadPoints();
+                } else {
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.setTitle("Accès refusé");
+                    a.setHeaderText(null);
+                    a.setContentText("Tu ne peux supprimer que tes propres points.");
+                    a.showAndWait();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    private void navigate(String path, String title) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource(path));
-            Stage stage = (Stage) tablePoints.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle(title);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

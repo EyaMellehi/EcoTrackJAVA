@@ -8,7 +8,9 @@ import javafx.scene.control.Label;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.PointRecyclage;
+import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
 
 import java.io.IOException;
@@ -25,9 +27,18 @@ public class ShowPointRecyclageController {
     @FXML private Label lblDescription;
     @FXML private Label lblCoords;
     @FXML private WebView mapView;
+    @FXML private NavbarCitoyenController navbarController;
 
     private final PointRecyclageService pointService = new PointRecyclageService();
     private PointRecyclage point;
+    private User loggedUser;
+
+    public void setLoggedUser(User user) {
+        this.loggedUser = user;
+        if (navbarController != null) {
+            navbarController.setLoggedUser(user);
+        }
+    }
 
     public void setPointId(int id) {
         try {
@@ -87,7 +98,12 @@ public class ShowPointRecyclageController {
     @FXML
     void backToList() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/recyclage/points_connected.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/points_connected.fxml"));
+            Parent root = loader.load();
+
+            PointsConnectedController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
             Stage stage = (Stage) lblTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Points de recyclage");
@@ -106,6 +122,7 @@ public class ShowPointRecyclageController {
             Parent root = loader.load();
 
             EditPointRecyclageController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
             controller.setPointId(point.getId());
 
             Stage stage = (Stage) lblTitle.getScene().getWindow();
