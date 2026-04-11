@@ -9,6 +9,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.example.Controllers.User.ProfileController;
+import org.example.Controllers.signalement.ListAssignedSignalementController;
+import org.example.Controllers.signalement.ListMunicipalSignalementController;
+import org.example.Controllers.signalement.ListSignalementController;
 import org.example.Entities.User;
 
 import java.io.IOException;
@@ -211,6 +214,44 @@ public class HomeConnectedController {
             System.out.println("Open events management");
         } else {
             System.out.println("Open events page");
+        }
+    }
+
+    @FXML
+    public void goToMySignalements() {
+        try {
+            FXMLLoader loader;
+
+            if (loggedUser != null && loggedUser.getRoles() != null) {
+                if (loggedUser.getRoles().contains("ROLE_AGENT_TERRAIN")) {
+                    loader = new FXMLLoader(getClass().getResource("/signalement/list_assigned_signalements.fxml"));
+                } else if (loggedUser.getRoles().contains("ROLE_AGENT_MUNICIPAL")) {
+                    loader = new FXMLLoader(getClass().getResource("/signalement/list_municipal_signalements.fxml"));
+                } else {
+                    loader = new FXMLLoader(getClass().getResource("/signalement/list_signalement.fxml"));
+                }
+            } else {
+                loader = new FXMLLoader(getClass().getResource("/signalement/list_signalement.fxml"));
+            }
+
+            Parent root = loader.load();
+            Object controller = loader.getController();
+
+            if (controller instanceof ListSignalementController) {
+                ((ListSignalementController) controller).setLoggedUser(loggedUser);
+            } else if (controller instanceof ListAssignedSignalementController) {
+                ((ListAssignedSignalementController) controller).setLoggedUser(loggedUser);
+            } else if (controller instanceof ListMunicipalSignalementController) {
+                ((ListMunicipalSignalementController) controller).setLoggedUser(loggedUser);
+            }
+
+            Stage stage = (Stage) btnReport.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Reports");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -18,6 +19,8 @@ import java.sql.SQLException;
 
 public class ShowPointRecyclageController {
 
+    @FXML private NavbarCitoyenController navbarController;
+
     @FXML private Label lblTitle;
     @FXML private Label lblAddressTop;
     @FXML private Label lblStatut;
@@ -27,71 +30,54 @@ public class ShowPointRecyclageController {
     @FXML private Label lblDescription;
     @FXML private Label lblCoords;
     @FXML private WebView mapView;
-    @FXML private NavbarCitoyenController navbarController;
 
     private final PointRecyclageService pointService = new PointRecyclageService();
-    private PointRecyclage point;
+
     private User loggedUser;
+    private PointRecyclage currentPoint;
 
     public void setLoggedUser(User user) {
         this.loggedUser = user;
+
         if (navbarController != null) {
             navbarController.setLoggedUser(user);
         }
     }
 
-    public void setPointId(int id) {
-        try {
-            point = pointService.getPointById(id);
-            if (point != null) {
-                loadData();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void setPoint(PointRecyclage point) {
+        this.currentPoint = point;
+        loadData();
     }
 
     private void loadData() {
-        lblTitle.setText("Point #" + point.getId());
-        lblAddressTop.setText(point.getAddress());
-        lblStatut.setText(point.getStatut());
-        lblCategorie.setText(point.getCategorie() != null ? point.getCategorie().getNom() : "-");
-        lblQuantite.setText(point.getQuantite() + " kg");
-        lblDate.setText(point.getDateDec() != null ? point.getDateDec().toString() : "-");
-        lblDescription.setText(point.getDescription() == null || point.getDescription().isEmpty() ? "-" : point.getDescription());
-        lblCoords.setText("Coordonnées : " + point.getLatitude() + ", " + point.getLongitude());
+        if (currentPoint == null) return;
 
-        initMap(point.getLatitude(), point.getLongitude());
+        lblTitle.setText("Point #" + currentPoint.getId());
+        lblAddressTop.setText(currentPoint.getAddress());
+        lblStatut.setText(currentPoint.getStatut());
+        lblCategorie.setText(currentPoint.getCategorie() != null ? currentPoint.getCategorie().getNom() : "-");
+        lblQuantite.setText(currentPoint.getQuantite() + " kg");
+        lblDate.setText(currentPoint.getDateDec() != null ? currentPoint.getDateDec().toString() : "-");
+        lblDescription.setText(currentPoint.getDescription() != null ? currentPoint.getDescription() : "-");
+        lblCoords.setText("Coordonnées : " + currentPoint.getLatitude() + ", " + currentPoint.getLongitude());
+
+        loadMap();
     }
 
-    private void initMap(double lat, double lng) {
+    private void loadMap() {
+        String html =
+                "<html><head>" +
+                        "<link rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'/>" +
+                        "<script src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'></script>" +
+                        "</head><body style='margin:0;'>" +
+                        "<div id='map' style='width:100%;height:100%;'></div>" +
+                        "<script>" +
+                        "var map=L.map('map').setView([" + currentPoint.getLatitude() + "," + currentPoint.getLongitude() + "],15);" +
+                        "L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors'}).addTo(map);" +
+                        "L.marker([" + currentPoint.getLatitude() + "," + currentPoint.getLongitude() + "]).addTo(map);" +
+                        "</script></body></html>";
+
         WebEngine engine = mapView.getEngine();
-
-        String html = """
-                <!DOCTYPE html>
-                <html>
-                <head>
-                  <meta charset="UTF-8">
-                  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-                  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-                  <style> html, body, #map { height:100%; margin:0; } </style>
-                </head>
-                <body>
-                  <div id="map"></div>
-                  <script>
-                    var map = L.map('map').setView([%LAT%, %LNG%], 15);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                      maxZoom: 19,
-                      attribution: '&copy; OpenStreetMap contributors'
-                    }).addTo(map);
-                    L.marker([%LAT%, %LNG%]).addTo(map);
-                  </script>
-                </body>
-                </html>
-                """
-                .replace("%LAT%", String.valueOf(lat))
-                .replace("%LNG%", String.valueOf(lng));
-
         engine.loadContent(html);
     }
 
@@ -115,15 +101,13 @@ public class ShowPointRecyclageController {
 
     @FXML
     void goToEdit() {
-        if (point == null) return;
-
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/edit_point_connected.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/edit_point_recyclage.fxml"));
             Parent root = loader.load();
 
             EditPointRecyclageController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
-            controller.setPointId(point.getId());
+            controller.setPoint(currentPoint);
 
             Stage stage = (Stage) lblTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -132,5 +116,13 @@ public class ShowPointRecyclageController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String msg) {
+        Alert a = new Alert(type);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }

@@ -27,7 +27,6 @@ import java.util.List;
 
 public class EditPointRecyclageController {
 
-    @FXML private Label lblTitle;
     @FXML private ComboBox<Categorie> cbCategorie;
     @FXML private TextField tfQuantite;
     @FXML private TextField tfAddress;
@@ -35,40 +34,46 @@ public class EditPointRecyclageController {
     @FXML private TextField tfLongitude;
     @FXML private TextArea taDescription;
     @FXML private Label lblPickInfo;
+    @FXML private Label lblTitle;
     @FXML private WebView mapView;
     @FXML private NavbarCitoyenController navbarController;
 
     private final CategorieService categorieService = new CategorieService();
     private final PointRecyclageService pointService = new PointRecyclageService();
 
-    private PointRecyclage point;
     private User loggedUser;
+    private PointRecyclage currentPoint;
 
     public void setLoggedUser(User user) {
         this.loggedUser = user;
+
         if (navbarController != null) {
             navbarController.setLoggedUser(user);
+        }
+    }
+
+    public void setPoint(PointRecyclage point) {
+        this.currentPoint = point;
+
+        if (point != null) {
+            lblTitle.setText("Modifier point #" + point.getId());
+            tfQuantite.setText(String.valueOf(point.getQuantite()));
+            tfAddress.setText(point.getAddress());
+            tfLatitude.setText(String.valueOf(point.getLatitude()));
+            tfLongitude.setText(String.valueOf(point.getLongitude()));
+            taDescription.setText(point.getDescription() != null ? point.getDescription() : "");
+            lblPickInfo.setText("Position actuelle chargée.");
+
+            if (cbCategorie.getItems() != null) {
+                cbCategorie.getSelectionModel().select(point.getCategorie());
+            }
         }
     }
 
     @FXML
     public void initialize() {
         loadCategories();
-        if (navbarController != null && loggedUser != null) {
-            navbarController.setLoggedUser(loggedUser);
-        }
-    }
-
-    public void setPointId(int id) {
-        try {
-            point = pointService.getPointById(id);
-            if (point != null) {
-                fillForm();
-                initMap(point.getLatitude(), point.getLongitude());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        initMap();
     }
 
     private void loadCategories() {
@@ -76,22 +81,12 @@ public class EditPointRecyclageController {
             List<Categorie> categories = categorieService.getAllCategories();
             cbCategorie.getItems().setAll(categories);
         } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les catégories.");
             e.printStackTrace();
         }
     }
 
-    private void fillForm() {
-        lblTitle.setText("Modifier point #" + point.getId());
-        cbCategorie.setValue(point.getCategorie());
-        tfQuantite.setText(String.valueOf(point.getQuantite()));
-        tfAddress.setText(point.getAddress());
-        tfLatitude.setText(String.format("%.6f", point.getLatitude()));
-        tfLongitude.setText(String.format("%.6f", point.getLongitude()));
-        taDescription.setText(point.getDescription());
-        lblPickInfo.setText("Position actuelle chargée.");
-    }
-
-    private void initMap(double lat, double lng) {
+    private void initMap() {
         WebEngine engine = mapView.getEngine();
 
         String html = """
@@ -101,18 +96,20 @@ public class EditPointRecyclageController {
                   <meta charset="UTF-8">
                   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
                   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-                  <style> html, body, #map { height:100%; margin:0; } </style>
+                  <style>
+                    html, body, #map { height: 100%; margin: 0; }
+                  </style>
                 </head>
                 <body>
                   <div id="map"></div>
                   <script>
-                    var map = L.map('map').setView([%LAT%, %LNG%], 13);
+                    var map = L.map('map').setView([36.8065, 10.1815], 12);
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                       maxZoom: 19,
                       attribution: '&copy; OpenStreetMap contributors'
                     }).addTo(map);
 
-                    var marker = L.marker([%LAT%, %LNG%], {draggable:true}).addTo(map);
+                    var marker = L.marker([36.8065, 10.1815], {draggable:true}).addTo(map);
 
                     function notify(lat, lng){
                       if(window.javaConnector){
@@ -130,13 +127,11 @@ public class EditPointRecyclageController {
                       notify(p.lat, p.lng);
                     });
 
-                    notify(%LAT%, %LNG%);
+                    notify(36.8065, 10.1815);
                   </script>
                 </body>
                 </html>
-                """
-                .replace("%LAT%", String.valueOf(lat))
-                .replace("%LNG%", String.valueOf(lng));
+                """;
 
         engine.loadContent(html);
 
@@ -144,6 +139,12 @@ public class EditPointRecyclageController {
             try {
                 JSObject window = (JSObject) engine.executeScript("window");
                 window.setMember("javaConnector", new JavaConnector());
+
+                if (currentPoint != null) {
+                    String script = "map.setView([" + currentPoint.getLatitude() + "," + currentPoint.getLongitude() + "], 15);"
+                            + "marker.setLatLng([" + currentPoint.getLatitude() + "," + currentPoint.getLongitude() + "]);";
+                    engine.executeScript(script);
+                }
             } catch (Exception ignored) {
             }
         });
@@ -154,7 +155,7 @@ public class EditPointRecyclageController {
             Platform.runLater(() -> {
                 tfLatitude.setText(String.format("%.6f", lat));
                 tfLongitude.setText(String.format("%.6f", lng));
-                lblPickInfo.setText("Position : " + String.format("%.6f", lat) + ", " + String.format("%.6f", lng));
+                lblPickInfo.setText("Point : " + String.format("%.6f", lat) + ", " + String.format("%.6f", lng));
             });
             loadAddressFromCoordinates(lat, lng);
         }
@@ -206,42 +207,27 @@ public class EditPointRecyclageController {
 
     @FXML
     void updatePoint() {
-        if (point == null || loggedUser == null) return;
+        if (loggedUser == null || currentPoint == null) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun utilisateur connecté ou point introuvable.");
+            return;
+        }
 
         try {
-            if (point.getCitoyen() == null || point.getCitoyen().getId() != loggedUser.getId()) {
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("Accès refusé");
-                a.setHeaderText(null);
-                a.setContentText("Tu ne peux modifier que tes propres points.");
-                a.showAndWait();
-                return;
-            }
+            currentPoint.setCategorie(cbCategorie.getValue());
+            currentPoint.setQuantite(Double.parseDouble(tfQuantite.getText().trim()));
+            currentPoint.setAddress(tfAddress.getText().trim());
+            currentPoint.setLatitude(Double.parseDouble(tfLatitude.getText().trim()));
+            currentPoint.setLongitude(Double.parseDouble(tfLongitude.getText().trim()));
+            currentPoint.setDescription(taDescription.getText().trim());
 
-            point.setCategorie(cbCategorie.getValue());
-            point.setQuantite(Double.parseDouble(tfQuantite.getText().trim()));
-            point.setAddress(tfAddress.getText().trim());
-            point.setLatitude(Double.parseDouble(tfLatitude.getText().trim()));
-            point.setLongitude(Double.parseDouble(tfLongitude.getText().trim()));
-            point.setDescription(taDescription.getText().trim().isEmpty() ? null : taDescription.getText().trim());
+            pointService.updatePoint(currentPoint);
 
-            pointService.updatePoint(point);
-
-            Alert a = new Alert(Alert.AlertType.INFORMATION);
-            a.setTitle("Succès");
-            a.setHeaderText(null);
-            a.setContentText("Point mis à jour avec succès.");
-            a.showAndWait();
-
+            showAlert(Alert.AlertType.INFORMATION, "Succès", "Point mis à jour avec succès.");
             backToList();
 
         } catch (Exception e) {
-            Alert a = new Alert(Alert.AlertType.ERROR);
-            a.setTitle("Erreur");
-            a.setHeaderText(null);
-            a.setContentText("Impossible de mettre à jour le point.");
-            a.showAndWait();
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de mettre à jour le point.");
         }
     }
 
@@ -261,5 +247,13 @@ public class EditPointRecyclageController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert a = new Alert(type);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(content);
+        a.showAndWait();
     }
 }

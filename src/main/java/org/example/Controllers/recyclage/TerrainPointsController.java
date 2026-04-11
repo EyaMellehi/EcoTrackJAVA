@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.PointRecyclage;
 import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TerrainPointsController {
+
+    @FXML private NavbarCitoyenController navbarCitoyenController;
 
     @FXML private Label lblAgentName;
     @FXML private Label lblTotal;
@@ -61,6 +64,10 @@ public class TerrainPointsController {
     public void setLoggedUser(User user) {
         this.loggedUser = user;
 
+        if (navbarCitoyenController != null) {
+            navbarCitoyenController.setLoggedUser(user);
+        }
+
         if (user != null) {
             lblAgentName.setText("Field Agent: " + safe(user.getName()));
         }
@@ -96,7 +103,6 @@ public class TerrainPointsController {
         ));
 
         addActionsColumn();
-
         tablePoints.setItems(filteredList);
     }
 

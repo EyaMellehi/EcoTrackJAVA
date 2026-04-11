@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.geometry.Pos?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -12,22 +11,30 @@
             style="-fx-background-color: #f6f7f6;">
 
     <top>
-        <StackPane prefHeight="220"
-                   style="-fx-background-color: linear-gradient(to right, #335c38, #6a8f70);">
+        <VBox spacing="0">
             <children>
-                <VBox alignment="CENTER" spacing="10">
+
+                <fx:include fx:id="navbarCitoyen" source="/components/navbar_citoyen.fxml"/>
+
+                <StackPane prefHeight="220"
+                           style="-fx-background-color: linear-gradient(to right, #335c38, #6a8f70);">
                     <children>
-                        <Label text="Agent de terrain"
-                               style="-fx-text-fill: #6ed46e; -fx-font-size: 24px; -fx-font-weight: bold;"/>
-                        <Label text="Détails du point"
-                               style="-fx-text-fill: white; -fx-font-size: 46px; -fx-font-weight: bold;"/>
-                        <Label fx:id="lblPointIdTop"
-                               text="Point: #0"
-                               style="-fx-text-fill: #dcefdc; -fx-font-size: 18px;"/>
+                        <VBox alignment="CENTER" spacing="10">
+                            <children>
+                                <Label text="Agent de terrain"
+                                       style="-fx-text-fill: #6ed46e; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                                <Label text="Détails du point"
+                                       style="-fx-text-fill: white; -fx-font-size: 46px; -fx-font-weight: bold;"/>
+                                <Label fx:id="lblPointIdTop"
+                                       text="Point: #0"
+                                       style="-fx-text-fill: #dcefdc; -fx-font-size: 18px;"/>
+                            </children>
+                        </VBox>
                     </children>
-                </VBox>
+                </StackPane>
+
             </children>
-        </StackPane>
+        </VBox>
     </top>
 
     <center>

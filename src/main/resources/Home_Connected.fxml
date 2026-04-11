@@ -40,6 +40,7 @@
 
                     <Button fx:id="btnReport"
                             text="Report"
+                            onAction="#goToMySignalements"
                             style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
 
                     <Button fx:id="btnBlogs"

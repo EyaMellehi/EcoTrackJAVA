@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.PointRecyclage;
 import org.example.Entities.RapportRecyc;
 import org.example.Entities.User;
@@ -21,6 +22,8 @@ import java.net.URI;
 import java.sql.SQLException;
 
 public class TerrainPointDetailsController {
+
+    @FXML private NavbarCitoyenController navbarCitoyenController;
 
     @FXML private Label lblPointIdTop;
     @FXML private Label lblPointTitle;
@@ -48,6 +51,11 @@ public class TerrainPointDetailsController {
     public void setData(User loggedUser, PointRecyclage point) {
         this.loggedUser = loggedUser;
         this.currentPoint = point;
+
+        if (navbarCitoyenController != null) {
+            navbarCitoyenController.setLoggedUser(loggedUser);
+        }
+
         loadData();
     }
 

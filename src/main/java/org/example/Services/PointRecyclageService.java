@@ -373,5 +373,44 @@ public class PointRecyclageService {
         ResultSet rs = ps.executeQuery();
         return rs.next() ? rs.getInt(1) : 0;
     }
-    /*bonbon*/
+    public List<PointRecyclage> getPointsByCitizen(int citizenId) throws SQLException {
+        List<PointRecyclage> points = new ArrayList<>();
+
+        String sql = "SELECT p.*, c.id AS categorie_id, c.nom AS categorie_nom, c.description AS categorie_description, c.coef_points " +
+                "FROM point_recyclage p " +
+                "LEFT JOIN categorie c ON p.categorie_id = c.id " +
+                "WHERE p.citoyen_id = ? " +
+                "ORDER BY p.id DESC";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, citizenId);
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            PointRecyclage point = new PointRecyclage();
+
+            point.setId(rs.getInt("id"));
+            point.setQuantite(rs.getDouble("quantite"));
+            point.setAddress(rs.getString("address"));
+            point.setLatitude(rs.getDouble("latitude"));
+            point.setLongitude(rs.getDouble("longitude"));
+            point.setDescription(rs.getString("description"));
+            point.setDateDec(rs.getDate("date_dec") != null ? rs.getDate("date_dec").toLocalDate() : null);
+            point.setStatut(rs.getString("statut"));
+
+            if (rs.getObject("categorie_id") != null) {
+                Categorie categorie = new Categorie();
+                categorie.setId(rs.getInt("categorie_id"));
+                categorie.setNom(rs.getString("categorie_nom"));
+                categorie.setDescription(rs.getString("categorie_description"));
+                categorie.setCoefPoints(rs.getDouble("coef_points"));
+                point.setCategorie(categorie);
+            }
+
+            points.add(point);
+        }
+
+        return points;
+    }
 }

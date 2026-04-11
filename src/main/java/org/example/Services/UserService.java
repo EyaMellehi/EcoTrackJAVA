@@ -318,4 +318,32 @@ public class UserService {
 
         return users;
     }
+
+
+    public User getUserById(int id) throws SQLException {
+        String sql = "SELECT * FROM user WHERE id = ?";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            User user = new User();
+            user.setId(rs.getInt("id"));
+            user.setEmail(rs.getString("email"));
+            user.setRoles(rs.getString("roles"));
+            user.setPassword(rs.getString("password"));
+            user.setName(rs.getString("name"));
+            user.setPhone(rs.getString("phone"));
+            user.setRegion(rs.getString("region"));
+            user.setPoints(rs.getInt("points"));
+            user.setActive(rs.getBoolean("is_active"));
+            user.setImage(rs.getString("image"));
+            user.setDelegation(rs.getString("delegation"));
+            user.setFaceioId(rs.getString("faceio_id"));
+            return user;
+        }
+
+        return null;
+    }
+
 }

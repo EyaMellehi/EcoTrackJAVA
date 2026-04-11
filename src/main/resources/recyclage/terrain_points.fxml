@@ -9,22 +9,30 @@
             style="-fx-background-color: #f6f7f6;">
 
     <top>
-        <StackPane prefHeight="200"
-                   style="-fx-background-color: linear-gradient(to right, #335c38, #6a8f70);">
+        <VBox spacing="0">
             <children>
-                <VBox alignment="CENTER" spacing="10">
+
+                <fx:include fx:id="navbarCitoyen" source="/components/navbar_citoyen.fxml"/>
+
+                <StackPane prefHeight="200"
+                           style="-fx-background-color: linear-gradient(to right, #335c38, #6a8f70);">
                     <children>
-                        <Label text="Field Agent"
-                               style="-fx-text-fill: #6ed46e; -fx-font-size: 22px; -fx-font-weight: bold;"/>
-                        <Label text="Assigned Recycling Points"
-                               style="-fx-text-fill: white; -fx-font-size: 42px; -fx-font-weight: bold;"/>
-                        <Label fx:id="lblAgentName"
-                               text="Field Agent: -"
-                               style="-fx-text-fill: #dcefdc; -fx-font-size: 16px;"/>
+                        <VBox alignment="CENTER" spacing="10">
+                            <children>
+                                <Label text="Field Agent"
+                                       style="-fx-text-fill: #6ed46e; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+                                <Label text="Assigned Recycling Points"
+                                       style="-fx-text-fill: white; -fx-font-size: 42px; -fx-font-weight: bold;"/>
+                                <Label fx:id="lblAgentName"
+                                       text="Field Agent: -"
+                                       style="-fx-text-fill: #dcefdc; -fx-font-size: 16px;"/>
+                            </children>
+                        </VBox>
                     </children>
-                </VBox>
+                </StackPane>
+
             </children>
-        </StackPane>
+        </VBox>
     </top>
 
     <center>

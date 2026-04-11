@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.signalement.EditSignalementController"
+            prefWidth="1200" prefHeight="800"
+            style="-fx-background-color: #f5f5f5;">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20"
+              style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+            <children>
+                <Label text="EcoTrack"
+                       style="-fx-text-fill: #2e7d32; -fx-font-size: 26px; -fx-font-weight: bold;"/>
+
+                <Pane HBox.hgrow="ALWAYS"/>
+
+                <Button text="Back"
+                        onAction="#goBack"
+                        style="-fx-background-color: transparent; -fx-text-fill: #2e7d32; -fx-font-size: 16px;"/>
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="20" alignment="TOP_CENTER" style="-fx-padding: 30;">
+            <children>
+
+                <VBox spacing="8" alignment="CENTER">
+                    <Label text="Edit report"
+                           style="-fx-text-fill: #104b2c; -fx-font-size: 32px; -fx-font-weight: bold;"/>
+                    <Label text="Update the selected report."
+                           style="-fx-text-fill: #6b7280; -fx-font-size: 16px;"/>
+                </VBox>
+
+                <VBox spacing="15" maxWidth="700"
+                      style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 8;">
+                    <children>
+
+                        <Label text="Title"/>
+                        <TextField fx:id="tfTitre"/>
+
+                        <Label text="Description"/>
+                        <TextArea fx:id="taDescription" prefHeight="100" wrapText="true"/>
+
+                        <Label text="Type"/>
+                        <ComboBox fx:id="cbType"/>
+
+                        <Label text="Status"/>
+                        <ComboBox fx:id="cbStatut"/>
+
+                        <Label text="Address"/>
+                        <TextField fx:id="tfAddresse"/>
+
+                        <Label text="Latitude"/>
+                        <TextField fx:id="tfLatitude"/>
+
+                        <Label text="Longitude"/>
+                        <TextField fx:id="tfLongitude"/>
+
+                        <Label text="Delegation"/>
+                        <TextField fx:id="tfDelegation"/>
+
+                        <HBox spacing="12" alignment="CENTER_RIGHT">
+                            <children>
+                                <Button text="Cancel"
+                                        onAction="#goBack"
+                                        style="-fx-background-color: #e5e7eb; -fx-text-fill: #111827;"/>
+
+                                <Button text="Update"
+                                        onAction="#updateSignalement"
+                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+                            </children>
+                        </HBox>
+
+                    </children>
+                </VBox>
+
+            </children>
+        </VBox>
+    </center>
+
+</BorderPane>

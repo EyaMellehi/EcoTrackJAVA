@@ -9,8 +9,14 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.example.Controllers.HomeConnectedController;
 import org.example.Controllers.User.ProfileController;
+import org.example.Controllers.recyclage.AddPointRecyclageController;
+import org.example.Controllers.recyclage.EditPointRecyclageController;
 import org.example.Controllers.recyclage.PointsConnectedController;
+import org.example.Controllers.recyclage.ShowPointRecyclageController;
 import org.example.Controllers.recyclage.TerrainPointsController;
+import org.example.Controllers.signalement.ListAssignedSignalementController;
+import org.example.Controllers.signalement.ListMunicipalSignalementController;
+import org.example.Controllers.signalement.ListSignalementController;
 import org.example.Entities.User;
 
 public class NavbarCitoyenController {
@@ -37,10 +43,7 @@ public class NavbarCitoyenController {
 
         String roles = user.getRoles();
 
-        if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
-            applyMunicipalNavbar();
-            hideDonations();
-        } else if (roles.contains("ROLE_CITOYEN")) {
+        if (roles.contains("ROLE_CITOYEN")) {
             applyStandardNavbar();
             showDonations();
         } else if (roles.contains("ROLE_AGENT_TERRAIN")) {
@@ -59,15 +62,6 @@ public class NavbarCitoyenController {
         btnAssociations.setText("Associations");
         btnRecycling.setText("Recycling");
         btnEvents.setText("Events");
-    }
-
-    private void applyMunicipalNavbar() {
-        btnHome.setText("Home");
-        btnReport.setText("Report");
-        btnBlogs.setText("Announcements Management");
-        btnAssociations.setText("Associations");
-        btnRecycling.setText("Recycling");
-        btnEvents.setText("Events Management");
     }
 
     private void showDonations() {
@@ -91,20 +85,35 @@ public class NavbarCitoyenController {
 
             Object controller = loader.getController();
 
-            if (controller instanceof HomeConnectedController homeController) {
-                homeController.setLoggedUser(loggedUser);
+            if (controller instanceof HomeConnectedController c) {
+                c.setLoggedUser(loggedUser);
             }
-
-            if (controller instanceof PointsConnectedController pointsController) {
-                pointsController.setLoggedUser(loggedUser);
+            if (controller instanceof PointsConnectedController c) {
+                c.setLoggedUser(loggedUser);
             }
-
-            if (controller instanceof TerrainPointsController terrainController) {
-                terrainController.setLoggedUser(loggedUser);
+            if (controller instanceof TerrainPointsController c) {
+                c.setLoggedUser(loggedUser);
             }
-
-            if (controller instanceof ProfileController profileController) {
-                profileController.setUser(loggedUser);
+            if (controller instanceof ProfileController c) {
+                c.setUser(loggedUser);
+            }
+            if (controller instanceof ListSignalementController c) {
+                c.setLoggedUser(loggedUser);
+            }
+            if (controller instanceof ListAssignedSignalementController c) {
+                c.setLoggedUser(loggedUser);
+            }
+            if (controller instanceof ListMunicipalSignalementController c) {
+                c.setLoggedUser(loggedUser);
+            }
+            if (controller instanceof AddPointRecyclageController c) {
+                c.setLoggedUser(loggedUser);
+            }
+            if (controller instanceof EditPointRecyclageController c) {
+                c.setLoggedUser(loggedUser);
+            }
+            if (controller instanceof ShowPointRecyclageController c) {
+                c.setLoggedUser(loggedUser);
             }
 
             Stage stage = (Stage) btnHome.getScene().getWindow();
@@ -124,7 +133,26 @@ public class NavbarCitoyenController {
 
     @FXML
     void goToReport() {
-        System.out.println("Open reports");
+        if (loggedUser != null && loggedUser.getRoles() != null) {
+            String roles = loggedUser.getRoles();
+
+            if (roles.contains("ROLE_AGENT_TERRAIN")) {
+                navigate("/signalement/list_assigned_signalements.fxml", "My reports");
+                return;
+            }
+
+            if (roles.contains("ROLE_CITOYEN")) {
+                navigate("/signalement/list_signalement.fxml", "Reports");
+                return;
+            }
+
+            if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
+                navigate("/signalement/list_municipal_signalements.fxml", "Reports");
+                return;
+            }
+        }
+
+        navigate("/signalement/list_signalement.fxml", "My reports");
     }
 
     @FXML

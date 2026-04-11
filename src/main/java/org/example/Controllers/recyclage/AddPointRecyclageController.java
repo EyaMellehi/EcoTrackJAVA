@@ -26,8 +26,12 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 public class AddPointRecyclageController {
+
+    @FXML private HBox navbar;
+    @FXML private NavbarCitoyenController navbarController;
 
     @FXML private ComboBox<Categorie> cbCategorie;
     @FXML private TextField tfQuantite;
@@ -37,10 +41,6 @@ public class AddPointRecyclageController {
     @FXML private TextArea taDescription;
     @FXML private Label lblPickInfo;
     @FXML private WebView mapView;
-    @FXML private NavbarCitoyenController navbarController;
-
-    @FXML private HBox navbar;
-
 
     private final CategorieService categorieService = new CategorieService();
     private final PointRecyclageService pointService = new PointRecyclageService();
@@ -49,6 +49,7 @@ public class AddPointRecyclageController {
 
     public void setLoggedUser(User user) {
         this.loggedUser = user;
+
         if (navbarController != null) {
             navbarController.setLoggedUser(user);
         }
@@ -58,14 +59,15 @@ public class AddPointRecyclageController {
     public void initialize() {
         loadCategories();
         initMap();
-        tfLatitude.setText("36.806500");
-        tfLongitude.setText("10.181500");
-        lblPickInfo.setText("Point : 36.806500, 10.181500");
-        loadAddressFromCoordinates(36.8065, 10.1815);
 
-        if (navbarController != null && loggedUser != null) {
-            navbarController.setLoggedUser(loggedUser);
-        }
+        tfLatitude.setText(String.format(Locale.US, "%.6f", 36.8065));
+        tfLongitude.setText(String.format(Locale.US, "%.6f", 10.1815));
+        lblPickInfo.setText("Point : "
+                + String.format(Locale.US, "%.6f", 36.8065)
+                + ", "
+                + String.format(Locale.US, "%.6f", 10.1815));
+
+        loadAddressFromCoordinates(36.8065, 10.1815);
     }
 
     private void loadCategories() {
@@ -73,8 +75,8 @@ public class AddPointRecyclageController {
             List<Categorie> categories = categorieService.getAllCategories();
             cbCategorie.getItems().setAll(categories);
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les catégories.");
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les catégories.");
         }
     }
 
@@ -139,10 +141,14 @@ public class AddPointRecyclageController {
     public class JavaConnector {
         public void updatePosition(double lat, double lng) {
             Platform.runLater(() -> {
-                tfLatitude.setText(String.format("%.6f", lat));
-                tfLongitude.setText(String.format("%.6f", lng));
-                lblPickInfo.setText("Point : " + String.format("%.6f", lat) + ", " + String.format("%.6f", lng));
+                tfLatitude.setText(String.format(Locale.US, "%.6f", lat));
+                tfLongitude.setText(String.format(Locale.US, "%.6f", lng));
+                lblPickInfo.setText("Point : "
+                        + String.format(Locale.US, "%.6f", lat)
+                        + ", "
+                        + String.format(Locale.US, "%.6f", lng));
             });
+
             loadAddressFromCoordinates(lat, lng);
         }
     }
@@ -196,8 +202,8 @@ public class AddPointRecyclageController {
         Categorie categorie = cbCategorie.getValue();
         String quantiteText = tfQuantite.getText().trim();
         String address = tfAddress.getText().trim();
-        String latitudeText = tfLatitude.getText().trim();
-        String longitudeText = tfLongitude.getText().trim();
+        String latitudeText = tfLatitude.getText().trim().replace(",", ".");
+        String longitudeText = tfLongitude.getText().trim().replace(",", ".");
         String description = taDescription.getText().trim();
 
         if (loggedUser == null) {
@@ -271,8 +277,8 @@ public class AddPointRecyclageController {
             backToList();
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ajouter le point.");
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ajouter le point.");
         }
     }
 

@@ -1,16 +1,16 @@
 package org.example.Controllers.recyclage;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import org.example.Controllers.HomeConnectedController;
 import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.PointRecyclage;
 import org.example.Entities.User;
@@ -18,10 +18,13 @@ import org.example.Services.PointRecyclageService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PointsConnectedController {
+
+    @FXML private HBox navbar;
+    @FXML private NavbarCitoyenController navbarController;
 
     @FXML private Label lblTotal;
     @FXML private Label lblPending;
@@ -34,151 +37,174 @@ public class PointsConnectedController {
     @FXML private TableView<PointRecyclage> tablePoints;
     @FXML private TableColumn<PointRecyclage, Integer> colId;
     @FXML private TableColumn<PointRecyclage, String> colCategorie;
-    @FXML private TableColumn<PointRecyclage, Double> colQuantite;
+    @FXML private TableColumn<PointRecyclage, String> colQuantite;
     @FXML private TableColumn<PointRecyclage, String> colAddress;
-    @FXML private TableColumn<PointRecyclage, Object> colDate;
+    @FXML private TableColumn<PointRecyclage, String> colDate;
     @FXML private TableColumn<PointRecyclage, String> colStatut;
     @FXML private TableColumn<PointRecyclage, Void> colActions;
 
-    @FXML private HBox navbar;
-    @FXML private NavbarCitoyenController navbarController;
-
     private final PointRecyclageService pointService = new PointRecyclageService();
-    private List<PointRecyclage> masterList;
-    private User loggedUser;
 
-    public void setLoggedUser(User user) {
-        this.loggedUser = user;
-        if (navbarController != null) {
-            navbarController.setLoggedUser(user);
-        }
-        loadPoints();
-    }
+    private User loggedUser;
+    private final ObservableList<PointRecyclage> masterList = FXCollections.observableArrayList();
+    private final ObservableList<PointRecyclage> filteredList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        cbStatus.setItems(FXCollections.observableArrayList("", "PENDING", "IN_PROGRESS", "COLLECTE", "VALIDE"));
+        cbStatus.setItems(FXCollections.observableArrayList(
+                "Tous", "PENDING", "IN_PROGRESS", "COLLECTE", "VALIDE"
+        ));
+        cbStatus.setValue("Tous");
 
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colQuantite.setCellValueFactory(new PropertyValueFactory<>("quantite"));
-        colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
-        colDate.setCellValueFactory(new PropertyValueFactory<>("dateDec"));
-        colStatut.setCellValueFactory(new PropertyValueFactory<>("statut"));
+        initTable();
 
-        colCategorie.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getCategorie() != null
-                        ? cellData.getValue().getCategorie().getNom()
-                        : "-"));
+        tfSearch.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+        cbStatus.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+    }
+
+    public void setLoggedUser(User user) {
+        this.loggedUser = user;
+
+        if (navbarController != null) {
+            navbarController.setLoggedUser(user);
+        }
+
+        loadPoints();
+    }
+
+    private void initTable() {
+        colId.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getId()));
+
+        colCategorie.setCellValueFactory(data -> new SimpleStringProperty(
+                data.getValue().getCategorie() != null ? safe(data.getValue().getCategorie().getNom()) : "-"
+        ));
+
+        colQuantite.setCellValueFactory(data -> new SimpleStringProperty(
+                data.getValue().getQuantite() + " kg"
+        ));
+
+        colAddress.setCellValueFactory(data -> new SimpleStringProperty(
+                safe(data.getValue().getAddress())
+        ));
+
+        colDate.setCellValueFactory(data -> new SimpleStringProperty(
+                data.getValue().getDateDec() != null ? data.getValue().getDateDec().toString() : "-"
+        ));
+
+        colStatut.setCellValueFactory(data -> new SimpleStringProperty(
+                safe(data.getValue().getStatut())
+        ));
 
         addActionsColumn();
-
-        if (navbarController != null && loggedUser != null) {
-            navbarController.setLoggedUser(loggedUser);
-        }
+        tablePoints.setItems(filteredList);
     }
 
     private void addActionsColumn() {
         colActions.setCellFactory(param -> new TableCell<>() {
-            private final Button btnVoir = new Button("Voir");
-            private final Button btnModifier = new Button("Modifier");
-            private final Button btnSupprimer = new Button("Supprimer");
-            private final HBox pane = new HBox(8, btnVoir, btnModifier, btnSupprimer);
+            private final Button btnShow = new Button("Voir");
+            private final Button btnEdit = new Button("Modifier");
+            private final HBox box = new HBox(8, btnShow, btnEdit);
 
             {
-                btnVoir.setStyle("-fx-background-color: white; -fx-border-color: #111827; -fx-text-fill: #111827; -fx-background-radius: 8; -fx-border-radius: 8;");
-                btnModifier.setStyle("-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-background-radius: 8;");
-                btnSupprimer.setStyle("-fx-background-color: #dc2626; -fx-text-fill: white; -fx-background-radius: 8;");
-
-                btnVoir.setOnAction(e -> {
-                    PointRecyclage p = getTableView().getItems().get(getIndex());
-                    openShow(p.getId());
+                btnShow.setOnAction(e -> {
+                    PointRecyclage point = getTableView().getItems().get(getIndex());
+                    goToShowPoint(point);
                 });
 
-                btnModifier.setOnAction(e -> {
-                    PointRecyclage p = getTableView().getItems().get(getIndex());
-                    openEdit(p.getId());
-                });
-
-                btnSupprimer.setOnAction(e -> {
-                    PointRecyclage p = getTableView().getItems().get(getIndex());
-                    deletePoint(p.getId());
+                btnEdit.setOnAction(e -> {
+                    PointRecyclage point = getTableView().getItems().get(getIndex());
+                    goToEditPoint(point);
                 });
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : pane);
+
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    PointRecyclage point = getTableView().getItems().get(getIndex());
+                    boolean canEdit = point != null &&
+                            !"COLLECTE".equalsIgnoreCase(safe(point.getStatut())) &&
+                            !"VALIDE".equalsIgnoreCase(safe(point.getStatut()));
+
+                    btnEdit.setVisible(canEdit);
+                    btnEdit.setManaged(canEdit);
+
+                    setGraphic(box);
+                }
             }
         });
     }
 
     private void loadPoints() {
         if (loggedUser == null) {
-            tablePoints.setItems(FXCollections.observableArrayList());
-            updateStats(List.of());
             return;
         }
 
         try {
-            masterList = pointService.getAllPoints().stream()
-                    .filter(p -> p.getCitoyen() != null && p.getCitoyen().getId() == loggedUser.getId())
-                    .collect(Collectors.toList());
-
-            tablePoints.setItems(FXCollections.observableArrayList(masterList));
-            updateStats(masterList);
+            List<PointRecyclage> points = pointService.getPointsByCitizen(loggedUser.getId());
+            masterList.setAll(points);
+            applyFilters();
+            updateStats();
         } catch (SQLException e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les points.");
         }
     }
 
-    private void updateStats(List<PointRecyclage> points) {
-        lblTotal.setText(String.valueOf(points.size()));
-        lblPending.setText(String.valueOf(points.stream().filter(p -> "PENDING".equals(p.getStatut())).count()));
-        lblInProgress.setText(String.valueOf(points.stream().filter(p -> "IN_PROGRESS".equals(p.getStatut())).count()));
-        lblCollecte.setText(String.valueOf(points.stream().filter(p -> "COLLECTE".equals(p.getStatut())).count()));
+    private void applyFilters() {
+        String keyword = tfSearch.getText() == null ? "" : tfSearch.getText().trim().toLowerCase();
+        String selectedStatus = cbStatus.getValue();
+
+        List<PointRecyclage> result = new ArrayList<>();
+
+        for (PointRecyclage p : masterList) {
+            boolean okSearch =
+                    safe(p.getAddress()).toLowerCase().contains(keyword) ||
+                            safe(p.getStatut()).toLowerCase().contains(keyword) ||
+                            (p.getCategorie() != null && safe(p.getCategorie().getNom()).toLowerCase().contains(keyword));
+
+            boolean okStatus = selectedStatus == null || selectedStatus.equals("Tous")
+                    || safe(p.getStatut()).equalsIgnoreCase(selectedStatus);
+
+            if (okSearch && okStatus) {
+                result.add(p);
+            }
+        }
+
+        filteredList.setAll(result);
+    }
+
+    private void updateStats() {
+        lblTotal.setText(String.valueOf(masterList.size()));
+        lblPending.setText(String.valueOf(masterList.stream().filter(p -> "PENDING".equalsIgnoreCase(safe(p.getStatut()))).count()));
+        lblInProgress.setText(String.valueOf(masterList.stream().filter(p -> "IN_PROGRESS".equalsIgnoreCase(safe(p.getStatut()))).count()));
+        lblCollecte.setText(String.valueOf(masterList.stream().filter(p -> "COLLECTE".equalsIgnoreCase(safe(p.getStatut()))).count()));
     }
 
     @FXML
     void filterPoints() {
-        if (masterList == null) return;
-
-        String keyword = tfSearch.getText() == null ? "" : tfSearch.getText().toLowerCase().trim();
-        String status = cbStatus.getValue();
-
-        List<PointRecyclage> filtered = masterList.stream()
-                .filter(p -> {
-                    boolean matchesKeyword =
-                            keyword.isEmpty()
-                                    || (p.getAddress() != null && p.getAddress().toLowerCase().contains(keyword))
-                                    || (p.getDescription() != null && p.getDescription().toLowerCase().contains(keyword))
-                                    || (p.getStatut() != null && p.getStatut().toLowerCase().contains(keyword))
-                                    || (p.getCategorie() != null && p.getCategorie().getNom() != null
-                                    && p.getCategorie().getNom().toLowerCase().contains(keyword));
-
-                    boolean matchesStatus =
-                            status == null || status.isEmpty() || status.equals(p.getStatut());
-
-                    return matchesKeyword && matchesStatus;
-                })
-                .collect(Collectors.toList());
-
-        tablePoints.setItems(FXCollections.observableArrayList(filtered));
-        updateStats(filtered);
+        applyFilters();
     }
 
     @FXML
     void resetFilter() {
         tfSearch.clear();
-        cbStatus.setValue("");
-        tablePoints.setItems(FXCollections.observableArrayList(masterList));
-        updateStats(masterList);
+        cbStatus.setValue("Tous");
+        applyFilters();
     }
 
     @FXML
     void goToAddPoint() {
+        if (loggedUser == null) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun utilisateur connecté.");
+            return;
+        }
+
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/add_point_connected.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/add_point_recyclage.fxml"));
             Parent root = loader.load();
 
             AddPointRecyclageController controller = loader.getController();
@@ -190,35 +216,18 @@ public class PointsConnectedController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page d'ajout.");
         }
     }
 
-    @FXML
-    void goToHomeConnected() {
+    private void goToShowPoint(PointRecyclage point) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Home_Connected.fxml"));
-            Parent root = loader.load();
-
-            HomeConnectedController controller = loader.getController();
-            controller.setLoggedUser(loggedUser);
-
-            Stage stage = (Stage) tablePoints.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Home");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void openShow(int id) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/show_point_connected.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/show_point_recyclage.fxml"));
             Parent root = loader.load();
 
             ShowPointRecyclageController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
-            controller.setPointId(id);
+            controller.setPoint(point);
 
             Stage stage = (Stage) tablePoints.getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -229,14 +238,14 @@ public class PointsConnectedController {
         }
     }
 
-    private void openEdit(int id) {
+    private void goToEditPoint(PointRecyclage point) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/edit_point_connected.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/edit_point_recyclage.fxml"));
             Parent root = loader.load();
 
             EditPointRecyclageController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
-            controller.setPointId(id);
+            controller.setPoint(point);
 
             Stage stage = (Stage) tablePoints.getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -247,29 +256,15 @@ public class PointsConnectedController {
         }
     }
 
-    private void deletePoint(int id) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmation");
-        confirm.setHeaderText(null);
-        confirm.setContentText("Supprimer ce point ?");
+    private String safe(String s) {
+        return s == null ? "" : s;
+    }
 
-        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            try {
-                PointRecyclage selected = pointService.getPointById(id);
-                if (selected != null && selected.getCitoyen() != null && loggedUser != null
-                        && selected.getCitoyen().getId() == loggedUser.getId()) {
-                    pointService.deletePoint(id);
-                    loadPoints();
-                } else {
-                    Alert a = new Alert(Alert.AlertType.WARNING);
-                    a.setTitle("Accès refusé");
-                    a.setHeaderText(null);
-                    a.setContentText("Tu ne peux supprimer que tes propres points.");
-                    a.showAndWait();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+    private void showAlert(Alert.AlertType type, String title, String msg) {
+        Alert a = new Alert(type);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }
