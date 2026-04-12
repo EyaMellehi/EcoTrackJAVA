@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="gui.EditerAnnonce"
+      spacing="15" styleClass="main-container"
+      stylesheets="@style.css">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Éditer l'Annonce"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+
+    <GridPane hgap="10" vgap="12">
+        <columnConstraints>
+            <ColumnConstraints prefWidth="100"/>
+            <ColumnConstraints prefWidth="220" hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <!-- Row 0: Titre -->
+        <Label text="Titre :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="titreField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <!-- Row 1: Région -->
+        <Label text="Région :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="regionComboBox" prefWidth="220" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <!-- Row 2: Contenu -->
+        <Label text="Contenu :" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.valignment="TOP"/>
+        <TextArea fx:id="contenuField" prefHeight="90" wrapText="true" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <!-- Row 3: Catégorie -->
+        <Label text="Catégorie :" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="categorieComboBox" prefWidth="220" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <!-- Row 4: Media -->
+        <Label text="Média :" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <HBox spacing="10" GridPane.rowIndex="4" GridPane.columnIndex="1">
+            <Button text="📸 Changer l'image" onAction="#selectMedia"
+                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 12px; -fx-padding: 5 15;"/>
+            <Label fx:id="mediaLabel" text="Aucune image"
+                   style="-fx-text-fill: #999; -fx-font-size: 12px;"/>
+        </HBox>
+    </GridPane>
+
+    <HBox spacing="10">
+        <Button text="✔ Enregistrer" onAction="#enregistrerModifications"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20;"/>
+        <Button text="❌ Annuler" onAction="#annuler"
+                style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20;"/>
+    </HBox>
+</VBox>

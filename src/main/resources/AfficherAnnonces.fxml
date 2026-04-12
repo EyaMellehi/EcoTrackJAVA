@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="gui.AfficherAnnonces"
+      spacing="12"
+      stylesheets="@style.css">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Liste des Annonces"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+
+    <TableView fx:id="annoncesTable" VBox.vgrow="ALWAYS" style="-fx-font-size: 12px; -fx-text-alignment: left;">
+        <columns>
+            <TableColumn fx:id="idCol" text="ID" prefWidth="70.0" minWidth="60.0" sortable="true"/>
+            <TableColumn fx:id="titreCol" text="Titre" prefWidth="250.0" minWidth="150.0" sortable="true"/>
+            <TableColumn fx:id="datePubCol" text="Date Publication" prefWidth="200.0" minWidth="150.0" sortable="true"/>
+            <TableColumn fx:id="regionCol" text="Région" prefWidth="140.0" minWidth="100.0" sortable="true"/>
+            <TableColumn fx:id="contenuCol" text="Contenu" prefWidth="350.0" minWidth="200.0" sortable="false"/>
+            <TableColumn fx:id="categorieCol" text="Catégorie" prefWidth="200.0" minWidth="120.0" sortable="true"/>
+        </columns>
+    </TableView>
+
+    <Button text="➕ Ajouter une annonce" onAction="#naviguerVersAjouter"
+            style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20;"/>
+</VBox>
+
