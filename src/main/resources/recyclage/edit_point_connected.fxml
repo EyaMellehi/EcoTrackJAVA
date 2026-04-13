@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.EditPointRecyclageController"
+            prefWidth="1500" prefHeight="900"
+            style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <fx:include fx:id="navbar" source="/components/navbar_citoyen.fxml"/>
+    </top>
+
+
+    <center>
+        <StackPane style="-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.45), rgba(0,0,0,0.45)), #5f6f52;">
+            <children>
+                <VBox maxWidth="760" spacing="18"
+                      style="-fx-background-color: white; -fx-padding: 28; -fx-background-radius: 16;">
+                    <children>
+
+                        <VBox spacing="6" alignment="CENTER">
+                            <Label text="Recyclage" style="-fx-text-fill: #2f9e44; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                            <Label fx:id="lblTitle" text="Modifier point"
+                                   style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                            <Label text="Clique sur la carte → adresse auto. Tape une adresse → marqueur bouge."
+                                   style="-fx-text-fill: #6b7280; -fx-font-size: 14px;"/>
+                        </VBox>
+
+                        <HBox spacing="12">
+                            <children>
+                                <ComboBox fx:id="cbCategorie" promptText="Catégorie" prefWidth="360"
+                                          style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+                                <TextField fx:id="tfQuantite" promptText="Quantité (kg)" prefWidth="360"
+                                           style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+                            </children>
+                        </HBox>
+
+                        <TextField fx:id="tfAddress" promptText="Adresse"
+                                   style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+
+                        <WebView fx:id="mapView" prefHeight="340"/>
+
+                        <Label fx:id="lblPickInfo" text="Position actuelle chargée."
+                               style="-fx-background-color: #edf7ee; -fx-padding: 10; -fx-background-radius: 8; -fx-text-fill: #123524;"/>
+
+                        <HBox spacing="12">
+                            <children>
+                                <TextField fx:id="tfLatitude" promptText="Latitude" prefWidth="360" editable="false"
+                                           style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+                                <TextField fx:id="tfLongitude" promptText="Longitude" prefWidth="360" editable="false"
+                                           style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+                            </children>
+                        </HBox>
+
+                        <Label text="Description (optionnel)" style="-fx-text-fill: #123524; -fx-font-weight: bold;"/>
+                        <TextArea fx:id="taDescription" prefHeight="120" wrapText="true"
+                                  style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+
+                        <HBox spacing="12" alignment="CENTER">
+                            <children>
+                                <Button text="Mettre à jour"
+                                        onAction="#updatePoint"
+                                        style="-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 12 24; -fx-background-radius: 8;"/>
+
+                                <Button text="Retour"
+                                        onAction="#backToList"
+                                        style="-fx-background-color: white; -fx-border-color: #374151; -fx-text-fill: #374151; -fx-padding: 12 24; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

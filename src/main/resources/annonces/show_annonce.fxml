@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.Controllers.annonces.ShowAnnonceController"
+            prefWidth="1000" prefHeight="800" style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 30 40 20 40; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;">
+            <Label fx:id="lblTitre" text="Titre de l'Annonce" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" wrapText="true" />
+            <HBox spacing="15.0">
+                <Label fx:id="lblCategorie" text="Catégorie:" style="-fx-font-size: 13px; -fx-text-fill: #7a8087;" />
+                <Label fx:id="lblRegion" text="Région:" style="-fx-font-size: 13px; -fx-text-fill: #7a8087;" />
+                <Label fx:id="lblDate" text="Date:" style="-fx-font-size: 13px; -fx-text-fill: #7a8087;" />
+                <Label fx:id="lblAuteur" text="Par:" style="-fx-font-size: 13px; -fx-text-fill: #7a8087; -fx-font-weight: bold;" />
+            </HBox>
+            <HBox spacing="12.0" alignment="CENTER_LEFT">
+                <Label fx:id="lblCommentStatus" text="Commentaires visibles mis à jour" style="-fx-background-color: #e8f5e9; -fx-text-fill: #166534; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 5 10; -fx-background-radius: 999;" />
+                <Label fx:id="lblCommentCount" text="0 commentaire(s) visible(s)" style="-fx-background-color: #eff6ff; -fx-text-fill: #1d4ed8; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 5 10; -fx-background-radius: 999;" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="25.0" style="-fx-background-color: #f6f7f6; -fx-padding: 30 40;">
+
+                    <VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 25; -fx-border-color: #e5e7eb; -fx-border-radius: 8;">
+                        <ImageView fx:id="imgMedia" fitWidth="900" fitHeight="400" preserveRatio="true" />
+                        <Label fx:id="lblContenu" text="Contenu de l'annonce" style="-fx-font-size: 14px; -fx-text-fill: #4b5563;" wrapText="true" />
+                    </VBox>
+
+                    <VBox spacing="15.0">
+                        <Label text="💬 Commentaires" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+
+                        <VBox spacing="10.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e5e7eb; -fx-border-radius: 8;">
+                            <Label text="Ajouter un commentaire" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+                            <TextArea fx:id="taCommentaire" prefHeight="100.0" promptText="Écrivez votre commentaire ici..." style="-fx-padding: 10; -fx-font-size: 12px;" wrapText="true" />
+                            <HBox alignment="CENTER_RIGHT">
+                                <Button fx:id="btnPostComment" text="Publier le commentaire" style="-fx-background-color: linear-gradient(to right, #2e7d32, #43a047); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 10 20;" />
+                            </HBox>
+                            <Label fx:id="lblCommentFeedback" text="" wrapText="true" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #166534;" />
+                        </VBox>
+
+                        <Label text="Commentaires approuvés" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #7a8087;" />
+                        <ScrollPane fx:id="scrollComments" style="-fx-control-inner-background: transparent; -fx-background-color: transparent;" fitToWidth="true" prefHeight="300">
+                            <VBox fx:id="commentsContainer" spacing="12.0" style="-fx-padding: 0;" />
+                        </ScrollPane>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

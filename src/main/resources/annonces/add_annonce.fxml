@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="700.0" prefWidth="900.0" spacing="15.0" style="-fx-padding: 20; -fx-background-color: #f6f7f6;" xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.Controllers.annonces.AddAnnonceController">
+
+    <Label text="📝 Créer une Nouvelle Annonce" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+    <Label text="Respectez les règles de validation pour publier une annonce propre et lisible." style="-fx-font-size: 12px; -fx-text-fill: #6b7280;" />
+
+    <VBox spacing="18.0" style="-fx-background-color: white; -fx-padding: 25; -fx-border-color: #e5e7eb; -fx-border-radius: 8;" VBox.vgrow="ALWAYS">
+
+        <VBox spacing="5.0">
+            <Label text="Titre *" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+            <TextField fx:id="tfTitre" promptText="Entrez le titre de l'annonce" style="-fx-padding: 10; -fx-font-size: 13px;" />
+            <Label text="Entre 3 et 100 caractères, sans lien ni caractères excessifs." style="-fx-font-size: 11px; -fx-text-fill: #7a8087;" />
+        </VBox>
+
+        <HBox spacing="30.0">
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label text="Catégorie *" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+                <ComboBox fx:id="cbCategorie" style="-fx-padding: 10; -fx-font-size: 13px;" />
+            </VBox>
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label text="Région *" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+                <ComboBox fx:id="cbRegion" style="-fx-padding: 10; -fx-font-size: 13px;" />
+            </VBox>
+        </HBox>
+
+        <VBox spacing="5.0" VBox.vgrow="ALWAYS">
+            <Label text="Contenu *" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+            <TextArea fx:id="taContenu" prefHeight="180.0" promptText="Entrez le contenu détaillé..." style="-fx-padding: 10; -fx-font-size: 12px;" wrapText="true" />
+            <Label text="Entre 10 et 2000 caractères, sans spam ni mots interdits." style="-fx-font-size: 11px; -fx-text-fill: #7a8087;" />
+        </VBox>
+
+        <VBox spacing="10.0" style="-fx-border-color: #d1d5db; -fx-border-radius: 5; -fx-padding: 15; -fx-background-color: #fafafa;">
+            <Label text="📎 Ajouter une Image (Optionnel)" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Button fx:id="btnChooseMedia" text="Choisir un fichier" style="-fx-background-color: linear-gradient(to right, #2e7d32, #43a047); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 10 16;" />
+                <Label fx:id="lblMediaPath" text="Aucun fichier sélectionné" style="-fx-font-size: 12px; -fx-text-fill: #7a8087;" />
+            </HBox>
+        </VBox>
+    </VBox>
+
+    <HBox spacing="10.0" alignment="CENTER_RIGHT">
+        <Button fx:id="btnSave" text="Créer l'annonce" style="-fx-background-color: linear-gradient(to right, #2e7d32, #43a047); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 10 25;" />
+        <Button fx:id="btnCancel" text="Annuler" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 10 25;" />
+    </HBox>
+</VBox>

@@ -1,18 +1,26 @@
 package org.example.Controllers;
 
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.example.Controllers.User.ProfileController;
+import org.example.Controllers.annonces.AgentAnnoncesDashboardController;
+import org.example.Controllers.annonces.ListAnnonceAdminController;
+import org.example.Controllers.annonces.ListAnnonceUserController;
+import org.example.Controllers.signalement.ListAssignedSignalementController;
+import org.example.Controllers.signalement.ListMunicipalSignalementController;
+import org.example.Controllers.signalement.ListSignalementController;
 import org.example.Entities.User;
 
+import java.io.IOException;
+
 public class HomeConnectedController {
+
     @FXML private Button btnHome;
     @FXML private Button btnReport;
     @FXML private Button btnBlogs;
@@ -22,12 +30,9 @@ public class HomeConnectedController {
     @FXML private MenuItem menuProfile;
     @FXML private MenuItem menuDonations;
     @FXML private MenuItem menuLogout;
+    @FXML private Label lblWelcomeUser;
 
     private User loggedUser;
-
-    @FXML
-    private Label lblWelcomeUser;
-
 
     public void setLoggedUser(User user) {
         this.loggedUser = user;
@@ -36,11 +41,23 @@ public class HomeConnectedController {
             return;
         }
 
+        if (user.getName() != null && !user.getName().isEmpty()) {
+            lblWelcomeUser.setText("Welcome, " + user.getName());
+        } else {
+            lblWelcomeUser.setText("Welcome");
+        }
+
         String roles = user.getRoles();
 
         if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
             applyMunicipalNavbar();
-        } else if (roles.contains("ROLE_CITOYEN") || roles.contains("ROLE_AGENT_TERRAIN")) {
+        } else if (roles.contains("ROLE_CITOYEN")) {
+            applyStandardNavbar();
+        } else if (roles.contains("ROLE_AGENT_TERRAIN")) {
+            applyTerrainNavbar();
+        } else if (roles.contains("ROLE_ADMIN")) {
+            applyAdminNavbar();
+        } else {
             applyStandardNavbar();
         }
 
@@ -50,7 +67,6 @@ public class HomeConnectedController {
         }
     }
 
-
     private void applyStandardNavbar() {
         btnHome.setText("Home");
         btnReport.setText("Report");
@@ -59,6 +75,7 @@ public class HomeConnectedController {
         btnRecycling.setText("Recycling");
         btnEvents.setText("Events");
     }
+
     private void applyMunicipalNavbar() {
         btnHome.setText("Home");
         btnReport.setText("Report");
@@ -67,6 +84,25 @@ public class HomeConnectedController {
         btnRecycling.setText("Recycling");
         btnEvents.setText("Events Management");
     }
+
+    private void applyTerrainNavbar() {
+        btnHome.setText("Home");
+        btnReport.setText("Report");
+        btnBlogs.setText("Blogs");
+        btnAssociations.setText("Associations");
+        btnRecycling.setText("Recycling");
+        btnEvents.setText("Events");
+    }
+
+    private void applyAdminNavbar() {
+        btnHome.setText("Home");
+        btnReport.setText("Report");
+        btnBlogs.setText("Announcements Management");
+        btnAssociations.setText("Associations");
+        btnRecycling.setText("Recycling");
+        btnEvents.setText("Events Management");
+    }
+
     @FXML
     void goToDonations() {
         System.out.println("Open donations");
@@ -103,4 +139,227 @@ public class HomeConnectedController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    void goToRecycling() {
+        if (loggedUser == null || loggedUser.getRoles() == null) {
+            System.out.println("No logged user found.");
+            return;
+        }
+
+        String roles = loggedUser.getRoles();
+
+        try {
+            FXMLLoader loader;
+            Parent root;
+
+            if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
+                loader = new FXMLLoader(getClass().getResource("/recyclage/municipal_points.fxml"));
+                root = loader.load();
+
+                org.example.Controllers.recyclage.MunicipalPointsController controller = loader.getController();
+                controller.setLoggedUser(loggedUser);
+
+            } else if (roles.contains("ROLE_AGENT_TERRAIN")) {
+                loader = new FXMLLoader(getClass().getResource("/recyclage/terrain_points.fxml"));
+                root = loader.load();
+
+                org.example.Controllers.recyclage.TerrainPointsController controller = loader.getController();
+                controller.setLoggedUser(loggedUser);
+
+            } else {
+                loader = new FXMLLoader(getClass().getResource("/recyclage/points_connected.fxml"));
+                root = loader.load();
+
+                org.example.Controllers.recyclage.PointsConnectedController controller = loader.getController();
+                controller.setLoggedUser(loggedUser);
+            }
+
+            Stage stage = (Stage) btnRecycling.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Points de recyclage");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void goToHome() {
+        System.out.println("Already in home");
+    }
+
+    @FXML
+    void goToReport() {
+        System.out.println("Open report page");
+    }
+
+    @FXML
+    void goToBlogs() {
+        try {
+            FXMLLoader loader;
+            Parent root;
+
+            if (loggedUser != null && loggedUser.getRoles() != null &&
+                    (loggedUser.getRoles().contains("ROLE_AGENT_MUNICIPAL") || loggedUser.getRoles().contains("ROLE_ADMIN"))) {
+                loader = new FXMLLoader(getClass().getResource("/annonces/agent_annonces_dashboard.fxml"));
+                root = loader.load();
+
+                AgentAnnoncesDashboardController controller = loader.getController();
+                controller.setLoggedUser(loggedUser);
+            } else {
+                loader = new FXMLLoader(getClass().getResource("/annonces/list_annonces_user.fxml"));
+                root = loader.load();
+
+                ListAnnonceUserController controller = loader.getController();
+                controller.setLoggedUser(loggedUser);
+            }
+
+            Stage stage = (Stage) btnBlogs.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Annonces");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void goToAssociations() {
+    
+ 
+        try {
+            FXMLLoader loader;
+            Parent root;
+
+                 loader = new FXMLLoader(getClass().getResource("/client_association/index.fxml"));
+                root = loader.load();
+
+ 
+
+            Stage stage = (Stage) btnRecycling.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Points de recyclage");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    @FXML
+    void goToEvents() {
+        if (loggedUser != null && loggedUser.getRoles() != null &&
+                loggedUser.getRoles().contains("ROLE_AGENT_MUNICIPAL")) {
+            System.out.println("Open events management");
+        } else {
+            System.out.println("Open events page");
+        }
+    }
+
+    @FXML
+    public void goToMySignalements() {
+        try {
+            FXMLLoader loader;
+
+            if (loggedUser != null && loggedUser.getRoles() != null) {
+                if (loggedUser.getRoles().contains("ROLE_AGENT_TERRAIN")) {
+                    loader = new FXMLLoader(getClass().getResource("/signalement/list_assigned_signalements.fxml"));
+                } else if (loggedUser.getRoles().contains("ROLE_AGENT_MUNICIPAL")) {
+                    loader = new FXMLLoader(getClass().getResource("/signalement/list_municipal_signalements.fxml"));
+                } else {
+                    loader = new FXMLLoader(getClass().getResource("/signalement/list_signalement.fxml"));
+                }
+            } else {
+                loader = new FXMLLoader(getClass().getResource("/signalement/list_signalement.fxml"));
+            }
+
+            Parent root = loader.load();
+            Object controller = loader.getController();
+
+            if (controller instanceof ListSignalementController) {
+                ((ListSignalementController) controller).setLoggedUser(loggedUser);
+            } else if (controller instanceof ListAssignedSignalementController) {
+                ((ListAssignedSignalementController) controller).setLoggedUser(loggedUser);
+            } else if (controller instanceof ListMunicipalSignalementController) {
+                ((ListMunicipalSignalementController) controller).setLoggedUser(loggedUser);
+            }
+
+            Stage stage = (Stage) btnReport.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Reports");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @FXML
+    void goToAssociation() {
+        if (loggedUser == null || loggedUser.getRoles() == null) {
+            System.out.println("No logged user found.");
+            return;
+        }
+
+        String roles = loggedUser.getRoles();
+
+        try {
+            FXMLLoader loader;
+            Parent root;
+
+            if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
+                loader = new FXMLLoader(getClass().getResource("/client_association/index.fxml"));
+                root = loader.load();
+
+
+            } else if (roles.contains("ROLE_AGENT_TERRAIN")) {
+                loader = new FXMLLoader(getClass().getResource("/client_association/index.fxml"));
+                root = loader.load();
+
+
+            } else {
+                loader = new FXMLLoader(getClass().getResource("/client_association/index.fxml"));
+                root = loader.load();
+
+
+            }
+
+            Stage stage = (Stage) btnRecycling.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Points de recyclage");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
