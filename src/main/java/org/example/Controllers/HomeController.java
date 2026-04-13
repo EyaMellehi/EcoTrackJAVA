@@ -37,4 +37,19 @@ public class HomeController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }}
+    }
+
+    @FXML
+    void goToRecycling() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/recyclage/points.fxml"));
+            Stage stage = (Stage) btnLogin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Recycling Points");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+}

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.MunicipalPointDetailsController"
+            prefWidth="1500" prefHeight="950"
+            style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <VBox spacing="0">
+            <children>
+                <fx:include fx:id="navbarInclude" source="/components/navbar_municipal.fxml"/>
+
+                <StackPane prefHeight="220"
+                           style="-fx-background-color: linear-gradient(to right, #335c38, #6a8f70);">
+                    <children>
+                        <VBox alignment="CENTER" spacing="10">
+                            <children>
+                                <Label text="Municipality"
+                                       style="-fx-text-fill: #6ed46e; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                                <Label text="Point details"
+                                       style="-fx-text-fill: white; -fx-font-size: 46px; -fx-font-weight: bold;"/>
+                                <HBox alignment="CENTER" spacing="8">
+                                    <children>
+                                        <Label fx:id="lblDelegationTop"
+                                               text="Delegation: -"
+                                               style="-fx-text-fill: #dcefdc; -fx-font-size: 16px;"/>
+                                        <Label text="•" style="-fx-text-fill: #dcefdc; -fx-font-size: 16px;"/>
+                                        <Label fx:id="lblPointIdTop"
+                                               text="Point: #0"
+                                               style="-fx-text-fill: #dcefdc; -fx-font-size: 16px;"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </StackPane>
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="25" style="-fx-padding: 30; -fx-background-color: #f6f7f6;">
+
+                    <HBox alignment="CENTER_LEFT" spacing="20">
+                        <children>
+                            <VBox spacing="5">
+                                <Label fx:id="lblPointTitle"
+                                       text="Point #0"
+                                       style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                                <Label fx:id="lblPointAddress"
+                                       text="Address"
+                                       wrapText="true"
+                                       style="-fx-font-size: 16px; -fx-text-fill: #666;"/>
+                            </VBox>
+
+                            <Pane HBox.hgrow="ALWAYS"/>
+
+                            <Button text="← Back"
+                                    onAction="#goBack"
+                                    style="-fx-background-color: white; -fx-border-color: #1f5130; -fx-text-fill: #1f5130; -fx-background-radius: 18; -fx-border-radius: 18; -fx-padding: 10 22;"/>
+                        </children>
+                    </HBox>
+
+                    <HBox spacing="20" alignment="TOP_LEFT">
+                        <children>
+
+                            <VBox prefWidth="760" spacing="18"
+                                  style="-fx-background-color: white; -fx-padding: 28; -fx-background-radius: 16;">
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <children>
+                                        <VBox spacing="4">
+                                            <Label text="Information"
+                                                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                                            <Label text="Details of the point reported by the citizen."
+                                                   style="-fx-text-fill: #777; -fx-font-size: 15px;"/>
+                                        </VBox>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                        <Label fx:id="lblStatusBadge"
+                                               text="PENDING"/>
+                                    </children>
+                                </HBox>
+
+                                <GridPane hgap="30" vgap="16">
+                                    <columnConstraints>
+                                        <ColumnConstraints percentWidth="50"/>
+                                        <ColumnConstraints percentWidth="50"/>
+                                    </columnConstraints>
+
+                                    <Label text="Citizen" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblCitizen" text="-" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+
+                                    <Label text="Category" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblCategory" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+
+                                    <Label text="Quantity" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblQuantity" text="-" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
+
+                                    <Label text="Reported on" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblReportedOn" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
+
+                                    <Label text="Address" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblAddress" text="-" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" style="-fx-font-weight: bold;"/>
+
+                                    <Label text="Latitude" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblLatitude" text="-" GridPane.columnIndex="0" GridPane.rowIndex="7" style="-fx-font-weight: bold;"/>
+
+                                    <Label text="Longitude" GridPane.columnIndex="1" GridPane.rowIndex="6" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblLongitude" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7" style="-fx-font-weight: bold;"/>
+
+                                    <Label text="AI Priority" GridPane.columnIndex="0" GridPane.rowIndex="8" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblAiPriority" text="Not estimated" GridPane.columnIndex="0" GridPane.rowIndex="9"
+                                           style="-fx-background-color: #e8f5e9; -fx-padding: 6 12; -fx-background-radius: 16; -fx-font-weight: bold;"/>
+
+                                    <Label text="Field agent" GridPane.columnIndex="0" GridPane.rowIndex="10" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblFieldAgent" text="Not assigned" GridPane.columnIndex="0" GridPane.rowIndex="11" GridPane.columnSpan="2"
+                                           style="-fx-font-weight: bold; -fx-text-fill: #d32f2f;"/>
+                                </GridPane>
+                            </VBox>
+
+                            <VBox prefWidth="380" spacing="18"
+                                  style="-fx-background-color: white; -fx-padding: 28; -fx-background-radius: 16;">
+                                <Label text="Summary"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                                <Label text="Quick info."
+                                       style="-fx-text-fill: #777; -fx-font-size: 15px;"/>
+
+                                <GridPane hgap="20" vgap="15"
+                                          style="-fx-background-color: #eef7ee; -fx-padding: 22; -fx-background-radius: 10;">
+                                    <Label text="ID" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #666;"/>
+                                    <Label fx:id="lblSummaryId" text="#" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+
+                                    <Label text="Delegation" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: #666;"/>
+                                    <Label fx:id="lblSummaryDelegation" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+
+                                    <Label text="Status" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: #666;"/>
+                                    <Label fx:id="lblSummaryStatus" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+
+                                    <Label text="Report" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: #666;"/>
+                                    <Label fx:id="lblSummaryReport" text="No" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
+                                </GridPane>
+
+                                <Label text="After assignment, changes are allowed only for 60 seconds."
+                                       wrapText="true"
+                                       style="-fx-text-fill: #777; -fx-font-size: 14px;"/>
+                            </VBox>
+                        </children>
+                    </HBox>
+
+                    <VBox spacing="18"
+                          style="-fx-background-color: white; -fx-padding: 28; -fx-background-radius: 16;">
+                        <Label text="Assign a field agent"
+                               style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                        <Label text="Choose Auto or Manual."
+                               style="-fx-text-fill: #777; -fx-font-size: 15px;"/>
+
+                        <HBox spacing="12">
+                            <children>
+                                <RadioButton fx:id="rbManual" text="Manual"/>
+                                <RadioButton fx:id="rbAuto" text="Auto (least loaded)"/>
+                            </children>
+                        </HBox>
+
+                        <TextField fx:id="txtAgentSearch"
+                                   promptText="Search an agent..."
+                                   prefWidth="420"
+                                   style="-fx-background-color: #eef7ee;"/>
+
+                        <ComboBox fx:id="cbAgents"
+                                  prefWidth="700"
+                                  style="-fx-background-color: white;"/>
+
+                        <Label fx:id="lblAutoInfo"
+                               text=""
+                               wrapText="true"
+                               style="-fx-text-fill: #666; -fx-font-size: 14px;"/>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="12">
+                            <children>
+                                <Button text="Cancel"
+                                        onAction="#goBack"
+                                        style="-fx-background-color: white; -fx-border-color: #777; -fx-text-fill: #333; -fx-background-radius: 18; -fx-border-radius: 18; -fx-padding: 10 26;"/>
+                                <Button fx:id="btnConfirmAssign"
+                                        text="Confirm"
+                                        onAction="#confirmAssign"
+                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-background-radius: 18; -fx-padding: 10 32;"/>
+                            </children>
+                        </HBox>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

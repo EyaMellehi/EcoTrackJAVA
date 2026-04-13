@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.signalement.ListMunicipalSignalementController"
+            prefWidth="1450" prefHeight="900"
+            style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <StackPane>
+            <children>
+                <fx:include fx:id="navbarCitoyen" source="/components/navbar_citoyen.fxml"/>
+                <fx:include fx:id="navbarMunicipal" source="/components/navbar_municipal.fxml"/>
+            </children>
+        </StackPane>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="24" style="-fx-background-color: #f6f7f6;">
+
+                    <!-- INTRO -->
+                    <HBox spacing="35" alignment="CENTER" style="-fx-padding: 40 60 20 60;">
+                        <children>
+                            <VBox spacing="16" prefWidth="520">
+                                <children>
+                                    <Label text="EcoTrack"
+                                           style="-fx-text-fill: #37a93d; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                                    <Label text="Signalements of&#10;my delegation"
+                                           style="-fx-text-fill: #104b2c; -fx-font-size: 42px; -fx-font-weight: bold;"/>
+                                    <Label wrapText="true"
+                                           text="Review the signalements of your delegation and assign them to the appropriate field agents."
+                                           style="-fx-text-fill: #6b7280; -fx-font-size: 16px;"/>
+                                </children>
+                            </VBox>
+
+                            <StackPane prefWidth="520" prefHeight="320">
+                                <children>
+                                    <ImageView fitWidth="520" fitHeight="320" preserveRatio="false">
+                                        <image>
+                                            <Image url="@/images/nat.jpg"/>
+                                        </image>
+                                    </ImageView>
+                                </children>
+                            </StackPane>
+                        </children>
+                    </HBox>
+
+                    <!-- SEARCH + AGENT -->
+                    <VBox spacing="14" style="-fx-padding: 0 60 0 60;">
+                        <children>
+                            <HBox alignment="CENTER_RIGHT" spacing="10">
+                                <children>
+                                    <ComboBox fx:id="cbSort"
+                                              promptText="Sort by"
+                                              prefWidth="170"
+                                              onAction="#sortSignalements"/>
+
+                                    <TextField fx:id="tfSearch"
+                                               promptText="Search by title, type, status or address..."
+                                               prefWidth="360"
+                                               style="-fx-background-color: white; -fx-padding: 10;"/>
+
+                                    <Button text="Search"
+                                            onAction="#searchSignalements"
+                                            style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+
+                                    <Button text="Refresh"
+                                            onAction="#loadMunicipalSignalements"
+                                            style="-fx-background-color: #e5e7eb; -fx-text-fill: #111827;"/>
+                                </children>
+                            </HBox>
+
+                            <HBox alignment="CENTER_LEFT" spacing="12"
+                                  style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-border-color: #eeeeee; -fx-border-radius: 8;">
+                                <children>
+                                    <Label text="Assign selected report to field agent:"
+                                           style="-fx-text-fill: #104b2c; -fx-font-size: 15px; -fx-font-weight: bold;"/>
+                                    <ComboBox fx:id="cbAgents" prefWidth="280"/>
+                                </children>
+                            </HBox>
+                        </children>
+                    </VBox>
+
+                    <!-- CARDS -->
+                    <VBox spacing="14" style="-fx-padding: 0 60 40 60;">
+                        <children>
+                            <FlowPane fx:id="reportsContainer"
+                                      hgap="20" vgap="20"
+                                      alignment="CENTER"
+                                      style="-fx-padding: 10 0 0 0;"/>
+                        </children>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
