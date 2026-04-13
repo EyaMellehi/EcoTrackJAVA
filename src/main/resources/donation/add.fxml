@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="14"
+      alignment="TOP_CENTER"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.Controllers.association.DonationController"
+      style="
+          -fx-padding:25;
+          -fx-background-color:linear-gradient(to bottom,#f8fff8,#ecfff1);
+          -fx-background-radius:18;
+          -fx-border-radius:18;
+          -fx-border-color:#d8f3dc;
+          -fx-border-width:1;
+      ">
+
+    <!-- TITLE -->
+    <Label text="💚 Faire un don"
+           style="
+               -fx-font-size:22;
+               -fx-font-weight:bold;
+               -fx-text-fill:#1b5e20;
+           "/>
+
+    <Label text="Merci pour votre soutien à l'association"
+           style="
+               -fx-font-size:12;
+               -fx-text-fill:#666;
+           "/>
+
+    <!-- TYPE -->
+    <VBox spacing="4" maxWidth="420">
+        <Label text="Type de donation"
+               style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
+
+        <ComboBox fx:id="typeBox"
+                  prefWidth="420"
+                  promptText="Choisir type">
+
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                </FXCollections>
+            </items>
+        </ComboBox>
+
+        <Label fx:id="errorType"
+               style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
+    </VBox>
+
+    <!-- MONTANT -->
+    <VBox spacing="4" maxWidth="420">
+        <Label text="Montant"
+               style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
+
+        <TextField fx:id="montantField"
+                   prefWidth="420"
+                   promptText="Montant en DT"/>
+
+        <Label fx:id="errorMontant"
+               style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
+    </VBox>
+
+    <!-- DESCRIPTION -->
+    <VBox spacing="4" maxWidth="420">
+        <Label text="Description matériel"
+               style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
+
+        <TextArea fx:id="descriptionField"
+                  prefWidth="420"
+                  prefHeight="90"
+                  wrapText="true"
+                  promptText="Ex: vêtements, nourriture, ordinateur..."/>
+
+        <Label fx:id="errorDescription"
+               style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
+    </VBox>
+
+    <!-- NOM -->
+    <VBox spacing="4" maxWidth="420">
+        <Label text="Nom complet"
+               style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
+
+        <TextField fx:id="nomField"
+                   prefWidth="420"
+                   promptText="Votre nom"/>
+
+        <Label fx:id="errorNom"
+               style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
+    </VBox>
+
+    <!-- EMAIL -->
+    <VBox spacing="4" maxWidth="420">
+        <Label text="Email"
+               style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
+
+        <TextField fx:id="emailField"
+                   prefWidth="420"
+                   promptText="email@example.com"/>
+
+        <Label fx:id="errorEmail"
+               style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
+    </VBox>
+
+    <!-- PHONE -->
+    <VBox spacing="4" maxWidth="420">
+        <Label text="Téléphone"
+               style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
+
+        <TextField fx:id="phoneField"
+                   prefWidth="420"
+                   promptText="22123456"/>
+
+        <Label fx:id="errorPhone"
+               style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
+    </VBox>
+
+    <!-- MESSAGE -->
+    <VBox spacing="4" maxWidth="420">
+        <Label text="Message (optionnel)"
+               style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
+
+        <TextArea fx:id="messageField"
+                  prefWidth="420"
+                  prefHeight="80"
+                  wrapText="true"
+                  promptText="Votre message..."/>
+    </VBox>
+
+    <!-- BUTTONS -->
+    <HBox spacing="12" alignment="CENTER">
+        <Button text="❌ Annuler"
+                onAction="#close"
+                style="
+                    -fx-background-color:#eeeeee;
+                    -fx-text-fill:#333;
+                    -fx-font-weight:bold;
+                    -fx-background-radius:8;
+                    -fx-cursor:hand;
+                "/>
+
+        <Button text="💚 Valider Donation"
+                onAction="#saveDonation"
+                style="
+                    -fx-background-color:linear-gradient(to right,#2e7d32,#43a047);
+                    -fx-text-fill:white;
+                    -fx-font-weight:bold;
+                    -fx-background-radius:8;
+                    -fx-cursor:hand;
+                    -fx-padding:10 20;
+                "/>
+    </HBox>
+
+</VBox>

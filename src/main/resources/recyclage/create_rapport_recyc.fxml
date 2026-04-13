@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.CreateRapportRecycController"
+            prefWidth="1100" prefHeight="700"
+            style="-fx-background-color: #f6f7f6;">
+
+    <center>
+        <VBox alignment="CENTER" spacing="20" style="-fx-padding: 40;">
+            <children>
+                <Label fx:id="lblPointId"
+                       text="Créer un rapport"
+                       style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                <Label fx:id="lblPointAddress"
+                       text="Adresse"
+                       wrapText="true"
+                       style="-fx-text-fill: #666;"/>
+
+                <VBox spacing="14" prefWidth="700"
+                      style="-fx-background-color: white; -fx-padding: 28; -fx-background-radius: 16;">
+                    <children>
+                        <Label text="Date collecte"/>
+                        <DatePicker fx:id="dpDateCollect"/>
+
+                        <Label text="Quantité collectée"/>
+                        <TextField fx:id="txtQuantiteCollecte" promptText="Ex: 5.5"/>
+
+                        <Label text="Commentaire"/>
+                        <TextArea fx:id="txtCommentaire" prefHeight="160" promptText="Commentaire optionnel..."/>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="12">
+                            <children>
+                                <Button text="Annuler" onAction="#cancel"/>
+                                <Button text="Enregistrer le rapport"
+                                        onAction="#saveRapport"
+                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </center>
+
+</BorderPane>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.annonces.AgentAnnoncesDashboardController"
+            prefWidth="1500" prefHeight="950"
+            style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <fx:include fx:id="navbar" source="/components/navbar_municipal.fxml"/>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="26" style="-fx-padding: 30 40 40 40; -fx-background-color: #f6f7f6;">
+
+                    <HBox alignment="CENTER_LEFT" spacing="14">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Dashboard annonces &amp; commentaires" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                            <Label text="Supervisez les annonces publiées et modérez les commentaires en attente depuis un seul écran." style="-fx-font-size: 15px; -fx-text-fill: #6b7280;" wrapText="true"/>
+                        </VBox>
+                        <Button text="Gérer les annonces" onAction="#openAnnouncementsManagement"
+                                style="-fx-background-color: linear-gradient(to right, #2e7d32, #43a047); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 12 20;"/>
+                        <Button text="Actualiser" onAction="#refreshDashboard"
+                                style="-fx-background-color: white; -fx-border-color: #d1d5db; -fx-text-fill: #334155; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 12 20; -fx-border-radius: 999;"/>
+                    </HBox>
+
+                    <HBox spacing="18">
+                        <VBox prefWidth="280" spacing="8" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 18; -fx-border-radius: 18; -fx-border-color: #e5e7eb;">
+                            <Label text="Annonces actives" style="-fx-text-fill: #6b7280; -fx-font-size: 14px;"/>
+                            <Label fx:id="lblAnnouncementsCount" text="0" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                            <Label text="Toutes les annonces publiées" style="-fx-text-fill: #6b7280; -fx-font-size: 12px;"/>
+                        </VBox>
+                        <VBox prefWidth="280" spacing="8" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 18; -fx-border-radius: 18; -fx-border-color: #e5e7eb;">
+                            <Label text="Commentaires en attente" style="-fx-text-fill: #6b7280; -fx-font-size: 14px;"/>
+                            <Label fx:id="lblPendingCommentsCount" text="0" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #b45309;"/>
+                            <Label text="À modérer" style="-fx-text-fill: #6b7280; -fx-font-size: 12px;"/>
+                        </VBox>
+                        <VBox prefWidth="280" spacing="8" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 18; -fx-border-radius: 18; -fx-border-color: #e5e7eb;">
+                            <Label text="Commentaires approuvés" style="-fx-text-fill: #6b7280; -fx-font-size: 14px;"/>
+                            <Label fx:id="lblApprovedCommentsCount" text="0" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #166534;"/>
+                            <Label text="Visibles pour les utilisateurs" style="-fx-text-fill: #6b7280; -fx-font-size: 12px;"/>
+                        </VBox>
+                        <VBox prefWidth="280" spacing="8" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 18; -fx-border-radius: 18; -fx-border-color: #e5e7eb;">
+                            <Label text="Actions rapides" style="-fx-text-fill: #6b7280; -fx-font-size: 14px;"/>
+                            <Label text="1 écran" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1d4ed8;"/>
+                            <Label text="pour annonces &amp; commentaires" style="-fx-text-fill: #6b7280; -fx-font-size: 12px;"/>
+                        </VBox>
+                    </HBox>
+
+                    <VBox spacing="14" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 18; -fx-border-radius: 18; -fx-border-color: #e5e7eb;">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Modération des commentaires" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                                <Label text="Commentaires récemment soumis pour validation." style="-fx-font-size: 12px; -fx-text-fill: #6b7280;"/>
+                            </VBox>
+                            <Label fx:id="lblDashboardMessage" wrapText="true" style="-fx-font-size: 12px;"/>
+                        </HBox>
+
+                        <VBox fx:id="pendingCommentsContainer" spacing="12" />
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>
+
+

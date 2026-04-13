@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox prefHeight="900" prefWidth="1500" style="-fx-background-color: #f5f7fb;" stylesheets="@../style.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/22" fx:controller="org.example.Controllers.association.AssociationController">
+
+    <children>
+
+        <!-- SIDEBAR EXACT SAME CATEGORY -->
+        <VBox prefWidth="240" style="-fx-background-color: #121b3a; -fx-padding: 26 0 26 0;">
+            <children>
+
+                <VBox spacing="8" style="-fx-padding: 0 24 24 24;">
+                    <Label style="-fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold;" text="EcoTrack" />
+                </VBox>
+
+                <Button onAction="#goToDashboard" style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 18px; -fx-font-weight: bold; -fx-alignment: CENTER-LEFT; -fx-padding: 16 24; -fx-pref-width: 240;" text="Dashboard" />
+
+                <Button onAction="#goToSubscribers" style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;" text="Subscribers" />
+
+                <Button onAction="#goToMunicipalAgents" style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;" text="Municipal Agents" />
+
+                <Button onAction="#goToFieldAgents" style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;" text="Field Agents" />
+
+                <Button onAction="#goToCategories" style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;" text="Categories" />
+
+                <!-- ACTIVE SAME STYLE -->
+                <Button style="-fx-background-color: #0d1530; -fx-text-fill: white; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;" text="Associations" />
+
+                <Button onAction="#goToEvents" style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;" text="Events" />
+
+                <Button onAction="#goToDonation" style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;" text="Donations" />
+
+            </children>
+        </VBox>
+
+        <!-- RIGHT SIDE EXACT SAME CATEGORY -->
+        <VBox style="-fx-background-color: #f5f7fb;" HBox.hgrow="ALWAYS">
+
+            <children>
+
+                <!-- TOP BAR -->
+                <HBox alignment="CENTER_RIGHT" prefHeight="70" style="-fx-background-color: white; -fx-padding: 0 18 0 18; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;">
+                    <children>
+
+                        <Pane HBox.hgrow="ALWAYS" />
+
+                        <MenuButton fx:id="menuAdmin" style="-fx-background-color: #f3f4f6; -fx-font-size: 18px; -fx-background-radius: 6; -fx-padding: 8 12;" text="👤">
+                            <items>
+                                <MenuItem onAction="#logout" text="Logout" />
+                            </items>
+                        </MenuButton>
+
+                    </children>
+                </HBox>
+
+                <!-- MAIN CONTENT -->
+                <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+
+                    <content>
+
+                        <VBox spacing="24" style="-fx-padding: 26; -fx-background-color: #f5f7fb;">
+
+                            <!-- PAGE HEADER -->
+                            <HBox alignment="CENTER_LEFT">
+                                <children>
+
+                                    <VBox spacing="8">
+                                        <Label style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1f2a44;" text="Associations" />
+
+                                        <Label style="-fx-font-size: 17px; -fx-text-fill: #6b7280;" text="Liste des associations écologiques." />
+                                    </VBox>
+
+                                    <Pane HBox.hgrow="ALWAYS" />
+
+                                    <Button onAction="#addNew" style="-fx-background-color: #121b3a; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 16; -fx-background-radius: 8;" text="+ Nouvelle association" />
+                           <Button onAction="#addNew" style="-fx-background-color: #121b3a; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 16; -fx-background-radius: 8;" text="Donations liste" textAlignment="CENTER" />
+
+                                </children>
+                            </HBox>
+
+                            <!-- MAIN CARD -->
+                            <VBox spacing="18" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e5e7eb;">
+
+                                <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1f2a44;" text="Liste des associations" />
+
+                                <!-- FILTER SAME CATEGORY -->
+                                <HBox alignment="BOTTOM_LEFT" spacing="12">
+                                    <children>
+
+                                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                            <Label style="-fx-text-fill: #374151;" text="Search" />
+
+                                            <TextField fx:id="searchField" onKeyReleased="#onSearch" promptText="Nom ou région..." style="-fx-pref-height: 38;" />
+                                        </VBox>
+
+                                        <VBox spacing="6">
+                                            <Label style="-fx-text-fill: #374151;" text="Region" />
+
+                                            <ComboBox fx:id="regionFilter" onAction="#onFilter" prefWidth="180" style="-fx-pref-height: 38;" />
+                                        </VBox>
+
+                                        <Button onAction="#onFilter" style="-fx-background-color: #121b3a; -fx-text-fill: white; -fx-font-weight: bold; -fx-pref-width: 150; -fx-pref-height: 38; -fx-background-radius: 6;" text="Filter" />
+
+                                        <Button style="-fx-background-color: white; -fx-border-color: #9ca3af; -fx-text-fill: #374151; -fx-pref-width: 150; -fx-pref-height: 38; -fx-background-radius: 6; -fx-border-radius: 6;" text="Reset" />
+
+                                    </children>
+                                </HBox>
+
+                                <!-- KEEP FEATURES : STATS -->
+                                <HBox spacing="14">
+                                    <VBox prefWidth="180" styleClass="card">
+                                        <Label text="Total" />
+                                        <Label fx:id="lblTotal" style="-fx-font-size:24; -fx-font-weight:bold;" text="0" />
+                                    </VBox>
+
+                                    <VBox prefWidth="180" styleClass="card">
+                                        <Label text="Active" />
+                                        <Label fx:id="lblActive" style="-fx-font-size:24; -fx-font-weight:bold;" text="0" />
+                                    </VBox>
+
+                                    <VBox prefWidth="180" styleClass="card">
+                                        <Label text="Inactive" />
+                                        <Label fx:id="lblInactive" style="-fx-font-size:24; -fx-font-weight:bold;" text="0" />
+                                    </VBox>
+
+                                    <VBox prefWidth="180" styleClass="card">
+                                        <Label text="Regions" />
+                                        <Label fx:id="lblRegions" style="-fx-font-size:24; -fx-font-weight:bold;" text="0" />
+                                    </VBox>
+                                </HBox>
+
+                                <!-- KEEP FEATURES : CARDS -->
+                                <ScrollPane fitToWidth="true" prefHeight="460">
+                                    <content>
+                                        <FlowPane fx:id="cardContainer" hgap="20" prefWrapLength="1150" vgap="20" />
+                                    </content>
+                                </ScrollPane>
+
+                                <!-- PAGINATION SAME CATEGORY -->
+                                <HBox alignment="CENTER_RIGHT" spacing="10">
+                                    <children>
+
+                                        <Button onAction="#prevPage" style="-fx-background-color: white; -fx-border-color: black; -fx-text-fill: black; -fx-background-radius: 6; -fx-border-radius: 6;" text="⬅" />
+
+                                        <Label fx:id="pageLabel" style="-fx-font-size:14px; -fx-font-weight:bold;" text="Page 1 / 1" />
+
+                                        <Button onAction="#nextPage" style="-fx-background-color: #0d6efd; -fx-text-fill: white; -fx-background-radius: 6;" text="➡" />
+
+                                    </children>
+                                </HBox>
+
+                            </VBox>
+
+                        </VBox>
+
+                    </content>
+                </ScrollPane>
+
+            </children>
+
+        </VBox>
+
+    </children>
+
+</HBox>

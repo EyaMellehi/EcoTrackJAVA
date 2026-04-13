@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.association.ShowControllerAdmin"
+            stylesheets="@../style.css"
+            styleClass="root">
+
+    <!-- 🌿 HEADER -->
+    <top>
+        <HBox spacing="20" styleClass="navbar">
+            <Label text="🌱 EcoTrack" styleClass="logo"/>
+            <Label text="Détails Association" styleClass="page-title"/>
+        </HBox>
+    </top>
+
+    <!-- CONTENT -->
+    <center>
+        <HBox spacing="40" alignment="CENTER" styleClass="show-wrapper">
+
+            <!-- 🖼 LEFT IMAGE -->
+            <VBox alignment="CENTER" spacing="15">
+
+                <StackPane styleClass="image-big-container">
+                    <ImageView fx:id="logo"
+                               fitWidth="180"
+                               fitHeight="180"
+                               preserveRatio="true"/>
+                </StackPane>
+
+                <Label fx:id="name" styleClass="show-title"/>
+
+                <Label fx:id="status" styleClass="badge-active"/>
+            </VBox>
+
+            <!-- 📄 RIGHT DETAILS -->
+            <VBox spacing="12" styleClass="details-box">
+
+                <Label text="Informations" styleClass="section-title"/>
+
+                <HBox spacing="10">
+                    <Label text="📂 Type:" styleClass="label-title"/>
+                    <Label fx:id="type"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Label text="📝 Description:" styleClass="label-title"/>
+                    <Label fx:id="description" wrapText="true"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Label text="📍 Région:" styleClass="label-title"/>
+                    <Label fx:id="region"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Label text="📞 Téléphone:" styleClass="label-title"/>
+                    <Label fx:id="tel"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Label text="📧 Email:" styleClass="label-title"/>
+                    <Label fx:id="email"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Label text="🏠 Adresse:" styleClass="label-title"/>
+                    <Label fx:id="adresse" wrapText="true"/>
+                </HBox>
+
+                <HBox spacing="15">
+
+
+
+                    <Button text="Fermer"
+                            onAction="#close"
+                            styleClass="btn-danger"/>
+
+                </HBox>
+
+            </VBox>
+
+        </HBox>
+    </center>
+
+</BorderPane>

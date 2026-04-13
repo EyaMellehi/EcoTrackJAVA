@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.Controllers.components.NavbarCitoyenController"
+      alignment="CENTER_LEFT"
+      spacing="20"
+      style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+
+    <children>
+
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <children>
+                <ImageView fitWidth="55" fitHeight="55" preserveRatio="true">
+                    <image>
+                        <Image url="@/images/logoeco.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="EcoTrack"
+                       style="-fx-text-fill: #2e7d32; -fx-font-size: 26px; -fx-font-weight: bold;"/>
+            </children>
+        </HBox>
+
+        <Pane HBox.hgrow="ALWAYS"/>
+
+        <HBox alignment="CENTER" spacing="25">
+            <children>
+                <Button fx:id="btnHome"
+                        text="Home"
+                        onAction="#goToHome"
+                        style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+
+                <Button fx:id="btnReport"
+                        text="Report"
+                        onAction="#goToReport"
+                        style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+
+                <Button fx:id="btnBlogs"
+                        text="Blogs"
+                        onAction="#goToBlogs"
+                        style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+
+                <Button fx:id="btnAssociations"
+                        text="Associations"
+                        onAction="#goAssociations"
+                        style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+
+                <Button fx:id="btnRecycling"
+                        text="Recycling"
+                        onAction="#goToRecycling"
+                        style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+
+                <Button fx:id="btnEvents"
+                        text="Events"
+                        onAction="#goToEvents"
+                        style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+            </children>
+        </HBox>
+
+        <Region prefWidth="20"/>
+
+        <MenuButton text="🔔"
+                    style="-fx-background-color: #eef7ee; -fx-font-size: 16px;">
+            <items>
+                <MenuItem text="No new notifications"/>
+            </items>
+        </MenuButton>
+
+        <MenuButton text="👤"
+                    style="-fx-background-color: #4da64f; -fx-text-fill: white; -fx-font-size: 16px;">
+            <items>
+                <MenuItem text="Profile" onAction="#goToProfile"/>
+                <MenuItem fx:id="menuDonations" text="My donations" onAction="#goToDonations"/>
+                <MenuItem text="Logout" onAction="#logout"/>
+            </items>
+        </MenuButton>
+
+    </children>
+</HBox>

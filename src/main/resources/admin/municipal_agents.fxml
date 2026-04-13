@@ -40,6 +40,8 @@
                         style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
 
                 <Button text="Associations"
+                        onAction="#goToAssocation"
+
                         style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
 
                 <Button text="Events"
