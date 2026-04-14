@@ -12,14 +12,13 @@ import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
 import org.example.Services.RapportRecycService;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class CreateRapportRecycController {
 
     @FXML private Label lblPointId;
     @FXML private Label lblPointAddress;
+    @FXML private Label lblQuantiteDeclaree;
     @FXML private DatePicker dpDateCollect;
     @FXML private TextField txtQuantiteCollecte;
     @FXML private TextArea txtCommentaire;
@@ -34,30 +33,93 @@ public class CreateRapportRecycController {
         this.loggedUser = loggedUser;
         this.currentPoint = point;
 
-        lblPointId.setText("Créer un rapport - Point #" + point.getId());
-        lblPointAddress.setText(point.getAddress());
+        if (point != null) {
+            lblPointId.setText("Créer un rapport - Point #" + point.getId());
+            lblPointAddress.setText(point.getAddress() != null ? point.getAddress() : "-");
+            lblQuantiteDeclaree.setText(point.getQuantite() + " kg");
+        }
+
         dpDateCollect.setValue(LocalDate.now());
+
+        // petit contrôle direct sur le champ quantité
+        txtQuantiteCollecte.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) return;
+
+            String cleaned = newVal.replace(",", ".");
+            if (!cleaned.matches("\\d*(\\.\\d*)?")) {
+                txtQuantiteCollecte.setText(oldVal);
+            }
+        });
+
+        // limiter commentaire
+        txtCommentaire.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && newVal.length() > 255) {
+                txtCommentaire.setText(oldVal);
+            }
+        });
     }
 
     @FXML
     private void saveRapport() {
         try {
+            if (loggedUser == null) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun agent connecté.");
+                return;
+            }
+
+            if (currentPoint == null) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun point sélectionné.");
+                return;
+            }
+
             if (dpDateCollect.getValue() == null) {
                 showAlert(Alert.AlertType.WARNING, "Attention", "Choisis une date de collecte.");
                 return;
             }
 
-            if (txtQuantiteCollecte.getText() == null || txtQuantiteCollecte.getText().trim().isEmpty()) {
+            if (dpDateCollect.getValue().isAfter(LocalDate.now())) {
+                showAlert(Alert.AlertType.WARNING, "Attention", "La date de collecte ne peut pas être dans le futur.");
+                return;
+            }
+
+            String quantiteText = txtQuantiteCollecte.getText() != null
+                    ? txtQuantiteCollecte.getText().trim().replace(",", ".")
+                    : "";
+
+            if (quantiteText.isEmpty()) {
                 showAlert(Alert.AlertType.WARNING, "Attention", "Saisis la quantité collectée.");
                 return;
             }
 
-            double qte = Double.parseDouble(txtQuantiteCollecte.getText().trim());
+            double qte;
+            try {
+                qte = Double.parseDouble(quantiteText);
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "La quantité doit être un nombre valide.");
+                return;
+            }
+
+            if (qte <= 0) {
+                showAlert(Alert.AlertType.WARNING, "Attention", "La quantité collectée doit être supérieure à 0.");
+                return;
+            }
+
+            if (qte > currentPoint.getQuantite()) {
+                showAlert(Alert.AlertType.WARNING, "Attention",
+                        "La quantité collectée ne peut pas dépasser la quantité déclarée (" + currentPoint.getQuantite() + " kg).");
+                return;
+            }
+
+            String commentaire = txtCommentaire.getText() != null ? txtCommentaire.getText().trim() : "";
+            if (commentaire.length() > 255) {
+                showAlert(Alert.AlertType.WARNING, "Attention", "Le commentaire ne doit pas dépasser 255 caractères.");
+                return;
+            }
 
             RapportRecyc rapport = new RapportRecyc();
             rapport.setDateCollect(dpDateCollect.getValue().atStartOfDay());
             rapport.setQuantiteCollecte(qte);
-            rapport.setCommentaire(txtCommentaire.getText());
+            rapport.setCommentaire(commentaire);
             rapport.setPointAttribue(currentPoint.getId());
             rapport.setPointRecy(currentPoint);
             rapport.setAgentTerrain(loggedUser);
@@ -78,8 +140,6 @@ public class CreateRapportRecycController {
             stage.setTitle("Rapport");
             stage.show();
 
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "La quantité doit être un nombre.");
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'enregistrer le rapport.");

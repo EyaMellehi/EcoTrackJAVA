@@ -17,6 +17,7 @@ import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +96,25 @@ public class PointsConnectedController {
                 safe(data.getValue().getStatut())
         ));
 
+        colStatut.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String statut, boolean empty) {
+                super.updateItem(statut, empty);
+
+                if (empty || statut == null || statut.isEmpty()) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                Label badge = new Label(statut.toUpperCase());
+                badge.setStyle(getStatusBadgeStyle(statut));
+
+                setGraphic(badge);
+                setText(null);
+            }
+        });
+
         addActionsColumn();
         tablePoints.setItems(filteredList);
     }
@@ -106,6 +126,9 @@ public class PointsConnectedController {
             private final HBox box = new HBox(8, btnShow, btnEdit);
 
             {
+                btnShow.setStyle("-fx-background-color: #eef7ee; -fx-text-fill: #2e7d32; -fx-font-weight: bold;");
+                btnEdit.setStyle("-fx-background-color: #fff7ed; -fx-text-fill: #ea580c; -fx-font-weight: bold;");
+
                 btnShow.setOnAction(e -> {
                     PointRecyclage point = getTableView().getItems().get(getIndex());
                     goToShowPoint(point);
@@ -123,25 +146,30 @@ public class PointsConnectedController {
 
                 if (empty) {
                     setGraphic(null);
-                } else {
-                    PointRecyclage point = getTableView().getItems().get(getIndex());
-                    boolean canEdit = point != null &&
-                            !"COLLECTE".equalsIgnoreCase(safe(point.getStatut())) &&
-                            !"VALIDE".equalsIgnoreCase(safe(point.getStatut()));
-
-                    btnEdit.setVisible(canEdit);
-                    btnEdit.setManaged(canEdit);
-
-                    setGraphic(box);
+                    return;
                 }
+
+                PointRecyclage point = getTableView().getItems().get(getIndex());
+
+                if (point == null) {
+                    setGraphic(null);
+                    return;
+                }
+
+                String statut = safe(point.getStatut()).toUpperCase();
+
+                boolean canEdit = statut.equals("PENDING");
+
+                btnEdit.setVisible(canEdit);
+                btnEdit.setManaged(canEdit);
+
+                setGraphic(box);
             }
         });
     }
 
     private void loadPoints() {
-        if (loggedUser == null) {
-            return;
-        }
+        if (loggedUser == null) return;
 
         try {
             List<PointRecyclage> points = pointService.getPointsByCitizen(loggedUser.getId());
@@ -204,7 +232,7 @@ public class PointsConnectedController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/add_point_recyclage.fxml"));
+            FXMLLoader loader = loadPage("/recyclage/add_point_recyclage.fxml");
             Parent root = loader.load();
 
             AddPointRecyclageController controller = loader.getController();
@@ -214,7 +242,7 @@ public class PointsConnectedController {
             stage.setScene(new Scene(root));
             stage.setTitle("Créer un point");
             stage.show();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page d'ajout.");
         }
@@ -222,7 +250,7 @@ public class PointsConnectedController {
 
     private void goToShowPoint(PointRecyclage point) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/show_point_recyclage.fxml"));
+            FXMLLoader loader = loadPage("/recyclage/show_point_connected.fxml");
             Parent root = loader.load();
 
             ShowPointRecyclageController controller = loader.getController();
@@ -233,14 +261,15 @@ public class PointsConnectedController {
             stage.setScene(new Scene(root));
             stage.setTitle("Détails du point");
             stage.show();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page détail.");
         }
     }
 
     private void goToEditPoint(PointRecyclage point) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/edit_point_recyclage.fxml"));
+            FXMLLoader loader = loadPage("/recyclage/edit_point_connected.fxml");
             Parent root = loader.load();
 
             EditPointRecyclageController controller = loader.getController();
@@ -251,9 +280,18 @@ public class PointsConnectedController {
             stage.setScene(new Scene(root));
             stage.setTitle("Modifier point");
             stage.show();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page modification.");
         }
+    }
+
+    private FXMLLoader loadPage(String path) {
+        URL location = getClass().getResource(path);
+        if (location == null) {
+            throw new IllegalStateException("FXML introuvable : " + path);
+        }
+        return new FXMLLoader(location);
     }
 
     private String safe(String s) {
@@ -267,4 +305,23 @@ public class PointsConnectedController {
         a.setContentText(msg);
         a.showAndWait();
     }
+
+    private String getStatusBadgeStyle(String statut) {
+        String s = safe(statut).toUpperCase();
+
+        String base = "-fx-padding: 6 12; "
+                + "-fx-background-radius: 14; "
+                + "-fx-font-weight: bold; "
+                + "-fx-font-size: 12px;";
+
+        return switch (s) {
+            case "PENDING" -> base + "-fx-background-color: #facc15; -fx-text-fill: #111827;";
+            case "COLLECTE" -> base + "-fx-background-color: #16a34a; -fx-text-fill: white;";
+            case "IN_PROGRESS" -> base + "-fx-background-color: #2563eb; -fx-text-fill: white;";
+            case "REFUSE" -> base + "-fx-background-color: #ef4444; -fx-text-fill: white;";
+            case "VALIDE" -> base + "-fx-background-color: #7c3aed; -fx-text-fill: white;";
+            default -> base + "-fx-background-color: #9ca3af; -fx-text-fill: white;";
+        };
+    }
+
 }

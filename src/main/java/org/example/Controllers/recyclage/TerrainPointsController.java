@@ -69,7 +69,7 @@ public class TerrainPointsController {
         }
 
         if (user != null) {
-            lblAgentName.setText("Field Agent: " + safe(user.getName()));
+            lblAgentName.setText("Agent terrain : " + safe(user.getName()));
         }
 
         loadPoints();
@@ -102,17 +102,41 @@ public class TerrainPointsController {
                 safe(data.getValue().getStatut())
         ));
 
+        colStatus.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String statut, boolean empty) {
+                super.updateItem(statut, empty);
+
+                if (empty || statut == null || statut.isEmpty()) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                Label badge = new Label(statut.toUpperCase());
+                badge.setStyle(getStatusBadgeStyle(statut));
+
+                setGraphic(badge);
+                setText(null);
+            }
+        });
+
         addActionsColumn();
         tablePoints.setItems(filteredList);
     }
 
     private void addActionsColumn() {
         colActions.setCellFactory(param -> new TableCell<>() {
-            private final Button btnOpen = new Button("Open");
+            private final Button btnOpen = new Button("Ouvrir");
             private final HBox pane = new HBox(8, btnOpen);
 
             {
-                btnOpen.setStyle("-fx-background-color: #e8f5e9; -fx-text-fill: #2e7d32;");
+                btnOpen.setStyle(
+                        "-fx-background-color: #eef7ee; " +
+                                "-fx-text-fill: #2e7d32; " +
+                                "-fx-font-weight: bold; " +
+                                "-fx-background-radius: 8;"
+                );
 
                 btnOpen.setOnAction(event -> {
                     PointRecyclage point = getTableView().getItems().get(getIndex());
@@ -215,6 +239,22 @@ public class TerrainPointsController {
     @FXML
     private void refreshTable() {
         loadPoints();
+    }
+
+    private String getStatusBadgeStyle(String statut) {
+        String s = safe(statut).toUpperCase();
+
+        String base = "-fx-padding: 6 14; "
+                + "-fx-background-radius: 14; "
+                + "-fx-font-weight: bold; "
+                + "-fx-font-size: 12px;";
+
+        return switch (s) {
+            case "IN_PROGRESS" -> base + "-fx-background-color: #2563eb; -fx-text-fill: white;";
+            case "COLLECTE" -> base + "-fx-background-color: #16a34a; -fx-text-fill: white;";
+            case "VALIDE" -> base + "-fx-background-color: #7c3aed; -fx-text-fill: white;";
+            default -> base + "-fx-background-color: #9ca3af; -fx-text-fill: white;";
+        };
     }
 
     private String safe(String value) {

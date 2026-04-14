@@ -3,8 +3,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.Controllers.recyclage.ShowPointRecyclageController"
@@ -77,9 +75,16 @@
                                         onAction="#backToList"
                                         style="-fx-background-color: white; -fx-border-color: #374151; -fx-text-fill: #374151; -fx-padding: 10 22; -fx-background-radius: 8; -fx-border-radius: 8;"/>
 
-                                <Button text="Modifier"
+                                <Button fx:id="btnEdit"
+                                        text="Modifier"
                                         onAction="#goToEdit"
                                         style="-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-padding: 10 22; -fx-background-radius: 8;"/>
+
+                                <Button fx:id="btnViewReport"
+                                        text="Voir rapport"
+                                        onAction="#goToViewReport"
+                                        visible="false" managed="false"
+                                        style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-padding: 10 22; -fx-background-radius: 8;"/>
                             </children>
                         </HBox>
                     </children>
@@ -94,7 +99,7 @@
                                style="-fx-text-fill: #6b7280;"/>
                         <VBox spacing="6" style="-fx-background-color: #edf7ee; -fx-padding: 14; -fx-background-radius: 10;">
                             <Label text="Astuce" style="-fx-text-fill: #6b7280;"/>
-                            <Label text="Vous pouvez modifier le point tant qu’il n’est pas validé/collecté."
+                            <Label text="Vous pouvez modifier uniquement un point avec le statut PENDING."
                                    wrapText="true"/>
                         </VBox>
                     </children>

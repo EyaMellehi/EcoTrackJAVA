@@ -24,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 public class EditPointRecyclageController {
 
@@ -59,10 +60,13 @@ public class EditPointRecyclageController {
             lblTitle.setText("Modifier point #" + point.getId());
             tfQuantite.setText(String.valueOf(point.getQuantite()));
             tfAddress.setText(point.getAddress());
-            tfLatitude.setText(String.valueOf(point.getLatitude()));
-            tfLongitude.setText(String.valueOf(point.getLongitude()));
+            tfLatitude.setText(String.format(Locale.US, "%.6f", point.getLatitude()));
+            tfLongitude.setText(String.format(Locale.US, "%.6f", point.getLongitude()));
             taDescription.setText(point.getDescription() != null ? point.getDescription() : "");
-            lblPickInfo.setText("Position actuelle chargée.");
+            lblPickInfo.setText("Point : "
+                    + String.format(Locale.US, "%.6f", point.getLatitude())
+                    + ", "
+                    + String.format(Locale.US, "%.6f", point.getLongitude()));
 
             if (cbCategorie.getItems() != null) {
                 cbCategorie.getSelectionModel().select(point.getCategorie());
@@ -153,9 +157,12 @@ public class EditPointRecyclageController {
     public class JavaConnector {
         public void updatePosition(double lat, double lng) {
             Platform.runLater(() -> {
-                tfLatitude.setText(String.format("%.6f", lat));
-                tfLongitude.setText(String.format("%.6f", lng));
-                lblPickInfo.setText("Point : " + String.format("%.6f", lat) + ", " + String.format("%.6f", lng));
+                tfLatitude.setText(String.format(Locale.US, "%.6f", lat));
+                tfLongitude.setText(String.format(Locale.US, "%.6f", lng));
+                lblPickInfo.setText("Point : "
+                        + String.format(Locale.US, "%.6f", lat)
+                        + ", "
+                        + String.format(Locale.US, "%.6f", lng));
             });
             loadAddressFromCoordinates(lat, lng);
         }
@@ -216,8 +223,8 @@ public class EditPointRecyclageController {
             currentPoint.setCategorie(cbCategorie.getValue());
             currentPoint.setQuantite(Double.parseDouble(tfQuantite.getText().trim()));
             currentPoint.setAddress(tfAddress.getText().trim());
-            currentPoint.setLatitude(Double.parseDouble(tfLatitude.getText().trim()));
-            currentPoint.setLongitude(Double.parseDouble(tfLongitude.getText().trim()));
+            currentPoint.setLatitude(Double.parseDouble(tfLatitude.getText().trim().replace(",", ".")));
+            currentPoint.setLongitude(Double.parseDouble(tfLongitude.getText().trim().replace(",", ".")));
             currentPoint.setDescription(taDescription.getText().trim());
 
             pointService.updatePoint(currentPoint);

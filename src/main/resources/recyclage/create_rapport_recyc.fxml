@@ -6,44 +6,95 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.Controllers.recyclage.CreateRapportRecycController"
-            prefWidth="1100" prefHeight="700"
+            prefWidth="1150" prefHeight="760"
             style="-fx-background-color: #f6f7f6;">
 
     <center>
-        <VBox alignment="CENTER" spacing="20" style="-fx-padding: 40;">
+        <VBox alignment="TOP_CENTER" spacing="24" style="-fx-padding: 35;">
             <children>
-                <Label fx:id="lblPointId"
-                       text="Créer un rapport"
-                       style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
-                <Label fx:id="lblPointAddress"
-                       text="Adresse"
-                       wrapText="true"
-                       style="-fx-text-fill: #666;"/>
 
-                <VBox spacing="14" prefWidth="700"
-                      style="-fx-background-color: white; -fx-padding: 28; -fx-background-radius: 16;">
+                <VBox alignment="CENTER" spacing="8">
                     <children>
-                        <Label text="Date collecte"/>
-                        <DatePicker fx:id="dpDateCollect"/>
+                        <Label text="Agent de terrain"
+                               style="-fx-text-fill: #2f9e44; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                        <Label fx:id="lblPointId"
+                               text="Créer un rapport"
+                               style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                        <Label fx:id="lblPointAddress"
+                               text="Adresse"
+                               wrapText="true"
+                               style="-fx-text-fill: #667085; -fx-font-size: 15px;"/>
+                    </children>
+                </VBox>
 
-                        <Label text="Quantité collectée"/>
-                        <TextField fx:id="txtQuantiteCollecte" promptText="Ex: 5.5"/>
+                <HBox spacing="18" alignment="CENTER">
+                    <children>
+                        <VBox prefWidth="240" spacing="8"
+                              style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 12; -fx-border-color: #e5e7eb; -fx-border-radius: 12;">
+                            <Label text="Quantité déclarée" style="-fx-text-fill: #667085;"/>
+                            <Label fx:id="lblQuantiteDeclaree"
+                                   text="0 kg"
+                                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                        </VBox>
 
-                        <Label text="Commentaire"/>
-                        <TextArea fx:id="txtCommentaire" prefHeight="160" promptText="Commentaire optionnel..."/>
+                        <VBox prefWidth="240" spacing="8"
+                              style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 12; -fx-border-color: #e5e7eb; -fx-border-radius: 12;">
+                            <Label text="Date par défaut" style="-fx-text-fill: #667085;"/>
+                            <Label text="Aujourd’hui"
+                                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                        </VBox>
+                    </children>
+                </HBox>
+
+                <VBox spacing="18" prefWidth="760" maxWidth="760"
+                      style="-fx-background-color: white; -fx-padding: 28; -fx-background-radius: 16; -fx-border-color: #e5e7eb; -fx-border-radius: 16;">
+                    <children>
+
+                        <VBox spacing="6">
+                            <Label text="Date de collecte"
+                                   style="-fx-text-fill: #123524; -fx-font-weight: bold;"/>
+                            <DatePicker fx:id="dpDateCollect"
+                                        prefWidth="320"
+                                        style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+                        </VBox>
+
+                        <VBox spacing="6">
+                            <Label text="Quantité collectée (kg)"
+                                   style="-fx-text-fill: #123524; -fx-font-weight: bold;"/>
+                            <TextField fx:id="txtQuantiteCollecte"
+                                       promptText="Ex: 5.5"
+                                       style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+                            <Label text="La quantité doit être positive et ne pas dépasser la quantité déclarée."
+                                   style="-fx-text-fill: #667085; -fx-font-size: 12px;"/>
+                        </VBox>
+
+                        <VBox spacing="6">
+                            <Label text="Commentaire"
+                                   style="-fx-text-fill: #123524; -fx-font-weight: bold;"/>
+                            <TextArea fx:id="txtCommentaire"
+                                      prefHeight="170"
+                                      wrapText="true"
+                                      promptText="Commentaire optionnel..."
+                                      style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+                            <Label text="Maximum 255 caractères."
+                                   style="-fx-text-fill: #667085; -fx-font-size: 12px;"/>
+                        </VBox>
 
                         <HBox alignment="CENTER_RIGHT" spacing="12">
                             <children>
-                                <Button text="Annuler" onAction="#cancel"/>
+                                <Button text="Annuler"
+                                        onAction="#cancel"
+                                        style="-fx-background-color: white; -fx-border-color: #374151; -fx-text-fill: #374151; -fx-padding: 10 18; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+
                                 <Button text="Enregistrer le rapport"
                                         onAction="#saveRapport"
-                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8;"/>
                             </children>
                         </HBox>
                     </children>
                 </VBox>
+
             </children>
         </VBox>
     </center>
-
 </BorderPane>
