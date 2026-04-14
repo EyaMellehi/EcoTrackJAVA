@@ -8,12 +8,16 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.Entities.Media;
 import org.example.Entities.RapportSignalement;
+import org.example.Entities.Signalement;
 import org.example.Entities.User;
 import org.example.Services.MediaService;
+import org.example.Services.SignalementService;
+import org.example.Services.UserService;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,23 +26,24 @@ import java.util.List;
 
 public class ShowRapportSignalementController {
 
-    @FXML private Label lblSignalementId;
-    @FXML private Label lblAgentId;
+    @FXML private Label lblSignalementTitre;
+    @FXML private Label lblSignalementType;
+    @FXML private Label lblSignalementAddress;
+    @FXML private Label lblAgentName;
     @FXML private Label lblDateIntervention;
     @FXML private Label lblCommentaire;
     @FXML private FlowPane mediaContainer;
 
-
     private final MediaService mediaService = new MediaService();
+    private final SignalementService signalementService = new SignalementService();
+    private final UserService userService = new UserService();
 
     private User loggedUser;
     private RapportSignalement rapport;
 
     public void setLoggedUser(User loggedUser) {
         this.loggedUser = loggedUser;
-
     }
-
 
     public void setRapport(RapportSignalement rapport) {
         this.rapport = rapport;
@@ -51,14 +56,41 @@ public class ShowRapportSignalementController {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        lblSignalementId.setText(String.valueOf(rapport.getSignalementId()));
-        lblAgentId.setText(String.valueOf(rapport.getAgentTerrainId()));
         lblDateIntervention.setText(
                 rapport.getDateIntervention() != null
                         ? rapport.getDateIntervention().format(formatter)
                         : ""
         );
+
         lblCommentaire.setText(rapport.getCommentaire() != null ? rapport.getCommentaire() : "");
+
+        try {
+            Signalement signalement = signalementService.getById(rapport.getSignalementId());
+            if (signalement != null) {
+                lblSignalementTitre.setText(signalement.getTitre() != null ? signalement.getTitre() : "");
+                lblSignalementType.setText(signalement.getType() != null ? signalement.getType() : "");
+                lblSignalementAddress.setText(signalement.getAddresse() != null ? signalement.getAddresse() : "");
+            } else {
+                lblSignalementTitre.setText("Unknown report");
+                lblSignalementType.setText("-");
+                lblSignalementAddress.setText("-");
+            }
+        } catch (Exception e) {
+            lblSignalementTitre.setText("Unknown report");
+            lblSignalementType.setText("-");
+            lblSignalementAddress.setText("-");
+        }
+
+        try {
+            User agent = userService.getUserById(rapport.getAgentTerrainId());
+            if (agent != null) {
+                lblAgentName.setText(agent.getName() != null ? agent.getName() : "Unknown agent");
+            } else {
+                lblAgentName.setText("Unknown agent");
+            }
+        } catch (Exception e) {
+            lblAgentName.setText("Unknown agent");
+        }
     }
 
     private void loadPhotos() {
@@ -81,12 +113,14 @@ public class ShowRapportSignalementController {
                 if (!file.exists()) continue;
 
                 ImageView imageView = new ImageView(new Image(file.toURI().toString()));
-                imageView.setFitWidth(170);
-                imageView.setFitHeight(120);
+                imageView.setFitWidth(240);
+                imageView.setFitHeight(170);
                 imageView.setPreserveRatio(false);
+                imageView.setStyle("-fx-cursor: hand;");
+                imageView.setOnMouseClicked(e -> openImagePreview(file));
 
                 Label filename = new Label(media.getFilename());
-                filename.setMaxWidth(170);
+                filename.setMaxWidth(240);
                 filename.setWrapText(true);
                 filename.setStyle("-fx-text-fill: #6b7280; -fx-font-size: 12px;");
 
@@ -97,6 +131,22 @@ public class ShowRapportSignalementController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void openImagePreview(File file) {
+        Stage previewStage = new Stage();
+        ImageView imageView = new ImageView(new Image(file.toURI().toString()));
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(900);
+        imageView.setFitHeight(650);
+
+        StackPane root = new StackPane(imageView);
+        root.setStyle("-fx-background-color: black; -fx-padding: 20;");
+
+        Scene scene = new Scene(root, 950, 700);
+        previewStage.setScene(scene);
+        previewStage.setTitle("Photo Preview");
+        previewStage.show();
     }
 
     @FXML
@@ -127,7 +177,7 @@ public class ShowRapportSignalementController {
                 ((ListSignalementController) controller).setLoggedUser(loggedUser);
             }
 
-            Stage stage = (Stage) lblSignalementId.getScene().getWindow();
+            Stage stage = (Stage) lblSignalementTitre.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Reports");
             stage.show();

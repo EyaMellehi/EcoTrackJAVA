@@ -110,6 +110,25 @@ public class PointRecyclageService {
     }
 
     public void updatePoint(PointRecyclage p) throws SQLException {
+        if (p == null) {
+            throw new SQLException("Point null.");
+        }
+
+        if (p.getCategorie() == null) {
+            throw new SQLException("Catégorie manquante.");
+        }
+
+        if (p.getCitoyen() == null) {
+            PointRecyclage dbPoint = getPointById(p.getId());
+            if (dbPoint != null) {
+                p.setCitoyen(dbPoint.getCitoyen());
+            }
+        }
+
+        if (p.getCitoyen() == null) {
+            throw new SQLException("Citoyen manquant pour ce point.");
+        }
+
         String sql = "UPDATE point_recyclage SET " +
                 "quantite = ?, date_dec = ?, description = ?, address = ?, latitude = ?, longitude = ?, statut = ?, " +
                 "categorie_id = ?, citoyen_id = ?, assigned_at = ?, ai_score = ?, ai_priority = ?, ai_explanation = ?, ai_estimated_at = ?, agent_terrain_id = ? " +

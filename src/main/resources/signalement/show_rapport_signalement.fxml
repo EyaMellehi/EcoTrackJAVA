@@ -47,17 +47,23 @@
                             </columnConstraints>
 
                             <children>
-                                <Label text="Signalement ID:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
-                                <Label fx:id="lblSignalementId" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                <Label text="Report title:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblSignalementTitre" wrapText="true" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                                <Label text="Agent Terrain ID:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
-                                <Label fx:id="lblAgentId" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                <Label text="Report type:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblSignalementType" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                                <Label text="Date Intervention:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
-                                <Label fx:id="lblDateIntervention" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                <Label text="Address:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblSignalementAddress" wrapText="true" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                                <Label text="Commentaire:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
-                                <Label fx:id="lblCommentaire" wrapText="true" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                                <Label text="Field agent:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblAgentName" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                                <Label text="Date intervention:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblDateIntervention" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                                <Label text="Comment:" GridPane.rowIndex="5" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblCommentaire" wrapText="true" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
                             </children>
                         </GridPane>
 

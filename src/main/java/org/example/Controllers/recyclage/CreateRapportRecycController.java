@@ -41,7 +41,6 @@ public class CreateRapportRecycController {
 
         dpDateCollect.setValue(LocalDate.now());
 
-        // petit contrôle direct sur le champ quantité
         txtQuantiteCollecte.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null) return;
 
@@ -51,7 +50,6 @@ public class CreateRapportRecycController {
             }
         });
 
-        // limiter commentaire
         txtCommentaire.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && newVal.length() > 255) {
                 txtCommentaire.setText(oldVal);
@@ -104,15 +102,15 @@ public class CreateRapportRecycController {
                 return;
             }
 
-            if (qte > currentPoint.getQuantite()) {
-                showAlert(Alert.AlertType.WARNING, "Attention",
-                        "La quantité collectée ne peut pas dépasser la quantité déclarée (" + currentPoint.getQuantite() + " kg).");
+            String commentaire = txtCommentaire.getText() != null ? txtCommentaire.getText().trim() : "";
+
+            if (commentaire.isEmpty()) {
+                showAlert(Alert.AlertType.WARNING, "Attention", "La description est obligatoire.");
                 return;
             }
 
-            String commentaire = txtCommentaire.getText() != null ? txtCommentaire.getText().trim() : "";
             if (commentaire.length() > 255) {
-                showAlert(Alert.AlertType.WARNING, "Attention", "Le commentaire ne doit pas dépasser 255 caractères.");
+                showAlert(Alert.AlertType.WARNING, "Attention", "La description ne doit pas dépasser 255 caractères.");
                 return;
             }
 

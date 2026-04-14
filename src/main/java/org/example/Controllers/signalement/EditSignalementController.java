@@ -1,16 +1,21 @@
 package org.example.Controllers.signalement;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import netscape.javascript.JSObject;
 import org.example.Entities.Signalement;
 import org.example.Entities.User;
 import org.example.Services.SignalementService;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 
 public class EditSignalementController {
@@ -23,7 +28,7 @@ public class EditSignalementController {
     @FXML private TextField tfLatitude;
     @FXML private TextField tfLongitude;
     @FXML private TextField tfDelegation;
-
+    @FXML private WebView mapView;
 
     private final SignalementService signalementService = new SignalementService();
     private User loggedUser;
@@ -31,13 +36,20 @@ public class EditSignalementController {
 
     public void setLoggedUser(User loggedUser) {
         this.loggedUser = loggedUser;
-
     }
-
 
     public void setSignalement(Signalement signalement) {
         this.signalement = signalement;
         fillFields();
+
+        if (mapView != null && mapView.getEngine() != null && signalement != null) {
+            try {
+                mapView.getEngine().executeScript(
+                        "setMarkerAndCenter(" + signalement.getLatitude() + ", " + signalement.getLongitude() + ");"
+                );
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     @FXML
@@ -59,6 +71,7 @@ public class EditSignalementController {
 
         addNumericValidation(tfLatitude);
         addNumericValidation(tfLongitude);
+        loadMap();
     }
 
     private void fillFields() {
@@ -74,6 +87,46 @@ public class EditSignalementController {
         tfLatitude.setText(String.valueOf(signalement.getLatitude()));
         tfLongitude.setText(String.valueOf(signalement.getLongitude()));
         tfDelegation.setText(signalement.getDelegation());
+    }
+
+    private void loadMap() {
+        if (mapView == null) return;
+
+        WebEngine webEngine = mapView.getEngine();
+        URL mapUrl = getClass().getResource("/maps/signalement_map.html");
+
+        if (mapUrl == null) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Map HTML file not found.");
+            return;
+        }
+
+        webEngine.load(mapUrl.toExternalForm());
+
+        webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == javafx.concurrent.Worker.State.SUCCEEDED) {
+                JSObject window = (JSObject) webEngine.executeScript("window");
+                window.setMember("javaConnector", new JavaConnector());
+
+                if (signalement != null) {
+                    try {
+                        webEngine.executeScript(
+                                "setMarkerAndCenter(" + signalement.getLatitude() + ", " + signalement.getLongitude() + ");"
+                        );
+                    } catch (Exception ignored) {
+                    }
+                }
+            }
+        });
+    }
+
+    public class JavaConnector {
+        public void setLocation(String lat, String lng, String address) {
+            Platform.runLater(() -> {
+                tfLatitude.setText(lat);
+                tfLongitude.setText(lng);
+                tfAddresse.setText(address);
+            });
+        }
     }
 
     @FXML
