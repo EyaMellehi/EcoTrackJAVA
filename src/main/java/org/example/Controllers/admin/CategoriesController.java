@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.Entities.Categorie;
+import org.example.Entities.User;
 import org.example.Services.CategorieService;
 
 import java.io.IOException;
@@ -29,10 +30,16 @@ public class CategoriesController {
     @FXML private TableColumn<Categorie, Number> colCoef;
     @FXML private TableColumn<Categorie, String> colDescription;
     @FXML private TableColumn<Categorie, Number> colNbPoints;
-
+    private User loggedUser;
     private final CategorieService categorieService = new CategorieService();
     private final ObservableList<Categorie> categorieList = FXCollections.observableArrayList();
 
+    public void setLoggedUser(User user) {
+        this.loggedUser = user;
+        if (user != null && user.getName() != null) {
+            menuAdmin.setText(user.getName());
+        }
+    }
     @FXML
     public void initialize() {
         colIndex.setCellValueFactory(cellData ->
@@ -179,17 +186,67 @@ public class CategoriesController {
 
     @FXML
     void goToDashboard() {
-        navigate("/admin/dashboard.fxml", "Dashboard");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin/admin_dashboard.fxml"));
+            Parent root = loader.load();
+
+            AdminDashboardController controller = loader.getController();
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Admin Dashboard");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
-    void goToSubscribers() { }
+    void goToSubscribers() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin/subscribers.fxml"));
+            Parent root = loader.load();
 
+            SubscribersController controller = loader.getController();
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Subscribers");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @FXML
-    void goToMunicipalAgents() { }
+    void goToMunicipalAgents() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin/municipal_agents.fxml"));
+            Parent root = loader.load();
 
+            MunicipalAgentsController controller = loader.getController();
+
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Municipal Agents");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @FXML
-    void goToFieldAgents() { }
+    void goToFieldAgents() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin/field_agents.fxml"));
+            Parent root = loader.load();
+
+            FieldAgentsController controller = loader.getController();
+
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Field Agents");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     void goToCategories() {
@@ -197,7 +254,17 @@ public class CategoriesController {
     }
 
     @FXML
-    void logout() { }
+    void logout() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/home.fxml"));
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("EcoTrack - Home");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private void navigate(String fxmlPath, String title) {
         try {

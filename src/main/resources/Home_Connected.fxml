@@ -45,6 +45,7 @@
 
                     <Button fx:id="btnBlogs"
                             text="Blogs"
+                            onAction="#goToBlogs"
                             style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
 
                     <Button fx:id="btnAssociations"

@@ -44,7 +44,7 @@ public class AdminDashboardController {
     @FXML
     void logout() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/user/home.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/home.fxml"));
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("EcoTrack - Home");

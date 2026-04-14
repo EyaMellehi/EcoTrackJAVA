@@ -196,7 +196,7 @@ public class SubscribersController {
     @FXML
     void logout() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/user/home.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/home.fxml"));
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("EcoTrack - Home");
@@ -289,6 +289,23 @@ public class SubscribersController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Field Agents");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    void goToCategories() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin/categories.fxml"));
+            Parent root = loader.load();
+
+            CategoriesController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Catégories");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
