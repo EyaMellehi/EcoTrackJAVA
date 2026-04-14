@@ -12,6 +12,7 @@ import org.example.Controllers.User.ProfileController;
 import org.example.Controllers.annonces.AgentAnnoncesDashboardController;
 import org.example.Controllers.annonces.ListAnnonceAdminController;
 import org.example.Controllers.annonces.ListAnnonceUserController;
+import org.example.Controllers.admin.EventsManagementController;
 import org.example.Controllers.signalement.ListAssignedSignalementController;
 import org.example.Controllers.signalement.ListMunicipalSignalementController;
 import org.example.Controllers.signalement.ListSignalementController;
@@ -124,7 +125,7 @@ public class HomeConnectedController {
     @FXML
     void goToProfile() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/profile.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/User/profile.fxml"));
             Parent root = loader.load();
 
             ProfileController controller = loader.getController();
@@ -187,7 +188,19 @@ public class HomeConnectedController {
 
     @FXML
     void goToHome() {
-        System.out.println("Already in home");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Home_Connected.fxml"));
+            Parent root = loader.load();
+            HomeConnectedController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
+            Stage stage = (Stage) btnHome.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("EcoTrack - Home");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -252,11 +265,31 @@ public class HomeConnectedController {
 
     @FXML
     void goToEvents() {
-        if (loggedUser != null && loggedUser.getRoles() != null &&
-                loggedUser.getRoles().contains("ROLE_AGENT_MUNICIPAL")) {
-            System.out.println("Open events management");
-        } else {
-            System.out.println("Open events page");
+        try {
+            FXMLLoader loader;
+            Parent root;
+
+            if (loggedUser != null && loggedUser.getRoles() != null &&
+                    (loggedUser.getRoles().contains("ROLE_AGENT_MUNICIPAL") || loggedUser.getRoles().contains("ROLE_ADMIN"))) {
+                loader = new FXMLLoader(getClass().getResource("/admin/events_management.fxml"));
+                root = loader.load();
+
+                EventsManagementController controller = loader.getController();
+                controller.setLoggedUser(loggedUser);
+            } else {
+                loader = new FXMLLoader(getClass().getResource("/events.fxml"));
+                root = loader.load();
+
+                EventsController controller = loader.getController();
+                controller.setLoggedUser(loggedUser);
+            }
+
+            Stage stage = (Stage) btnEvents.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Events");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

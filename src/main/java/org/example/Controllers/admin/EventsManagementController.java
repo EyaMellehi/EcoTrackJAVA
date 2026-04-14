@@ -58,6 +58,7 @@ public class EventsManagementController {
 
     public void setLoggedUser(User user) {
         this.loggedUser = user;
+        loadEvents();
     }
 
     @FXML
@@ -140,7 +141,13 @@ public class EventsManagementController {
         String sort = cbSort.getValue();
         String order = cbOrder.getValue();
 
-        List<Event> events = eventService.searchEventsForManagement(query, statut, sort, order);
+        String regionFilter = null;
+        if (loggedUser != null && loggedUser.getRoles() != null && loggedUser.getRoles().contains("ROLE_AGENT_MUNICIPAL")
+                && loggedUser.getRegion() != null && !loggedUser.getRegion().isBlank()) {
+            regionFilter = loggedUser.getRegion();
+        }
+
+        List<Event> events = eventService.searchEventsForManagement(query, statut, sort, order, regionFilter);
         ObservableList<Event> list = FXCollections.observableArrayList(events);
         tableEvents.setItems(list);
     }

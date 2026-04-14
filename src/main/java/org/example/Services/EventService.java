@@ -126,6 +126,10 @@ public class EventService {
      * Recherche admin: peut retourner tous les statuts si aucun filtre n'est selectionne.
      */
     public List<Event> searchEventsForManagement(String query, String statut, String sortBy, String order) {
+        return searchEventsForManagement(query, statut, sortBy, order, null);
+    }
+
+    public List<Event> searchEventsForManagement(String query, String statut, String sortBy, String order, String region) {
         List<Event> events = new ArrayList<>();
         if (eventTable == null) {
             return events;
@@ -145,6 +149,11 @@ public class EventService {
             params.add(searchTerm);
             params.add(searchTerm);
             params.add(searchTerm);
+        }
+
+        if (region != null && !region.isBlank()) {
+            sql.append("AND LOWER(TRIM(e.lieu)) = LOWER(TRIM(?)) ");
+            params.add(region.trim());
         }
 
         String sortColumn;

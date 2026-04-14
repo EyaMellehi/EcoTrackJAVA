@@ -70,7 +70,7 @@ public class LoginController {
                     || user.getRoles().contains("ROLE_AGENT_TERRAIN")
                     || user.getRoles().contains("ROLE_AGENT_MUNICIPAL")) {
 
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/home_connected.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Home_Connected.fxml"));
                 Parent root = loader.load();
 
                 HomeConnectedController controller = loader.getController();
@@ -94,7 +94,7 @@ public class LoginController {
     @FXML
     void goToRegister(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/user/register.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/User/Register.fxml"));
             Stage stage = (Stage) linkRegister.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Register");
@@ -114,7 +114,7 @@ public class LoginController {
     @FXML
     void goToForgotPassword() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/user/forgot_password.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/User/forgot_password.fxml"));
             Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Forgot Password");

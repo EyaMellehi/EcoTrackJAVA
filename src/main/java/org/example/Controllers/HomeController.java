@@ -3,6 +3,7 @@ package org.example.Controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
@@ -15,40 +16,58 @@ public class HomeController {
 
     @FXML
     void goToLogin() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/user/login.fxml"));
-            Stage stage = (Stage) btnLogin.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Login");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        navigateTo("/User/Login.fxml", "Login");
     }
 
     @FXML
     void goToRegister() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/user/register.fxml"));
-            Stage stage = (Stage) btnLogin.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Register");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        navigateTo("/User/Register.fxml", "Register");
     }
 
     @FXML
     void goToRecycling() {
+        navigateTo("/recyclage/points_connected.fxml", "Recycling Points");
+    }
+
+    @FXML
+    void goToEvents() {
+        navigateTo("/events.fxml", "Events");
+    }
+
+    @FXML
+    void goToBlogs() {
+        navigateTo("/annonces/list_annonces_user.fxml", "Blogs");
+    }
+
+    @FXML
+    void goToAssociation() {
+        navigateTo("/client_association/index.fxml", "Associations");
+    }
+
+    @FXML
+    void goToReport() {
+        navigateTo("/signalement/list_signalement.fxml", "Reports");
+    }
+
+    @FXML
+    void goToHome() {
+        // Already on home page.
+    }
+
+    private void navigateTo(String fxmlPath, String title) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/recyclage/points.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
             Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setTitle("Recycling Points");
+            stage.setTitle(title);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Navigation Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Could not open: " + title);
+            alert.showAndWait();
         }
     }
 

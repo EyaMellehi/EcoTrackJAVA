@@ -363,6 +363,9 @@ public class EventsController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin/events_management.fxml"));
             Parent root = loader.load();
 
+            org.example.Controllers.admin.EventsManagementController controller = loader.getController();
+            controller.setLoggedUser(currentUser);
+
             Stage stage = (Stage) btnHome.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Gestion des evenements");
