@@ -35,7 +35,7 @@
                 <Button text="Blogs" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
                 <Button text="Associations" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
                 <Button text="Recycling" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
-                <Button text="Events" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+                <Button text="Events" onAction="#goToEvents" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
 
                 <Button text="Login" fx:id="btnLogin"
                         onAction="#goToLogin"
@@ -75,7 +75,7 @@
                                             style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 12 24;"/>
                                     <Button text="Recycling points"
                                             style="-fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 12 24;"/>
-                                    <Button text="Events"
+                                    <Button text="Events" onAction="#goToEvents"
                                             style="-fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 12 24;"/>
                                 </HBox>
                             </VBox>
@@ -133,7 +133,7 @@
                             <VBox prefWidth="320" spacing="14" style="-fx-background-color: white; -fx-padding: 25;">
                                 <Label text="Events" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
                                 <Label text="Join eco events and earn points." wrapText="true" style="-fx-font-size: 16px; -fx-text-fill: #666;"/>
-                                <Button text="Open" style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+                                <Button text="Open" onAction="#goToEvents" style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
                             </VBox>
                         </children>
                     </FlowPane>

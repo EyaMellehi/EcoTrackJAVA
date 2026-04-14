@@ -8,12 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.scene.layout.HBox;
-import org.example.Controllers.components.NavbarCitoyenController;
-import org.example.Controllers.components.NavbarMunicipalController;
 import org.example.Entities.User;
 import org.example.Services.UserService;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,11 +18,7 @@ import java.io.File;
 
 public class EditProfileController {
 
-    @FXML private HBox navbarCitoyen;
-    @FXML private HBox navbarMunicipal;
-
-    @FXML private NavbarCitoyenController navbarCitoyenController;
-    @FXML private NavbarMunicipalController navbarMunicipalController;
+    @FXML private MenuButton menuProfile;
 
     @FXML private Label lblAvatar;
     @FXML private Label lblNamePreview;
@@ -99,8 +91,6 @@ public class EditProfileController {
     public void setUser(User user) {
         this.user = user;
 
-        configureNavbar();
-
         if (user != null) {
             tfName.setText(user.getName());
             tfEmail.setText(user.getEmail());
@@ -113,47 +103,9 @@ public class EditProfileController {
 
             if (user.getName() != null && !user.getName().isEmpty()) {
                 lblAvatar.setText(String.valueOf(Character.toUpperCase(user.getName().charAt(0))));
-            } else {
-                lblAvatar.setText("U");
+                menuProfile.setText(user.getName());
             }
         }
-    }
-
-    private void configureNavbar() {
-        if (user == null || user.getRoles() == null) {
-            showCitoyenNavbar();
-            return;
-        }
-
-        String roles = user.getRoles();
-
-        if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
-            showMunicipalNavbar();
-            if (navbarMunicipalController != null) {
-                navbarMunicipalController.setLoggedUser(user);
-            }
-        } else {
-            showCitoyenNavbar();
-            if (navbarCitoyenController != null) {
-                navbarCitoyenController.setLoggedUser(user);
-            }
-        }
-    }
-
-    private void showCitoyenNavbar() {
-        navbarCitoyen.setVisible(true);
-        navbarCitoyen.setManaged(true);
-
-        navbarMunicipal.setVisible(false);
-        navbarMunicipal.setManaged(false);
-    }
-
-    private void showMunicipalNavbar() {
-        navbarMunicipal.setVisible(true);
-        navbarMunicipal.setManaged(true);
-
-        navbarCitoyen.setVisible(false);
-        navbarCitoyen.setManaged(false);
     }
 
     @FXML
@@ -208,8 +160,7 @@ public class EditProfileController {
             user.setEmail(email);
             user.setPhone(phone);
             user.setRegion(region);
-
-            String imagePath = user.getImage();
+            String imagePath = user.getImage(); // garder l’ancienne image si aucune nouvelle
 
             if (selectedImage != null) {
                 String fileName = System.currentTimeMillis() + "_" + selectedImage.getName();
@@ -229,6 +180,7 @@ public class EditProfileController {
             userService.updateProfile(user);
 
             showAlert(Alert.AlertType.INFORMATION, "Success", "Profile updated successfully.");
+
             goBackToProfilePage();
 
         } catch (Exception e) {
@@ -259,7 +211,18 @@ public class EditProfileController {
         }
     }
 
-
+    @FXML
+    void logout() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/home.fxml"));
+            Stage stage = (Stage) tfName.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("EcoTrack - Home");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private void showAlert(Alert.AlertType type, String title, String msg) {
         Alert alert = new Alert(type);

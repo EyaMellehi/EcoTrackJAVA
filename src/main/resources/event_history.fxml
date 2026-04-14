@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.EventHistoryController"
+            prefWidth="1200" prefHeight="760"
+            style="-fx-background-color: #f5f5f5;">
+
+    <top>
+        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 16 20; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <children>
+                        <Label text="Mon Historique d'Evenements" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button text="Home" onAction="#goHome" style="-fx-background-color: transparent; -fx-text-fill: #1f5130;"/>
+                    </children>
+                </HBox>
+                <Label fx:id="lblInfo" text="Consultez tous les evenements auxquels vous avez participe." style="-fx-text-fill: #6b7280;"/>
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="14" style="-fx-padding: 20;">
+                    <children>
+                        <Button text="Retour aux evenements" onAction="#goBack" style="-fx-background-color: transparent; -fx-border-color: #6b7280; -fx-text-fill: #374151;"/>
+
+                        <VBox fx:id="emptyBox" alignment="CENTER" spacing="10" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 40; -fx-border-color: #e5e7eb; -fx-border-radius: 12;">
+                            <children>
+                                <Label text="Vous n'avez pas encore participe a des evenements." style="-fx-text-fill: #6b7280; -fx-font-size: 18px;"/>
+                                <Button text="Decouvrir les evenements" onAction="#goBack" style="-fx-background-color: #2563eb; -fx-text-fill: white;"/>
+                            </children>
+                        </VBox>
+
+                        <FlowPane fx:id="historyFlow" hgap="16" vgap="16" prefWrapLength="1120"/>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
+

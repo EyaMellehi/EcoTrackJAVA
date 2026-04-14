@@ -4,7 +4,6 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -309,19 +308,6 @@ public class MunicipalAgentsController {
             stage.setScene(new Scene(root));
             stage.setTitle("Edit Municipal Agent");
             stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void goToAssocation(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin_association/association.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
-            stage.setScene(new Scene(root));
-             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
