@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.EventParticipationController"
+            prefWidth="1100" prefHeight="780"
+            style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 16 20; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+            <children>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Accueil" style="-fx-text-fill: #2e7d32; -fx-font-size: 13px;"/>
+                        <Label text=">" style="-fx-text-fill: #9ca3af;"/>
+                        <Label text="Événements" style="-fx-text-fill: #2e7d32; -fx-font-size: 13px;"/>
+                        <Label text=">" style="-fx-text-fill: #9ca3af;"/>
+                        <Label text="Participer" style="-fx-text-fill: #111827; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                        <Label text=">" style="-fx-text-fill: #9ca3af;"/>
+                        <Label text="Participer" style="-fx-text-fill: #111827; -fx-font-size: 13px;"/>
+                    </children>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <children>
+                        <Label text="Participer à un événement" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnHome" text="Home" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 16px;"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox alignment="CENTER" spacing="20" style="-fx-padding: 32 24;">
+                    <children>
+                        <Label fx:id="lblAlert" visible="false" managed="false" wrapText="true" style="-fx-padding: 12 14; -fx-background-radius: 8;"/>
+
+                        <BorderPane prefWidth="720" style="-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 18; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 14, 0, 0, 4);">
+                            <top>
+                                <StackPane prefHeight="150" BorderPane.alignment="CENTER">
+                                    <children>
+                                        <Pane style="-fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -fx-background-radius: 18 18 0 0;"/>
+                                        <Pane style="-fx-background-color: rgba(0,0,0,0.10); -fx-background-radius: 18 18 0 0;"/>
+                                        <VBox alignment="CENTER" spacing="8">
+                                            <children>
+                                                <Label text="✦" style="-fx-text-fill: white; -fx-font-size: 34px;"/>
+                                                <Label text="Confirmez votre inscription" style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </StackPane>
+                            </top>
+
+                            <center>
+                                <VBox spacing="18" style="-fx-padding: 24;">
+                                    <children>
+                                        <VBox spacing="8" style="-fx-background-color: #f8fafc; -fx-padding: 18; -fx-background-radius: 12;">
+                                            <children>
+                                                <Label text="Récapitulatif de l'événement" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1f2937;"/>
+                                                <GridPane hgap="12" vgap="12">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints percentWidth="32"/>
+                                                        <ColumnConstraints percentWidth="68"/>
+                                                    </columnConstraints>
+                                                    <Label text="Titre" style="-fx-text-fill: #6b7280;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                                    <Label fx:id="lblEventTitle" text="—" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                                    <Label text="Lieu" style="-fx-text-fill: #6b7280;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                                    <Label fx:id="lblEventLieu" text="—" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                                    <Label text="Date et heure" style="-fx-text-fill: #6b7280;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                                    <Label fx:id="lblEventDateDeb" text="—" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                                    <Label text="Fin" style="-fx-text-fill: #6b7280;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                                                    <Label fx:id="lblEventDateFin" text="—" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                                                    <Label text="Récompense" style="-fx-text-fill: #6b7280;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                                                    <Label fx:id="lblEventPoints" text="0 point" style="-fx-font-weight: bold;" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                                                    <Label text="Utilisateur" style="-fx-text-fill: #6b7280;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                                                    <Label fx:id="lblUserName" text="—" style="-fx-font-weight: bold;" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                                                </GridPane>
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="8" style="-fx-background-color: #eff6ff; -fx-padding: 16; -fx-background-radius: 12;">
+                                            <children>
+                                                <Label text="Êtes-vous prêt ?" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1d4ed8;"/>
+                                                <Label text="En confirmant, vous vous inscrivez officiellement à cet événement. Vous pourrez ensuite retrouver votre participation dans votre historique." wrapText="true" style="-fx-text-fill: #334155;"/>
+                                            </children>
+                                        </VBox>
+
+                                        <HBox spacing="12" alignment="CENTER_RIGHT">
+                                            <children>
+                                                <Button fx:id="btnCancel" text="Annuler" style="-fx-background-color: transparent; -fx-border-color: #6b7280; -fx-text-fill: #374151; -fx-padding: 10 18;"/>
+                                                <Button fx:id="btnConfirm" text="Confirmer mon inscription" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-padding: 10 18;"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </center>
+                        </BorderPane>
+
+                        <Button fx:id="btnBackList" text="Retour à la liste des événements" style="-fx-background-color: transparent; -fx-text-fill: #6b7280;"/>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
+

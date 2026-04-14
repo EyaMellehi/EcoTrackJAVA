@@ -20,10 +20,13 @@ public class MyConnection {
 
     private MyConnection() {
         try {
+            System.out.println("Attempting connection to: " + url);
             connection= DriverManager.getConnection(url,username,password);
             System.out.println("Connected to database successfully");
         }catch(SQLException e){
             System.out.println("Connection Failed!");
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     public Connection getConnection() {
