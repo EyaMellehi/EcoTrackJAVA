@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.Controllers.admin.MunicipalAgentsController"
+      prefWidth="1500" prefHeight="900"
+      style="-fx-background-color: #f5f7fb;">
+
+    <children>
+
+        <!-- SIDEBAR -->
+        <VBox prefWidth="240"
+              style="-fx-background-color: #121b3a; -fx-padding: 26 0 26 0;">
+            <children>
+
+                <VBox spacing="8" style="-fx-padding: 0 24 24 24;">
+                    <Label text="EcoTrack"
+                           style="-fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <Button text="Dashboard"
+                        onAction="#goToDashboard"
+                        style="-fx-background-color: #0d1530; -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; -fx-alignment: CENTER-LEFT; -fx-padding: 16 24; -fx-pref-width: 240;"/>
+
+                <Button text="Subscribers"
+                        onAction="#goToSubscribers"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+
+                <Button text="Municipal Agents"
+                        onAction="#goToMunicipalAgents"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+
+                <Button text="Field Agents"
+                        onAction="#goToFieldAgents"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+
+                <Button text="Categories"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+
+                <Button text="Associations"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+
+                <Button text="Events"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+
+            </children>
+        </VBox>
+
+        <!-- RIGHT -->
+        <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: #f5f7fb;">
+            <children>
+
+                <HBox alignment="CENTER_RIGHT"
+                      prefHeight="70"
+                      style="-fx-background-color: white; -fx-padding: 0 18 0 18; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;">
+                    <children>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <MenuButton text="👤" fx:id="menuAdmin"
+                                    style="-fx-background-color: #f3f4f6; -fx-font-size: 18px; -fx-background-radius: 6; -fx-padding: 8 12;">
+                            <items>
+                                <MenuItem text="Logout" onAction="#logout"/>
+                            </items>
+                        </MenuButton>
+                    </children>
+                </HBox>
+
+                <VBox spacing="20" style="-fx-padding: 26;">
+                    <Label text="Municipal Agents"
+                           style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #1f2a44;"/>
+
+                    <VBox spacing="14"
+                          style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e5e7eb;">
+
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <children>
+                                <TextField fx:id="tfSearch" promptText="Name or email..." prefWidth="300"/>
+                                <ComboBox fx:id="cbRegion" promptText="All regions" prefWidth="200"/>
+                                <ComboBox fx:id="cbStatus" promptText="All" prefWidth="160"/>
+                                <Button text="Filter"
+                                        onAction="#filterMunicipalAgents"
+                                        style="-fx-background-color: #121b3a; -fx-text-fill: white; -fx-padding: 10 18; -fx-background-radius: 8;"/>
+
+                                <Pane HBox.hgrow="ALWAYS"/>
+
+                                <Button text="+  New Municipal Agent"
+                                        onAction="#goToAddMunicipalAgent"
+                                        style="-fx-background-color: #121b3a; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 16; -fx-background-radius: 20;"/>
+                            </children>
+                        </HBox>
+
+                        <TableView fx:id="tableMunicipalAgents" prefHeight="520">
+                            <columns>
+                                <TableColumn fx:id="colNum" text="#" prefWidth="60"/>
+                                <TableColumn fx:id="colName" text="NAME" prefWidth="150"/>
+                                <TableColumn fx:id="colEmail" text="EMAIL" prefWidth="220"/>
+                                <TableColumn fx:id="colPhone" text="PHONE" prefWidth="100"/>
+                                <TableColumn fx:id="colRegion" text="REGION" prefWidth="100"/>
+                                <TableColumn fx:id="colDelegation" text="DELEGATION" prefWidth="120"/>
+                                <TableColumn fx:id="colStatus" text="STATUS" prefWidth="120"/>
+                                <TableColumn fx:id="colActions" text="ACTIONS" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+
+                    </VBox>
+                </VBox>
+
+            </children>
+        </VBox>
+
+    </children>
+</HBox>

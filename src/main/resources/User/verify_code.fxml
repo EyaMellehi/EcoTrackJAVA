@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.Controllers.User.VerifyCodeController"
+      alignment="CENTER" spacing="15" prefWidth="500" prefHeight="350"
+      style="-fx-background-color: white;">
+
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <Label text="Verify Reset Code"
+           style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <Label fx:id="lblEmailInfo" text="Email"
+           style="-fx-text-fill: gray;"/>
+
+    <TextField fx:id="tfCode" promptText="Enter 6-digit code" prefWidth="250"/>
+
+    <Button text="Verify Code"
+            onAction="#verifyCode"
+            style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+
+    <Hyperlink text="Back to login" onAction="#goToLogin"/>
+</VBox>

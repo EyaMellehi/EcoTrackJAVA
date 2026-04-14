@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.Controllers.admin.EditFieldAgentController"
+      prefWidth="1500" prefHeight="900"
+      style="-fx-background-color: #f5f7fb;">
+
+    <children>
+
+        <VBox prefWidth="240"
+              style="-fx-background-color: #121b3a; -fx-padding: 26 0 26 0;">
+            <children>
+                <VBox spacing="8" style="-fx-padding: 0 24 24 24;">
+                    <Label text="EcoTrack"
+                           style="-fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <Button text="Dashboard"
+                        onAction="#goToDashboard"
+                        style="-fx-background-color: #0d1530; -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; -fx-alignment: CENTER-LEFT; -fx-padding: 16 24; -fx-pref-width: 240;"/>
+
+                <Button text="Subscribers"
+                        onAction="#goToSubscribers"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+
+                <Button text="Municipal Agents"
+                        onAction="#goToMunicipalAgents"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+
+                <Button text="Field Agents"
+                        onAction="#goToFieldAgents"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+
+                <Button text="Categories"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+
+                <Button text="Associations"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+
+                <Button text="Events"
+                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+            </children>
+        </VBox>
+
+        <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: #f5f7fb;">
+            <children>
+
+                <HBox alignment="CENTER_RIGHT"
+                      prefHeight="70"
+                      style="-fx-background-color: white; -fx-padding: 0 18 0 18; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;">
+                    <children>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <MenuButton text="👤" fx:id="menuAdmin"
+                                    style="-fx-background-color: #f3f4f6; -fx-font-size: 18px; -fx-background-radius: 6; -fx-padding: 8 12;">
+                            <items>
+                                <MenuItem text="Logout" onAction="#logout"/>
+                            </items>
+                        </MenuButton>
+                    </children>
+                </HBox>
+
+                <HBox spacing="24" style="-fx-padding: 26;">
+                    <children>
+
+                        <VBox prefWidth="900" spacing="18"
+                              style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e5e7eb;">
+
+                            <HBox alignment="CENTER_LEFT">
+                                <children>
+                                    <VBox spacing="8">
+                                        <Label text="Edit Field Agent"
+                                               style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #1f2a44;"/>
+                                        <Label text="Update details and account status."
+                                               style="-fx-text-fill: #6b7280; -fx-font-size: 16px;"/>
+                                    </VBox>
+                                    <Pane HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="lblStatusBadge" text="Active"
+                                           style="-fx-background-color: #22c55e; -fx-text-fill: white; -fx-padding: 4 10; -fx-background-radius: 8;"/>
+                                </children>
+                            </HBox>
+
+                            <GridPane hgap="28" vgap="16">
+                                <children>
+                                    <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="6">
+                                        <Label text="Full Name"/>
+                                        <TextField fx:id="tfName" prefWidth="420"/>
+                                    </VBox>
+
+                                    <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="6">
+                                        <Label text="Email"/>
+                                        <TextField fx:id="tfEmail" prefWidth="420"/>
+                                    </VBox>
+
+                                    <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="6">
+                                        <Label text="Phone (optional)"/>
+                                        <TextField fx:id="tfPhone" prefWidth="420"/>
+                                    </VBox>
+
+                                    <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" spacing="6">
+                                        <Label text="Region"/>
+                                        <ComboBox fx:id="cbRegion" prefWidth="420" onAction="#onRegionChanged"/>
+                                    </VBox>
+
+                                    <VBox GridPane.columnIndex="0" GridPane.rowIndex="2" spacing="6">
+                                        <Label text="Delegation"/>
+                                        <ComboBox fx:id="cbDelegation" prefWidth="420"/>
+                                    </VBox>
+                                </children>
+                            </GridPane>
+
+                            <VBox spacing="10"
+                                  style="-fx-background-color: #f8fafc; -fx-padding: 16; -fx-border-color: #e5e7eb; -fx-background-radius: 8; -fx-border-radius: 8;">
+                                <HBox alignment="CENTER_LEFT">
+                                    <children>
+                                        <Label text="Account Status"
+                                               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                        <CheckBox fx:id="chkActive" text="Active"/>
+                                    </children>
+                                </HBox>
+                                <Label text="Disable to prevent login."
+                                       style="-fx-text-fill: #6b7280;"/>
+                            </VBox>
+
+                            <VBox spacing="10"
+                                  style="-fx-background-color: #f8fafc; -fx-padding: 16; -fx-border-color: #e5e7eb; -fx-background-radius: 8; -fx-border-radius: 8;">
+                                <Label text="🔑  Change Password (optional)"
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                <Label text="Leave blank if you don't want to change it."
+                                       style="-fx-text-fill: #6b7280;"/>
+                                <PasswordField fx:id="pfNewPassword" promptText="Min 6 characters"/>
+                            </VBox>
+
+                            <Separator/>
+
+                            <HBox spacing="10" alignment="CENTER_RIGHT">
+                                <children>
+                                    <Button text="Cancel"
+                                            onAction="#backToFieldAgents"
+                                            style="-fx-background-color: white; -fx-border-color: #94a3b8; -fx-text-fill: #334155; -fx-padding: 12 18; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+
+                                    <Button text="💾  Save Changes"
+                                            onAction="#saveChanges"
+                                            style="-fx-background-color: #121b3a; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 12 18; -fx-background-radius: 8;"/>
+                                </children>
+                            </HBox>
+
+                        </VBox>
+
+                        <VBox prefWidth="360" spacing="16"
+                              style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e5e7eb;">
+                            <children>
+                                <HBox spacing="12" alignment="CENTER_LEFT">
+                                    <children>
+                                        <StackPane prefWidth="48" prefHeight="48"
+                                                   style="-fx-background-color: #f3f4f6; -fx-border-color: #d1d5db; -fx-background-radius: 24; -fx-border-radius: 24;">
+                                            <children>
+                                                <Label fx:id="lblAvatar" text="A"
+                                                       style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                                            </children>
+                                        </StackPane>
+
+                                        <VBox spacing="4">
+                                            <Label fx:id="lblNameHeader" text="Ahmed"
+                                                   style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                            <Label fx:id="lblEmailHeader" text="ahmed@gmail.com"
+                                                   style="-fx-text-fill: #6b7280;"/>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+
+                                <VBox spacing="10"
+                                      style="-fx-background-color: #f8fafc; -fx-padding: 14; -fx-border-color: #e5e7eb; -fx-background-radius: 8; -fx-border-radius: 8;">
+                                    <HBox>
+                                        <children>
+                                            <Label text="Agent ID"/>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                            <Label fx:id="lblAgentId" text="#22"/>
+                                        </children>
+                                    </HBox>
+
+                                    <HBox>
+                                        <children>
+                                            <Label text="Region"/>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                            <Label fx:id="lblRegionInfo" text="Tunis"/>
+                                        </children>
+                                    </HBox>
+
+                                    <HBox>
+                                        <children>
+                                            <Label text="Status"/>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                            <Label fx:id="lblStatusInfo" text="Active"/>
+                                        </children>
+                                    </HBox>
+                                </VBox>
+                            </children>
+                        </VBox>
+
+                    </children>
+                </HBox>
+
+            </children>
+        </VBox>
+
+    </children>
+</HBox>
