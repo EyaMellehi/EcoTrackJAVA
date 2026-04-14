@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.Controllers.signalement.EditSignalementController"
@@ -25,61 +26,69 @@
     </top>
 
     <center>
-        <VBox spacing="20" alignment="TOP_CENTER" style="-fx-padding: 30;">
-            <children>
-
-                <VBox spacing="8" alignment="CENTER">
-                    <Label text="Edit report"
-                           style="-fx-text-fill: #104b2c; -fx-font-size: 32px; -fx-font-weight: bold;"/>
-                    <Label text="Update the selected report."
-                           style="-fx-text-fill: #6b7280; -fx-font-size: 16px;"/>
-                </VBox>
-
-                <VBox spacing="15" maxWidth="700"
-                      style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 8;">
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="20" alignment="TOP_CENTER" style="-fx-padding: 30;">
                     <children>
 
-                        <Label text="Title"/>
-                        <TextField fx:id="tfTitre"/>
+                        <VBox spacing="8" alignment="CENTER">
+                            <Label text="Edit report"
+                                   style="-fx-text-fill: #104b2c; -fx-font-size: 32px; -fx-font-weight: bold;"/>
+                            <Label text="Update the selected report."
+                                   style="-fx-text-fill: #6b7280; -fx-font-size: 16px;"/>
+                        </VBox>
 
-                        <Label text="Description"/>
-                        <TextArea fx:id="taDescription" prefHeight="100" wrapText="true"/>
-
-                        <Label text="Type"/>
-                        <ComboBox fx:id="cbType"/>
-
-                        <Label text="Status"/>
-                        <ComboBox fx:id="cbStatut"/>
-
-                        <Label text="Address"/>
-                        <TextField fx:id="tfAddresse"/>
-
-                        <Label text="Latitude"/>
-                        <TextField fx:id="tfLatitude"/>
-
-                        <Label text="Longitude"/>
-                        <TextField fx:id="tfLongitude"/>
-
-                        <Label text="Delegation"/>
-                        <TextField fx:id="tfDelegation"/>
-
-                        <HBox spacing="12" alignment="CENTER_RIGHT">
+                        <VBox spacing="15" maxWidth="700"
+                              style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 8;">
                             <children>
-                                <Button text="Cancel"
-                                        onAction="#goBack"
-                                        style="-fx-background-color: #e5e7eb; -fx-text-fill: #111827;"/>
 
-                                <Button text="Update"
-                                        onAction="#updateSignalement"
-                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+                                <Label text="Title"/>
+                                <TextField fx:id="tfTitre"/>
+
+                                <Label text="Description"/>
+                                <TextArea fx:id="taDescription" prefHeight="100" wrapText="true"/>
+
+                                <Label text="Type"/>
+                                <ComboBox fx:id="cbType"/>
+
+                                <Label text="Status"/>
+                                <ComboBox fx:id="cbStatut"/>
+
+                                <Label text="Address"/>
+                                <TextField fx:id="tfAddresse"/>
+
+                                <Label text="Location"/>
+                                <WebView fx:id="mapView" prefHeight="320"/>
+
+                                <Label text="Click on the map to update the location."
+                                       style="-fx-text-fill: #6b7280; -fx-font-size: 13px;"/>
+
+                                <!-- Hidden fields used by controller -->
+                                <TextField fx:id="tfLatitude" visible="false" managed="false"/>
+                                <TextField fx:id="tfLongitude" visible="false" managed="false"/>
+
+                                <Label text="Delegation"/>
+                                <TextField fx:id="tfDelegation"/>
+
+                                <HBox spacing="12" alignment="CENTER_RIGHT">
+                                    <children>
+                                        <Button text="Cancel"
+                                                onAction="#goBack"
+                                                style="-fx-background-color: #e5e7eb; -fx-text-fill: #111827;"/>
+
+                                        <Button text="Update"
+                                                onAction="#updateSignalement"
+                                                style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+                                    </children>
+                                </HBox>
+
                             </children>
-                        </HBox>
+                        </VBox>
 
                     </children>
                 </VBox>
-
-            </children>
-        </VBox>
+            </content>
+        </ScrollPane>
     </center>
 
 </BorderPane>

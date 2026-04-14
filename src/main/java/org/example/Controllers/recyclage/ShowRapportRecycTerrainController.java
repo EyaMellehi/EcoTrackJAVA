@@ -55,11 +55,15 @@ public class ShowRapportRecycTerrainController {
             }
 
             lblTitle.setText("Rapport - Point #" + currentPoint.getId());
-            lblAddress.setText(currentPoint.getAddress());
+            lblAddress.setText(currentPoint.getAddress() != null ? currentPoint.getAddress() : "-");
+
             lblCategorie.setText(currentPoint.getCategorie() != null ? currentPoint.getCategorie().getNom() : "-");
             lblQuantiteDeclaree.setText(currentPoint.getQuantite() + " kg");
             lblDateCreation.setText(currentPoint.getDateDec() != null ? currentPoint.getDateDec().toString() : "-");
-            lblStatut.setText(currentPoint.getStatut());
+
+            String statut = currentPoint.getStatut() != null ? currentPoint.getStatut().toUpperCase() : "-";
+            lblStatut.setText(statut);
+            applyStatusStyle(statut);
 
             lblDateCollecte.setText(currentRapport.getDateCollect() != null ? currentRapport.getDateCollect().toString() : "-");
             lblQuantiteCollectee.setText(currentRapport.getQuantiteCollecte() + " kg");
@@ -76,11 +80,45 @@ public class ShowRapportRecycTerrainController {
                 lblTempsTraitement.setText("-");
             }
 
-            lblDescriptionPoint.setText(currentPoint.getDescription() != null && !currentPoint.getDescription().isEmpty() ? currentPoint.getDescription() : "-");
-            lblCommentaire.setText(currentRapport.getCommentaire() != null && !currentRapport.getCommentaire().isEmpty() ? currentRapport.getCommentaire() : "-");
+            lblDescriptionPoint.setText(
+                    currentPoint.getDescription() != null && !currentPoint.getDescription().isEmpty()
+                            ? currentPoint.getDescription()
+                            : "-"
+            );
+
+            lblCommentaire.setText(
+                    currentRapport.getCommentaire() != null && !currentRapport.getCommentaire().isEmpty()
+                            ? currentRapport.getCommentaire()
+                            : "-"
+            );
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void applyStatusStyle(String statut) {
+        String base = "-fx-padding: 6 12; -fx-background-radius: 14; -fx-font-weight: bold; -fx-font-size: 13px;";
+
+        switch (statut) {
+            case "PENDING":
+                lblStatut.setStyle(base + "-fx-background-color: #facc15; -fx-text-fill: #111827;");
+                break;
+            case "IN_PROGRESS":
+                lblStatut.setStyle(base + "-fx-background-color: #2563eb; -fx-text-fill: white;");
+                break;
+            case "COLLECTE":
+                lblStatut.setStyle(base + "-fx-background-color: #16a34a; -fx-text-fill: white;");
+                break;
+            case "REFUSE":
+                lblStatut.setStyle(base + "-fx-background-color: #ef4444; -fx-text-fill: white;");
+                break;
+            case "VALIDE":
+                lblStatut.setStyle(base + "-fx-background-color: #7c3aed; -fx-text-fill: white;");
+                break;
+            default:
+                lblStatut.setStyle(base + "-fx-background-color: #9ca3af; -fx-text-fill: white;");
+                break;
         }
     }
 

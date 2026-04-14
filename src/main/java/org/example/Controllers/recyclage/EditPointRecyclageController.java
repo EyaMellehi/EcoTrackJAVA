@@ -54,22 +54,39 @@ public class EditPointRecyclageController {
     }
 
     public void setPoint(PointRecyclage point) {
-        this.currentPoint = point;
+        try {
+            // recharge complet depuis la base pour récupérer citoyen + catégorie + agent
+            this.currentPoint = pointService.getPointById(point.getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.currentPoint = point;
+        }
 
-        if (point != null) {
-            lblTitle.setText("Modifier point #" + point.getId());
-            tfQuantite.setText(String.valueOf(point.getQuantite()));
-            tfAddress.setText(point.getAddress());
-            tfLatitude.setText(String.format(Locale.US, "%.6f", point.getLatitude()));
-            tfLongitude.setText(String.format(Locale.US, "%.6f", point.getLongitude()));
-            taDescription.setText(point.getDescription() != null ? point.getDescription() : "");
+        if (currentPoint != null) {
+            lblTitle.setText("Modifier point #" + currentPoint.getId());
+            tfQuantite.setText(String.valueOf(currentPoint.getQuantite()));
+            tfAddress.setText(currentPoint.getAddress());
+            tfLatitude.setText(String.format(Locale.US, "%.6f", currentPoint.getLatitude()));
+            tfLongitude.setText(String.format(Locale.US, "%.6f", currentPoint.getLongitude()));
+            taDescription.setText(currentPoint.getDescription() != null ? currentPoint.getDescription() : "");
             lblPickInfo.setText("Point : "
-                    + String.format(Locale.US, "%.6f", point.getLatitude())
+                    + String.format(Locale.US, "%.6f", currentPoint.getLatitude())
                     + ", "
-                    + String.format(Locale.US, "%.6f", point.getLongitude()));
+                    + String.format(Locale.US, "%.6f", currentPoint.getLongitude()));
 
-            if (cbCategorie.getItems() != null) {
-                cbCategorie.getSelectionModel().select(point.getCategorie());
+            if (cbCategorie.getItems() != null && currentPoint.getCategorie() != null) {
+                cbCategorie.getSelectionModel().select(currentPoint.getCategorie());
+            }
+
+            if (mapView != null && mapView.getEngine() != null) {
+                try {
+                    String script = "if(window.map && window.marker){"
+                            + "map.setView([" + currentPoint.getLatitude() + "," + currentPoint.getLongitude() + "], 15);"
+                            + "marker.setLatLng([" + currentPoint.getLatitude() + "," + currentPoint.getLongitude() + "]);"
+                            + "}";
+                    mapView.getEngine().executeScript(script);
+                } catch (Exception ignored) {
+                }
             }
         }
     }
@@ -220,6 +237,15 @@ public class EditPointRecyclageController {
         }
 
         try {
+            if (currentPoint.getCitoyen() == null) {
+                currentPoint = pointService.getPointById(currentPoint.getId());
+            }
+
+            if (currentPoint == null || currentPoint.getCitoyen() == null) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de retrouver le citoyen du point.");
+                return;
+            }
+
             currentPoint.setCategorie(cbCategorie.getValue());
             currentPoint.setQuantite(Double.parseDouble(tfQuantite.getText().trim()));
             currentPoint.setAddress(tfAddress.getText().trim());
