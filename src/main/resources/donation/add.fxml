@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.collections.FXCollections?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -18,7 +17,6 @@
           -fx-border-width:1;
       ">
 
-    <!-- TITLE -->
     <Label text="💚 Faire un don"
            style="
                -fx-font-size:22;
@@ -32,7 +30,6 @@
                -fx-text-fill:#666;
            "/>
 
-    <!-- TYPE -->
     <VBox spacing="4" maxWidth="420">
         <Label text="Type de donation"
                style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
@@ -40,10 +37,8 @@
         <ComboBox fx:id="typeBox"
                   prefWidth="420"
                   promptText="Choisir type">
-
             <items>
-                <FXCollections fx:factory="observableArrayList">
-                </FXCollections>
+                <FXCollections fx:factory="observableArrayList"/>
             </items>
         </ComboBox>
 
@@ -51,7 +46,6 @@
                style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
     </VBox>
 
-    <!-- MONTANT -->
     <VBox spacing="4" maxWidth="420">
         <Label text="Montant"
                style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
@@ -64,7 +58,6 @@
                style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
     </VBox>
 
-    <!-- DESCRIPTION -->
     <VBox spacing="4" maxWidth="420">
         <Label text="Description matériel"
                style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
@@ -79,7 +72,6 @@
                style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
     </VBox>
 
-    <!-- NOM -->
     <VBox spacing="4" maxWidth="420">
         <Label text="Nom complet"
                style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
@@ -92,7 +84,6 @@
                style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
     </VBox>
 
-    <!-- EMAIL -->
     <VBox spacing="4" maxWidth="420">
         <Label text="Email"
                style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
@@ -105,7 +96,6 @@
                style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
     </VBox>
 
-    <!-- PHONE -->
     <VBox spacing="4" maxWidth="420">
         <Label text="Téléphone"
                style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
@@ -118,7 +108,6 @@
                style="-fx-text-fill:#d32f2f; -fx-font-size:11;"/>
     </VBox>
 
-    <!-- MESSAGE -->
     <VBox spacing="4" maxWidth="420">
         <Label text="Message (optionnel)"
                style="-fx-font-weight:bold; -fx-text-fill:#2e7d32;"/>
@@ -130,7 +119,6 @@
                   promptText="Votre message..."/>
     </VBox>
 
-    <!-- BUTTONS -->
     <HBox spacing="12" alignment="CENTER">
         <Button text="❌ Annuler"
                 onAction="#close"

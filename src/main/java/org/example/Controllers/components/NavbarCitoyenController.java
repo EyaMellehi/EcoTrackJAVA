@@ -1,6 +1,5 @@
 package org.example.Controllers.components;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,12 +7,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-
 import org.example.Controllers.HomeConnectedController;
 import org.example.Controllers.User.ProfileController;
 import org.example.Controllers.annonces.ListAnnonceUserController;
+import org.example.Controllers.association.AssocationClientIndex;
 import org.example.Controllers.recyclage.AddPointRecyclageController;
 import org.example.Controllers.recyclage.EditPointRecyclageController;
 import org.example.Controllers.recyclage.PointsConnectedController;
@@ -51,9 +48,6 @@ public class NavbarCitoyenController {
         if (roles.contains("ROLE_CITOYEN")) {
             applyStandardNavbar();
             showDonations();
-        } else if (roles.contains("ROLE_AGENT_TERRAIN")) {
-            applyStandardNavbar();
-            hideDonations();
         } else {
             applyStandardNavbar();
             hideDonations();
@@ -90,39 +84,18 @@ public class NavbarCitoyenController {
 
             Object controller = loader.getController();
 
-            if (controller instanceof HomeConnectedController c) {
-                c.setLoggedUser(loggedUser);
-            }
-            if (controller instanceof PointsConnectedController c) {
-                c.setLoggedUser(loggedUser);
-            }
-            if (controller instanceof TerrainPointsController c) {
-                c.setLoggedUser(loggedUser);
-            }
-            if (controller instanceof ProfileController c) {
-                c.setUser(loggedUser);
-            }
-            if (controller instanceof ListSignalementController c) {
-                c.setLoggedUser(loggedUser);
-            }
-            if (controller instanceof ListAssignedSignalementController c) {
-                c.setLoggedUser(loggedUser);
-            }
-            if (controller instanceof ListMunicipalSignalementController c) {
-                c.setLoggedUser(loggedUser);
-            }
-            if (controller instanceof ListAnnonceUserController c) {
-                c.setLoggedUser(loggedUser);
-            }
-            if (controller instanceof AddPointRecyclageController c) {
-                c.setLoggedUser(loggedUser);
-            }
-            if (controller instanceof EditPointRecyclageController c) {
-                c.setLoggedUser(loggedUser);
-            }
-            if (controller instanceof ShowPointRecyclageController c) {
-                c.setLoggedUser(loggedUser);
-            }
+            if (controller instanceof HomeConnectedController c) c.setLoggedUser(loggedUser);
+            if (controller instanceof PointsConnectedController c) c.setLoggedUser(loggedUser);
+            if (controller instanceof TerrainPointsController c) c.setLoggedUser(loggedUser);
+            if (controller instanceof ProfileController c) c.setUser(loggedUser);
+            if (controller instanceof ListSignalementController c) c.setLoggedUser(loggedUser);
+            if (controller instanceof ListAssignedSignalementController c) c.setLoggedUser(loggedUser);
+            if (controller instanceof ListMunicipalSignalementController c) c.setLoggedUser(loggedUser);
+            if (controller instanceof ListAnnonceUserController c) c.setLoggedUser(loggedUser);
+            if (controller instanceof AddPointRecyclageController c) c.setLoggedUser(loggedUser);
+            if (controller instanceof EditPointRecyclageController c) c.setLoggedUser(loggedUser);
+            if (controller instanceof ShowPointRecyclageController c) c.setLoggedUser(loggedUser);
+            if (controller instanceof AssocationClientIndex c) c.setLoggedUser(loggedUser);
 
             Stage stage = (Stage) btnHome.getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -148,12 +121,10 @@ public class NavbarCitoyenController {
                 navigate("/signalement/list_assigned_signalements.fxml", "My reports");
                 return;
             }
-
             if (roles.contains("ROLE_CITOYEN")) {
                 navigate("/signalement/list_signalement.fxml", "Reports");
                 return;
             }
-
             if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
                 navigate("/signalement/list_municipal_signalements.fxml", "Reports");
                 return;
@@ -170,28 +141,8 @@ public class NavbarCitoyenController {
 
     @FXML
     void goAssociations() {
-        
-
-        try {
-            FXMLLoader loader;
-            Parent root;
-
-                 loader = new FXMLLoader(getClass().getResource("/client_association/index.fxml"));
-                root = loader.load();
-
- 
-
-            Stage stage = (Stage) btnRecycling.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Points de recyclage");
-            stage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        navigate("/client_association/index.fxml", "Associations");
     }
-
-
 
     @FXML
     void goToRecycling() {
@@ -202,12 +153,10 @@ public class NavbarCitoyenController {
                 navigate("/recyclage/terrain_points.fxml", "Mes points affectés");
                 return;
             }
-
             if (roles.contains("ROLE_CITOYEN")) {
                 navigate("/recyclage/points_connected.fxml", "Points de recyclage");
                 return;
             }
-
             if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
                 navigate("/recyclage/municipal_points.fxml", "Points de recyclage");
                 return;
@@ -232,6 +181,7 @@ public class NavbarCitoyenController {
         if (loggedUser != null && loggedUser.getRoles() != null &&
                 loggedUser.getRoles().contains("ROLE_CITOYEN")) {
             System.out.println("Open donations");
+            navigate("/donation/donationIndex.fxml", "My Donations");
         }
     }
 
@@ -239,6 +189,4 @@ public class NavbarCitoyenController {
     void logout() {
         navigate("/home.fxml", "Home");
     }
-
-
 }

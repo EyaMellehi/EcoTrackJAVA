@@ -1,6 +1,6 @@
 package org.example.Controllers.association;
 
- import javafx.fxml.FXML;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -8,7 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
- import org.example.Entities.Association;
+import org.example.Entities.Association;
+import org.example.Entities.User;
 
 public class AssociationClientShow {
 
@@ -22,10 +23,16 @@ public class AssociationClientShow {
     @FXML private Label status;
     @FXML private ImageView logo;
 
+    private Association currentAssociation;
+    private User loggedUser;
+
+    public void setLoggedUser(User user) {
+        this.loggedUser = user;
+    }
+
     public void setAssociation(Association a) {
         this.currentAssociation = a;
 
-        // 🔥 SAFE DATA (avoid crash)
         String nom = (a.getNom() != null) ? a.getNom() : "N/A";
         String typ = (a.getType() != null) ? a.getType() : "N/A";
         String desc = (a.getDescription() != null) ? a.getDescription() : "N/A";
@@ -41,7 +48,6 @@ public class AssociationClientShow {
         email.setText("📧 " + mail);
         adresse.setText("🏠 " + adr);
 
-        // 🔥 STATUS
         if (a.isActive()) {
             status.setText("ACTIVE");
             status.getStyleClass().setAll("badge-active");
@@ -50,14 +56,11 @@ public class AssociationClientShow {
             status.getStyleClass().setAll("badge-inactive");
         }
 
-        // 🔥 IMAGE
         try {
             if (a.getLogo() != null && !a.getLogo().isEmpty()) {
                 logo.setImage(new Image("file:" + a.getLogo(), true));
             } else {
-                logo.setImage(new Image(
-                        getClass().getResourceAsStream("/images/default.png")
-                ));
+                logo.setImage(new Image(getClass().getResourceAsStream("/images/default.png")));
             }
         } catch (Exception e) {
             logo.setImage(new Image("https://via.placeholder.com/150"));
@@ -66,23 +69,38 @@ public class AssociationClientShow {
 
     @FXML
     void close() {
-        Stage stage = (Stage) name.getScene().getWindow();
-        stage.close();
-    }
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client_association/index.fxml"));
+            Parent root = loader.load();
 
-    private Association currentAssociation;
+            AssocationClientIndex controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
+            Stage stage = (Stage) name.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Associations");
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     void openDonationForm() {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/donation/add.fxml")
-            );
-
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/donation/add.fxml"));
             Parent root = loader.load();
 
             DonationController controller = loader.getController();
-            controller.setAssociation(this.currentAssociation); // 🔥 important
+            controller.setAssociation(this.currentAssociation);
+
+            if (loggedUser != null) {
+                try {
+                    controller.setLoggedUser(loggedUser);
+                } catch (Exception ignored) {
+                }
+            }
 
             Stage stage = new Stage();
             stage.setTitle("Faire un don");

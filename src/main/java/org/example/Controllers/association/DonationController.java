@@ -1,11 +1,11 @@
 package org.example.Controllers.association;
 
-
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.Entities.Association;
 import org.example.Entities.Donation;
+import org.example.Entities.User;
 import org.example.Services.DonationService;
 
 public class DonationController {
@@ -28,25 +28,39 @@ public class DonationController {
     @FXML private Label errorPhone;
 
     private Association association;
+    private User loggedUser;
+
     private final DonationService service = new DonationService();
 
     public void setAssociation(Association association) {
         this.association = association;
     }
 
+    public void setLoggedUser(User user) {
+        this.loggedUser = user;
+
+        if (user != null) {
+            if (nomField != null) {
+                nomField.setText(user.getName() != null ? user.getName() : "");
+            }
+
+            if (emailField != null) {
+                emailField.setText(user.getEmail() != null ? user.getEmail() : "");
+            }
+
+            if (phoneField != null) {
+                phoneField.setText(user.getPhone() != null ? user.getPhone() : "");
+            }
+        }
+    }
+
     @FXML
     public void initialize() {
-
-        // types donation
         typeBox.getItems().addAll("Argent", "Matériel");
 
-        // hide dynamic fields
         toggleFields(null);
-
-        // listener
         typeBox.setOnAction(e -> toggleFields(typeBox.getValue()));
 
-        // placeholders
         montantField.setPromptText("Ex: 50");
         descriptionField.setPromptText("Décrire le matériel...");
         messageField.setPromptText("Votre message...");
@@ -55,31 +69,21 @@ public class DonationController {
         phoneField.setPromptText("Votre téléphone");
     }
 
-    // ====================================================
-    // TOGGLE FIELDS
-    // ====================================================
     private void toggleFields(String type) {
-
         boolean isArgent = "Argent".equals(type);
         boolean isMateriel = "Matériel".equals(type);
 
-        // Montant
         montantField.setVisible(isArgent);
         montantField.setManaged(isArgent);
 
-        // Description matériel
         descriptionField.setVisible(isMateriel);
         descriptionField.setManaged(isMateriel);
 
         clearErrors();
     }
 
-    // ====================================================
-    // SAVE DONATION
-    // ====================================================
     @FXML
     void saveDonation() {
-
         clearErrors();
 
         if (!validateForm()) {
@@ -87,6 +91,15 @@ public class DonationController {
         }
 
         try {
+            if (association == null) {
+                showError("Erreur", "Association introuvable.");
+                return;
+            }
+
+            if (loggedUser == null) {
+                showError("Erreur", "Aucun utilisateur connecté.");
+                return;
+            }
 
             Donation d = new Donation();
 
@@ -101,9 +114,11 @@ public class DonationController {
             }
 
             d.setMessageDon(messageField.getText().trim());
-          //  d.setDonateur();
             d.setStatut("En attente");
             d.setAssociation(association);
+
+            // correction principale
+            d.setDonateur(loggedUser);
 
             service.add(d);
 
@@ -116,38 +131,25 @@ public class DonationController {
             close();
 
         } catch (Exception e) {
-
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText(null);
-            alert.setContentText("❌ Erreur lors de l'envoi.");
-            alert.showAndWait();
-
             e.printStackTrace();
+            showError("Erreur", "❌ Erreur lors de l'envoi.");
         }
     }
 
-    // ====================================================
-    // VALIDATION
-    // ====================================================
     private boolean validateForm() {
-
         boolean valid = true;
 
-        // type
         if (typeBox.getValue() == null) {
             errorType.setText("Choisir un type");
             valid = false;
         }
 
-        // nom
-        if (nomField.getText().trim().isEmpty()) {
+        if (nomField.getText() == null || nomField.getText().trim().isEmpty()) {
             errorNom.setText("Nom obligatoire");
             valid = false;
         }
 
-        // email
-        String email = emailField.getText().trim();
+        String email = emailField.getText() != null ? emailField.getText().trim() : "";
         if (email.isEmpty()) {
             errorEmail.setText("Email obligatoire");
             valid = false;
@@ -156,8 +158,7 @@ public class DonationController {
             valid = false;
         }
 
-        // phone
-        String phone = phoneField.getText().trim();
+        String phone = phoneField.getText() != null ? phoneField.getText().trim() : "";
         if (phone.isEmpty()) {
             errorPhone.setText("Téléphone obligatoire");
             valid = false;
@@ -166,10 +167,8 @@ public class DonationController {
             valid = false;
         }
 
-        // argent
         if ("Argent".equals(typeBox.getValue())) {
-
-            String montant = montantField.getText().trim();
+            String montant = montantField.getText() != null ? montantField.getText().trim() : "";
 
             if (montant.isEmpty()) {
                 errorMontant.setText("Montant obligatoire");
@@ -177,12 +176,10 @@ public class DonationController {
             } else {
                 try {
                     double m = Double.parseDouble(montant);
-
                     if (m <= 0) {
                         errorMontant.setText("Montant invalide");
                         valid = false;
                     }
-
                 } catch (Exception e) {
                     errorMontant.setText("Nombre invalide");
                     valid = false;
@@ -190,10 +187,9 @@ public class DonationController {
             }
         }
 
-        // matériel
         if ("Matériel".equals(typeBox.getValue())) {
-
-            if (descriptionField.getText().trim().isEmpty()) {
+            String desc = descriptionField.getText() != null ? descriptionField.getText().trim() : "";
+            if (desc.isEmpty()) {
                 errorDescription.setText("Décrire le matériel");
                 valid = false;
             }
@@ -202,11 +198,7 @@ public class DonationController {
         return valid;
     }
 
-    // ====================================================
-    // CLEAR ERRORS
-    // ====================================================
     private void clearErrors() {
-
         errorType.setText("");
         errorMontant.setText("");
         errorDescription.setText("");
@@ -215,9 +207,14 @@ public class DonationController {
         errorPhone.setText("");
     }
 
-    // ====================================================
-    // CLOSE
-    // ====================================================
+    private void showError(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
     @FXML
     private void close() {
         Stage stage = (Stage) typeBox.getScene().getWindow();

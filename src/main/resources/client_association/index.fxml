@@ -9,49 +9,48 @@
             stylesheets="@../style.css"
             styleClass="root">
 
-    <!-- NAVBAR -->
     <top>
         <VBox>
+            <children>
 
-            <fx:include source="/components/navbar_citoyen.fxml"/>
+                <fx:include fx:id="navbar" source="/components/navbar_citoyen.fxml"/>
 
-            <!-- SEARCH + FILTER -->
-            <HBox spacing="15"
-                  alignment="CENTER_LEFT"
-                  style="-fx-background-color:white;
-                         -fx-padding:18;
-                         -fx-border-color:#e5e7eb;
-                         -fx-border-width:0 0 1 0;">
+                <HBox spacing="15"
+                      alignment="CENTER_LEFT"
+                      style="-fx-background-color:white;
+                             -fx-padding:18;
+                             -fx-border-color:#e5e7eb;
+                             -fx-border-width:0 0 1 0;">
 
-                <TextField fx:id="searchField"
-                           promptText="🔍 Search association..."
-                           onKeyReleased="#onSearch"
-                           prefWidth="320"
-                           style="-fx-background-radius:10;
-                                  -fx-border-radius:10;
-                                  -fx-padding:10;
-                                  -fx-font-size:14px;"/>
+                    <TextField fx:id="searchField"
+                               promptText="🔍 Search association..."
+                               onKeyReleased="#onSearch"
+                               prefWidth="320"
+                               style="-fx-background-radius:10;
+                                      -fx-border-radius:10;
+                                      -fx-padding:10;
+                                      -fx-font-size:14px;"/>
 
-                <ComboBox fx:id="regionFilter"
-                          onAction="#onFilter"
-                          prefWidth="220"
-                          promptText="Choose region"
-                          style="-fx-background-radius:10;
-                                 -fx-font-size:14px;"/>
+                    <ComboBox fx:id="regionFilter"
+                              onAction="#onFilter"
+                              prefWidth="220"
+                              promptText="Choose region"
+                              style="-fx-background-radius:10;
+                                     -fx-font-size:14px;"/>
 
-                <Region HBox.hgrow="ALWAYS"/>
+                    <Region HBox.hgrow="ALWAYS"/>
 
-                <Label text="Associations Directory"
-                       style="-fx-font-size:18px;
-                              -fx-font-weight:bold;
-                              -fx-text-fill:#1f5130;"/>
+                    <Label text="Associations Directory"
+                           style="-fx-font-size:18px;
+                                  -fx-font-weight:bold;
+                                  -fx-text-fill:#1f5130;"/>
 
-            </HBox>
+                </HBox>
 
+            </children>
         </VBox>
     </top>
 
-    <!-- CONTENT -->
     <center>
         <ScrollPane fitToWidth="true"
                     fitToHeight="true"
@@ -64,14 +63,12 @@
                           vgap="25"
                           alignment="CENTER"
                           prefWrapLength="1100"
-
                           styleClass="content"/>
             </content>
 
         </ScrollPane>
     </center>
 
-    <!-- PAGINATION -->
     <bottom>
         <HBox spacing="20"
               alignment="CENTER"

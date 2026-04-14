@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.example.Utils.DatabaseInitializer;
 
 public class MainFX extends Application {
 
@@ -15,7 +14,7 @@ public class MainFX extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         // Initialize database tables on startup
-        DatabaseInitializer.initializeTables();
+
         
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/home.fxml"));
         Scene scene = new Scene(fxmlLoader.load());

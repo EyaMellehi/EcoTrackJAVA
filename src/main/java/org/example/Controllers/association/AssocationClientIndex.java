@@ -10,10 +10,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.Association;
+import org.example.Entities.User;
 import org.example.Services.AssociationService;
 
 import java.io.IOException;
@@ -28,6 +32,11 @@ public class AssocationClientIndex {
     @FXML private ComboBox<String> regionFilter;
     @FXML private Label pageLabel;
 
+    @FXML private HBox navbar;
+    @FXML private NavbarCitoyenController navbarController;
+
+    private User loggedUser;
+
     private final AssociationService service = new AssociationService();
 
     private List<Association> allData = new ArrayList<>();
@@ -36,9 +45,16 @@ public class AssocationClientIndex {
     private int currentPage = 0;
     private final int pageSize = 6;
 
+    public void setLoggedUser(User user) {
+        this.loggedUser = user;
+
+        if (navbarController != null) {
+            navbarController.setLoggedUser(user);
+        }
+    }
+
     @FXML
     public void initialize() {
-
         if (regionFilter != null) {
             regionFilter.setItems(FXCollections.observableArrayList(
                     "All",
@@ -69,7 +85,6 @@ public class AssocationClientIndex {
             ));
 
             regionFilter.setValue("All");
-
             regionFilter.setOnAction(e -> onFilter());
         }
 
@@ -83,11 +98,9 @@ public class AssocationClientIndex {
     private void loadData() {
         try {
             allData = service.getAll();
-
             if (allData == null) {
                 allData = new ArrayList<>();
             }
-
         } catch (Exception e) {
             allData = new ArrayList<>();
             e.printStackTrace();
@@ -97,7 +110,6 @@ public class AssocationClientIndex {
     }
 
     private void applyFilters() {
-
         String keyword = "";
         String region = "All";
 
@@ -113,9 +125,7 @@ public class AssocationClientIndex {
         final String selectedRegion = region;
 
         filteredData = allData.stream()
-
                 .filter(a -> {
-
                     if (searchValue.isEmpty()) return true;
 
                     String nom = a.getNom() == null ? "" : a.getNom().toLowerCase();
@@ -126,14 +136,10 @@ public class AssocationClientIndex {
                             || desc.contains(searchValue)
                             || reg.contains(searchValue);
                 })
-
                 .filter(a -> {
                     if (selectedRegion.equals("All")) return true;
-
-                    return a.getRegion() != null &&
-                            a.getRegion().equalsIgnoreCase(selectedRegion);
+                    return a.getRegion() != null && a.getRegion().equalsIgnoreCase(selectedRegion);
                 })
-
                 .collect(Collectors.toList());
 
         currentPage = 0;
@@ -141,7 +147,6 @@ public class AssocationClientIndex {
     }
 
     private void refreshPage() {
-
         cardContainer.getChildren().clear();
 
         if (filteredData.isEmpty()) {
@@ -171,7 +176,6 @@ public class AssocationClientIndex {
     }
 
     private VBox createCard(Association a) {
-
         VBox card = new VBox(12);
         card.getStyleClass().add("card");
         card.setPrefWidth(250);
@@ -196,33 +200,26 @@ public class AssocationClientIndex {
 
         imageContainer.getChildren().add(logo);
 
-        Label name = new Label(
-                a.getNom() == null ? "No Name" : a.getNom()
-        );
+        Label name = new Label(a.getNom() == null ? "No Name" : a.getNom());
         name.getStyleClass().add("card-title");
 
-        Label region = new Label(
-                "📍 " + (a.getRegion() == null ? "Unknown" : a.getRegion())
-        );
+        Label region = new Label("📍 " + (a.getRegion() == null ? "Unknown" : a.getRegion()));
+        Label phone = new Label("📞 " + (a.getTel() == 0 ? "--" : a.getTel()));
 
-        Label phone = new Label(
-                "📞 " + (a.getTel() == 0 ? "--" : a.getTel())
-        );
-
-        Label status = new Label(
-                a.isActive() ? "ACTIVE" : "INACTIVE"
-        );
-
-        status.getStyleClass().add(
-                a.isActive() ? "badge-active" : "badge-inactive"
-        );
+        Label status = new Label(a.isActive() ? "ACTIVE" : "INACTIVE");
+        status.getStyleClass().add(a.isActive() ? "badge-active" : "badge-inactive");
 
         Button viewBtn = new Button("👁 View");
         viewBtn.getStyleClass().add("icon-btn");
         viewBtn.setOnAction(e -> openShowPage(a));
 
-        HBox footer = new HBox(10, status, viewBtn);
-        footer.setStyle("-fx-alignment:center-space-between;");
+        HBox footer = new HBox(10);
+        footer.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        footer.getChildren().addAll(status, spacer, viewBtn);
 
         card.getChildren().addAll(
                 imageContainer,
@@ -232,30 +229,22 @@ public class AssocationClientIndex {
                 footer
         );
 
-        card.setOnMouseEntered(e ->
-                card.setStyle("-fx-scale-x:1.03;-fx-scale-y:1.03;")
-        );
-
-        card.setOnMouseExited(e ->
-                card.setStyle("")
-        );
+        card.setOnMouseEntered(e -> card.setStyle("-fx-scale-x:1.03;-fx-scale-y:1.03;"));
+        card.setOnMouseExited(e -> card.setStyle(""));
 
         return card;
     }
 
     private void openShowPage(Association a) {
-
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/client_association/show.fxml")
-            );
-
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client_association/show.fxml"));
             Parent root = loader.load();
 
             AssociationClientShow controller = loader.getController();
             controller.setAssociation(a);
+            controller.setLoggedUser(loggedUser);
 
-            Stage stage = new Stage();
+            Stage stage = (Stage) cardContainer.getScene().getWindow();
             stage.setTitle("Association Details");
             stage.setScene(new Scene(root));
             stage.show();
@@ -277,9 +266,7 @@ public class AssocationClientIndex {
 
     @FXML
     private void nextPage() {
-
         int totalPages = (int) Math.ceil((double) filteredData.size() / pageSize);
-
         if (currentPage < totalPages - 1) {
             currentPage++;
             refreshPage();
@@ -288,7 +275,6 @@ public class AssocationClientIndex {
 
     @FXML
     private void prevPage() {
-
         if (currentPage > 0) {
             currentPage--;
             refreshPage();
