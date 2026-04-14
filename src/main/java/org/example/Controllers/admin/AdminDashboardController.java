@@ -44,7 +44,7 @@ public class AdminDashboardController {
     @FXML
     void logout() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/user/home.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/home.fxml"));
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("EcoTrack - Home");
@@ -117,6 +117,42 @@ public class AdminDashboardController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Field Agents");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    void goToCategories() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/admin/categories.fxml"));
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Catégories");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void goToAssociation() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/admin_association/association.fxml"));
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("associaitons");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void goToDonation() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/donation/donationIndex.fxml"));
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("donations");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

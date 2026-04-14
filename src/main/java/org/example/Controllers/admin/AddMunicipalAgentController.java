@@ -283,4 +283,21 @@ public class AddMunicipalAgentController {
             e.printStackTrace();
         }
     }
+    @FXML
+    void goToCategories() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin/categories.fxml"));
+            Parent root = loader.load();
+
+            CategoriesController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Catégories");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

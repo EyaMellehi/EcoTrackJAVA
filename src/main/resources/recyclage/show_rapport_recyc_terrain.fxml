@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.ShowRapportRecycTerrainController"
+            prefWidth="1200" prefHeight="800"
+            style="-fx-background-color: #f6f7f6;">
+
+    <center>
+        <VBox alignment="CENTER" spacing="20" style="-fx-padding: 40;">
+            <children>
+
+                <HBox alignment="CENTER_LEFT" spacing="20" prefWidth="900">
+                    <children>
+                        <VBox spacing="5">
+                            <Label fx:id="lblTitle"
+                                   text="Rapport"
+                                   style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                            <Label fx:id="lblAddress"
+                                   text="Adresse"
+                                   wrapText="true"
+                                   style="-fx-text-fill: #666;"/>
+                        </VBox>
+
+                        <Pane HBox.hgrow="ALWAYS"/>
+
+                        <Button text="Retour au point" onAction="#goBackToPoint"/>
+                    </children>
+                </HBox>
+
+                <VBox spacing="14" prefWidth="900"
+                      style="-fx-background-color: white; -fx-padding: 28; -fx-background-radius: 16;">
+                    <children>
+                        <Label fx:id="lblCategorie" text="Catégorie : -"/>
+                        <Label fx:id="lblQuantiteDeclaree" text="Quantité déclarée : -"/>
+                        <Label fx:id="lblDateCreation" text="Date création : -"/>
+                        <Label fx:id="lblStatut" text="Statut du point : -"/>
+                        <Label fx:id="lblDateCollecte" text="Date collecte : -"/>
+                        <Label fx:id="lblQuantiteCollectee" text="Quantité collectée : -"/>
+                        <Label fx:id="lblAgent" text="Agent terrain : -"/>
+                        <Label fx:id="lblPointAttribue" text="Point attribué : -"/>
+                        <Label fx:id="lblTempsTraitement" text="Temps de traitement : -"/>
+                        <Label fx:id="lblDescriptionPoint" text="Description point : -" wrapText="true"/>
+                        <Label fx:id="lblCommentaire" text="Commentaire rapport : -" wrapText="true"/>
+
+                        <Label text="Rapport enregistré. Statut du point : COLLECTE"
+                               style="-fx-background-color: #e8f5e9; -fx-text-fill: #2e7d32; -fx-padding: 12; -fx-background-radius: 10; -fx-font-weight: bold;"/>
+                    </children>
+                </VBox>
+
+            </children>
+        </VBox>
+    </center>
+
+</BorderPane>

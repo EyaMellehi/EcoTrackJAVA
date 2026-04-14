@@ -3,8 +3,6 @@ package org.example.Controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
@@ -24,7 +22,7 @@ public class HomeController {
             stage.setTitle("Login");
             stage.show();
         } catch (Exception e) {
-            showError("Impossible d'ouvrir la page de connexion", e);
+            e.printStackTrace();
         }
     }
 
@@ -37,29 +35,21 @@ public class HomeController {
             stage.setTitle("Register");
             stage.show();
         } catch (Exception e) {
-            showError("Impossible d'ouvrir la page d'inscription", e);
+            e.printStackTrace();
         }
     }
 
     @FXML
-    void goToEvents() {
+    void goToRecycling() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/events.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/recyclage/points.fxml"));
             Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setTitle("Événements");
+            stage.setTitle("Recycling Points");
             stage.show();
         } catch (Exception e) {
-            showError("Impossible d'ouvrir la page Events", e);
+            e.printStackTrace();
         }
     }
 
-    private void showError(String message, Exception e) {
-        e.printStackTrace();
-        Alert alert = new Alert(Alert.AlertType.ERROR, message + "\n\n" + e.getMessage(), ButtonType.OK);
-        alert.setHeaderText("Erreur de navigation");
-        alert.showAndWait();
-    }
-
 }
-

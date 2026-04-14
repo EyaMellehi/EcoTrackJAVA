@@ -13,6 +13,9 @@ public class MainFX extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        // Initialize database tables on startup
+
+        
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/home.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("EcoTrack - Home");

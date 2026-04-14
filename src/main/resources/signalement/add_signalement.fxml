@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.Controllers.signalement.AddSignalementController"
+           prefWidth="1450" prefHeight="900"
+           style="-fx-background-image: url('/images/carousel-1.jpg'); -fx-background-size: cover; -fx-background-position: center center;">
+
+    <children>
+        <Pane style="-fx-background-color: rgba(32,90,52,0.55);"/>
+
+        <BorderPane maxWidth="920" maxHeight="800"
+                    style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 25;">
+
+            <top>
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Incident Report Form"
+                               style="-fx-text-fill: #104b2c; -fx-font-size: 34px; -fx-font-weight: bold;"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button text="Back"
+                                onAction="#goBack"
+                                style="-fx-background-color: transparent; -fx-text-fill: #2e7d32; -fx-font-size: 16px;"/>
+                    </children>
+                </HBox>
+            </top>
+
+            <center>
+                <VBox spacing="14" style="-fx-padding: 20 0 0 0;">
+                    <children>
+
+                        <HBox spacing="10">
+                            <children>
+                                <ComboBox fx:id="cbType" promptText="Choose type" prefWidth="260"/>
+                                <TextField fx:id="tfTitre" promptText="Title" HBox.hgrow="ALWAYS"/>
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="10">
+                            <children>
+                                <TextField fx:id="tfAddresse" promptText="Address (or landmark)" HBox.hgrow="ALWAYS"/>
+                                <Button text="Localiser"
+                                        onAction="#locateTypedAddress"
+                                        style="-fx-background-color: white; -fx-border-color: #2e7d32; -fx-text-fill: #2e7d32; -fx-padding: 10 18;"/>
+                            </children>
+                        </HBox>
+
+                        <Label text="Type an address then “Localiser”, or click directly on the map."
+                               style="-fx-text-fill: #7a8087; -fx-font-size: 13px;"/>
+
+                        <WebView fx:id="mapView" prefHeight="300"/>
+
+                        <Label text="Click on the map to choose the exact location."
+                               style="-fx-text-fill: #7a8087; -fx-font-size: 13px;"/>
+
+                        <HBox alignment="CENTER_LEFT">
+                            <children>
+                                <Label text="Description"
+                                       style="-fx-text-fill: #104b2c; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                <Pane HBox.hgrow="ALWAYS"/>
+                                <Button text="🎤 Dicter"
+                                        style="-fx-background-color: white; -fx-border-color: #dc3545; -fx-text-fill: #dc3545;"/>
+                            </children>
+                        </HBox>
+
+                        <TextArea fx:id="taDescription" promptText="Description" prefHeight="110" wrapText="true"/>
+
+                        <!-- PHOTOS -->
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Photos (optional)"
+                                       style="-fx-text-fill: #104b2c; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                <HBox spacing="10">
+                                    <children>
+                                        <Button text="Choose Photos"
+                                                onAction="#choosePhotos"
+                                                style="-fx-background-color: white; -fx-border-color: #2e7d32; -fx-text-fill: #2e7d32; -fx-padding: 10 18;"/>
+                                        <Label fx:id="lblSelectedPhotos"
+                                               text="No photos selected"
+                                               style="-fx-text-fill: #7a8087; -fx-font-size: 14px;"/>
+                                    </children>
+                                </HBox>
+
+                                <Label text="You can select multiple images."
+                                       style="-fx-text-fill: #8b9197; -fx-font-size: 13px;"/>
+                            </children>
+                        </VBox>
+
+                        <HBox spacing="10">
+                            <children>
+                                <TextField fx:id="tfDelegation" promptText="Delegation" prefWidth="220"/>
+                                <TextField fx:id="tfLatitude" promptText="Latitude" prefWidth="160"/>
+                                <TextField fx:id="tfLongitude" promptText="Longitude" prefWidth="160"/>
+                            </children>
+                        </HBox>
+
+                        <HBox alignment="CENTER">
+                            <children>
+                                <Button text="✈ Submit report"
+                                        onAction="#addSignalement"
+                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 14 32;"/>
+                            </children>
+                        </HBox>
+
+                        <Label text="By submitting, you agree that the report will be processed by the relevant authorities."
+                               style="-fx-text-fill: #8b9197; -fx-font-size: 13px;"/>
+                    </children>
+                </VBox>
+            </center>
+
+        </BorderPane>
+    </children>
+</StackPane>

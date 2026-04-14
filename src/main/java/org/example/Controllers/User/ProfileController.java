@@ -5,15 +5,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
-import org.example.Entities.User;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import org.example.Controllers.components.NavbarCitoyenController;
+import org.example.Controllers.components.NavbarMunicipalController;
+import org.example.Entities.User;
+
 import java.io.File;
+
 public class ProfileController {
 
-    @FXML
-    private ImageView imgAvatar;
+    @FXML private ImageView imgAvatar;
     @FXML private Label lblAvatar;
     @FXML private Label lblNameCard;
     @FXML private Label lblEmailCard;
@@ -26,10 +30,18 @@ public class ProfileController {
     @FXML private Label lblRegion;
     @FXML private Label lblEcoPoints;
 
+    @FXML private HBox navbarCitoyen;
+    @FXML private HBox navbarMunicipal;
+
+    @FXML private NavbarCitoyenController navbarCitoyenController;
+    @FXML private NavbarMunicipalController navbarMunicipalController;
+
     private User user;
 
     public void setUser(User user) {
         this.user = user;
+
+        configureNavbar();
 
         if (user != null) {
             lblNameCard.setText(user.getName() != null ? user.getName() : "");
@@ -53,54 +65,69 @@ public class ProfileController {
                     imgAvatar.setVisible(true);
                     lblAvatar.setVisible(false);
                 } else {
-                    imgAvatar.setVisible(false);
-                    lblAvatar.setVisible(true);
-
-                    if (user.getName() != null && !user.getName().isEmpty()) {
-                        lblAvatar.setText(String.valueOf(Character.toUpperCase(user.getName().charAt(0))));
-                    } else if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-                        lblAvatar.setText(String.valueOf(Character.toUpperCase(user.getEmail().charAt(0))));
-                    } else {
-                        lblAvatar.setText("U");
-                    }
+                    showLetterAvatar();
                 }
             } else {
-                imgAvatar.setVisible(false);
-                lblAvatar.setVisible(true);
-
-                if (user.getName() != null && !user.getName().isEmpty()) {
-                    lblAvatar.setText(String.valueOf(Character.toUpperCase(user.getName().charAt(0))));
-                } else if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-                    lblAvatar.setText(String.valueOf(Character.toUpperCase(user.getEmail().charAt(0))));
-                } else {
-                    lblAvatar.setText("U");
-                }
+                showLetterAvatar();
             }
         }
     }
 
-    @FXML
-    void goToProfile() {
-        // already on profile
-    }
+    private void configureNavbar() {
+        if (user == null || user.getRoles() == null) {
+            showCitoyenNavbar();
+            return;
+        }
 
-    @FXML
-    void goToDonations() {
-        System.out.println("Open donations page");
-    }
+        String roles = user.getRoles();
 
-    @FXML
-    void logout() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/home.fxml"));
-            Stage stage = (Stage) lblFullName.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("EcoTrack - Home");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
+            showMunicipalNavbar();
+
+            if (navbarMunicipalController != null) {
+                navbarMunicipalController.setLoggedUser(user);
+            }
+        } else {
+            // citoyen + agent terrain => même navbar citoyen
+            showCitoyenNavbar();
+
+            if (navbarCitoyenController != null) {
+                navbarCitoyenController.setLoggedUser(user);
+            }
         }
     }
+
+    private void showCitoyenNavbar() {
+        navbarCitoyen.setVisible(true);
+        navbarCitoyen.setManaged(true);
+
+        navbarMunicipal.setVisible(false);
+        navbarMunicipal.setManaged(false);
+    }
+
+    private void showMunicipalNavbar() {
+        navbarMunicipal.setVisible(true);
+        navbarMunicipal.setManaged(true);
+
+        navbarCitoyen.setVisible(false);
+        navbarCitoyen.setManaged(false);
+    }
+
+    private void showLetterAvatar() {
+        imgAvatar.setVisible(false);
+        lblAvatar.setVisible(true);
+
+        if (user != null && user.getName() != null && !user.getName().isEmpty()) {
+            lblAvatar.setText(String.valueOf(Character.toUpperCase(user.getName().charAt(0))));
+        } else if (user != null && user.getEmail() != null && !user.getEmail().isEmpty()) {
+            lblAvatar.setText(String.valueOf(Character.toUpperCase(user.getEmail().charAt(0))));
+        } else {
+            lblAvatar.setText("U");
+        }
+    }
+
+
+
 
     @FXML
     void updateProfile() {

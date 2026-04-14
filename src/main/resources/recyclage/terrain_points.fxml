@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.TerrainPointsController"
+            prefWidth="1450" prefHeight="850"
+            style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <VBox spacing="0">
+            <children>
+
+                <fx:include fx:id="navbarCitoyen" source="/components/navbar_citoyen.fxml"/>
+
+                <StackPane prefHeight="220">
+                    <children>
+
+                        <ImageView fitHeight="220" preserveRatio="false" StackPane.alignment="CENTER">
+                            <image>
+                                <Image url="@/images/carousel-1.jpg"/>
+                            </image>
+                            <viewport>
+                                <Rectangle2D width="1500" height="220"/>
+                            </viewport>
+                        </ImageView>
+
+                        <Pane style="-fx-background-color: rgba(0,0,0,0.45);"/>
+
+                        <VBox alignment="CENTER" spacing="10">
+                            <children>
+                                <Label text="Agent de terrain"
+                                       style="-fx-text-fill: #6ed46e; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+                                <Label text="Mes points affectés"
+                                       style="-fx-text-fill: white; -fx-font-size: 42px; -fx-font-weight: bold;"/>
+                                <Label fx:id="lblAgentName"
+                                       text="Agent terrain : -"
+                                       style="-fx-text-fill: #dcefdc; -fx-font-size: 16px;"/>
+                            </children>
+                        </VBox>
+
+                    </children>
+                </StackPane>
+
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="25" style="-fx-padding: 30; -fx-background-color: #f6f7f6;">
+
+                    <HBox spacing="20" alignment="CENTER">
+                        <children>
+                            <VBox prefWidth="250" spacing="8"
+                                  style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                                <Label text="Total" style="-fx-font-size: 16px; -fx-text-fill: #555;"/>
+                                <Label fx:id="lblTotal" text="0"
+                                       style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                            </VBox>
+
+                            <VBox prefWidth="250" spacing="8"
+                                  style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                                <Label text="En cours" style="-fx-font-size: 16px; -fx-text-fill: #555;"/>
+                                <Label fx:id="lblInProgress" text="0"
+                                       style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                            </VBox>
+
+                            <VBox prefWidth="250" spacing="8"
+                                  style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                                <Label text="Collectés" style="-fx-font-size: 16px; -fx-text-fill: #555;"/>
+                                <Label fx:id="lblCollected" text="0"
+                                       style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                            </VBox>
+                        </children>
+                    </HBox>
+
+                    <VBox spacing="12"
+                          style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                        <children>
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <children>
+                                    <TextField fx:id="txtSearch"
+                                               promptText="Rechercher : citoyen, catégorie, adresse, statut..."
+                                               prefWidth="460"
+                                               style="-fx-background-color: #eef7ee; -fx-background-radius: 8; -fx-padding: 10 12;"/>
+
+                                    <ComboBox fx:id="cbStatus"
+                                              prefWidth="220"
+                                              style="-fx-background-color: #eef7ee; -fx-background-radius: 8;"/>
+
+                                    <Pane HBox.hgrow="ALWAYS"/>
+
+                                    <Button text="Refresh"
+                                            onAction="#refreshTable"
+                                            style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8;"/>
+                                </children>
+                            </HBox>
+                        </children>
+                    </VBox>
+
+                    <VBox spacing="15"
+                          style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                        <children>
+                            <TableView fx:id="tablePoints" prefHeight="540">
+                                <columns>
+                                    <TableColumn fx:id="colId" text="#" prefWidth="60"/>
+                                    <TableColumn fx:id="colCitizen" text="Citoyen" prefWidth="140"/>
+                                    <TableColumn fx:id="colCategory" text="Catégorie" prefWidth="120"/>
+                                    <TableColumn fx:id="colQuantity" text="Quantité" prefWidth="100"/>
+                                    <TableColumn fx:id="colAddress" text="Adresse" prefWidth="360"/>
+                                    <TableColumn fx:id="colDate" text="Date" prefWidth="110"/>
+                                    <TableColumn fx:id="colStatus" text="Statut" prefWidth="130"/>
+                                    <TableColumn fx:id="colActions" text="Actions" prefWidth="180"/>
+                                </columns>
+                            </TableView>
+                        </children>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
