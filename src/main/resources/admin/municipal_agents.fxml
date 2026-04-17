@@ -41,11 +41,11 @@
                         style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
 
                 <Button text="Associations"
-                        onAction="#goToAssocation"
-
+                        onAction="#goToAssociation"
                         style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
 
-                <Button text="Events"
+                <Button text="Donation"
+                        onAction="#goToDonation"
                         style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
 
             </children>

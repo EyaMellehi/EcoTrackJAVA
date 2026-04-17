@@ -37,7 +37,6 @@
                 <!-- ACTIVE SAME STYLE -->
                 <Button style="-fx-background-color: #0d1530; -fx-text-fill: white; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;" text="Associations" />
 
-                <Button onAction="#goToEvents" style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;" text="Events" />
 
                 <Button onAction="#goToDonation" style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;" text="Donations" />
 

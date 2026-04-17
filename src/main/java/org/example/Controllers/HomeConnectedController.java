@@ -19,6 +19,7 @@ import org.example.Controllers.signalement.ListSignalementController;
 import org.example.Entities.User;
 
 import java.io.IOException;
+import javafx.scene.layout.StackPane;
 
 public class HomeConnectedController {
 
@@ -32,6 +33,7 @@ public class HomeConnectedController {
     @FXML private MenuItem menuDonations;
     @FXML private MenuItem menuLogout;
     @FXML private Label lblWelcomeUser;
+    @FXML private StackPane navbarContainer;
 
     private User loggedUser;
 
@@ -42,67 +44,52 @@ public class HomeConnectedController {
             return;
         }
 
+        loadNavbarByRole();
+
         if (user.getName() != null && !user.getName().isEmpty()) {
             lblWelcomeUser.setText("Welcome, " + user.getName());
         } else {
             lblWelcomeUser.setText("Welcome");
         }
+    }
+    private void loadNavbarByRole() {
+        try {
+            if (navbarContainer == null) {
+                return;
+            }
 
-        String roles = user.getRoles();
+            navbarContainer.getChildren().clear();
 
-        if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
-            applyMunicipalNavbar();
-        } else if (roles.contains("ROLE_CITOYEN")) {
-            applyStandardNavbar();
-        } else if (roles.contains("ROLE_AGENT_TERRAIN")) {
-            applyTerrainNavbar();
-        } else if (roles.contains("ROLE_ADMIN")) {
-            applyAdminNavbar();
-        } else {
-            applyStandardNavbar();
+            String roles = loggedUser != null && loggedUser.getRoles() != null ? loggedUser.getRoles() : "";
+            FXMLLoader loader;
+
+            if (roles.contains("ROLE_CITOYEN") || roles.contains("ROLE_AGENT_TERRAIN")) {
+                loader = new FXMLLoader(getClass().getResource("/components/navbar_citoyen.fxml"));
+            } else if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
+                loader = new FXMLLoader(getClass().getResource("/components/navbar_municipal.fxml"));
+            } else {
+                loader = new FXMLLoader(getClass().getResource("/components/navbar_citoyen.fxml"));
+            }
+
+            Parent navbar = loader.load();
+            Object controller = loader.getController();
+
+            if (controller instanceof org.example.Controllers.components.NavbarCitoyenController c) {
+                c.setLoggedUser(loggedUser);
+            } else if (controller instanceof org.example.Controllers.components.NavbarMunicipalController c) {
+                c.setLoggedUser(loggedUser);
+            }
+
+            navbarContainer.getChildren().add(navbar);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        if (!roles.contains("ROLE_CITOYEN")) {
-            menuDonations.setVisible(false);
-            menuDonations.setDisable(true);
-        }
     }
 
-    private void applyStandardNavbar() {
-        btnHome.setText("Home");
-        btnReport.setText("Report");
-        btnBlogs.setText("Blogs");
-        btnAssociations.setText("Associations");
-        btnRecycling.setText("Recycling");
-        btnEvents.setText("Events");
-    }
 
-    private void applyMunicipalNavbar() {
-        btnHome.setText("Home");
-        btnReport.setText("Report");
-        btnBlogs.setText("Announcements Management");
-        btnAssociations.setText("Associations");
-        btnRecycling.setText("Recycling");
-        btnEvents.setText("Events Management");
-    }
 
-    private void applyTerrainNavbar() {
-        btnHome.setText("Home");
-        btnReport.setText("Report");
-        btnBlogs.setText("Blogs");
-        btnAssociations.setText("Associations");
-        btnRecycling.setText("Recycling");
-        btnEvents.setText("Events");
-    }
 
-    private void applyAdminNavbar() {
-        btnHome.setText("Home");
-        btnReport.setText("Report");
-        btnBlogs.setText("Announcements Management");
-        btnAssociations.setText("Associations");
-        btnRecycling.setText("Recycling");
-        btnEvents.setText("Events Management");
-    }
 
     @FXML
     void goToDonations() {

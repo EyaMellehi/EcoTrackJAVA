@@ -102,4 +102,14 @@ public class AddCategoryController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+    public void goToAssociation() {
+
+            navigate("/admin_association/association.fxml ","Associtaion");
+    }
+
+    public void goToDonation() {
+
+            navigate("/donation/donationIndex.fxml ","donation");
+
+        }
 }

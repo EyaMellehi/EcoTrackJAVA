@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.Controllers.User.CompleteGoogleRegisterController"
+      prefWidth="1400" prefHeight="800"
+      style="-fx-background-color: white;">
+
+    <!-- LEFT SIDE -->
+    <StackPane prefWidth="700" HBox.hgrow="ALWAYS">
+        <children>
+
+            <Pane style="-fx-background-image: url('/images/nat.jpg');
+                         -fx-background-size: cover;
+                         -fx-background-repeat: no-repeat;
+                         -fx-background-position: center center;"/>
+
+            <Pane style="-fx-background-color: rgba(46,125,50,0.35);"/>
+
+            <VBox alignment="BOTTOM_LEFT" spacing="12">
+                <padding>
+                    <Insets top="40" right="40" bottom="40" left="40"/>
+                </padding>
+
+                <Label text="EcoTrack"
+                       style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;"/>
+
+                <Label text="Almost there ✨"
+                       style="-fx-text-fill: white; -fx-font-size: 36px; -fx-font-weight: bold;"/>
+
+                <Label text="Complete your account to start tracking&#10;your impact and helping your city."
+                       style="-fx-text-fill: white; -fx-font-size: 18px;"/>
+            </VBox>
+
+        </children>
+    </StackPane>
+
+    <!-- RIGHT SIDE -->
+    <VBox alignment="CENTER" spacing="20" prefWidth="700"
+          HBox.hgrow="ALWAYS"
+          style="-fx-background-color: white; -fx-padding: 40;">
+
+        <VBox alignment="CENTER" spacing="12"
+              prefWidth="420" maxWidth="420"
+              style="-fx-background-color: #ffffff;
+                     -fx-background-radius: 18;
+                     -fx-border-radius: 18;
+                     -fx-border-color: #eeeeee;
+                     -fx-padding: 35;">
+
+            <Label text="Complete Registration"
+                   style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #1f1f1f;"/>
+
+            <Label text="We found your Google account. Just complete a few details."
+                   wrapText="true"
+                   style="-fx-text-fill: #777777; -fx-font-size: 14px; -fx-alignment: center;"/>
+
+            <Label fx:id="lblEmail"
+                   text="Email:"
+                   style="-fx-text-fill: #2e7d32; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+
+            <TextField fx:id="tfName"
+                       promptText="Full name"
+                       prefWidth="320"
+                       maxWidth="320"
+                       style="-fx-background-radius: 10;
+                              -fx-padding: 12;
+                              -fx-font-size: 14px;"/>
+
+            <ComboBox fx:id="cbRegion"
+                      promptText="Choose your region"
+                      prefWidth="320"
+                      maxWidth="320"
+                      style="-fx-background-radius: 10;
+                             -fx-font-size: 14px;"/>
+
+            <TextField fx:id="tfPhone"
+                       promptText="Phone number"
+                       prefWidth="320"
+                       maxWidth="320"
+                       style="-fx-background-radius: 10;
+                              -fx-padding: 12;
+                              -fx-font-size: 14px;"/>
+
+            <VBox spacing="12" alignment="CENTER">
+                <Button fx:id="btnComplete"
+                        text="Complete Registration"
+                        onAction="#completeRegistration"
+                        prefWidth="320"
+                        maxWidth="320"
+                        style="-fx-background-color: #2e7d32;
+                               -fx-text-fill: white;
+                               -fx-font-size: 15px;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 10;
+                               -fx-padding: 12 20;"/>
+
+                <Button text="Back to Login"
+                        onAction="#goToLogin"
+                        prefWidth="320"
+                        maxWidth="320"
+                        style="-fx-background-color: white;
+                               -fx-border-color: #d9d9d9;
+                               -fx-border-width: 1;
+                               -fx-border-radius: 10;
+                               -fx-background-radius: 10;
+                               -fx-text-fill: #333333;
+                               -fx-font-size: 14px;
+                               -fx-font-weight: bold;
+                               -fx-padding: 12 20;"/>
+            </VBox>
+
+        </VBox>
+
+    </VBox>
+
+</HBox>

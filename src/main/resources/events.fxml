@@ -14,38 +14,8 @@
             prefWidth="1400" prefHeight="800"
             style="-fx-background-color: #f5f5f5;">
 
-    <!-- TOP: Barre de navigation -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20"
-              style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
-            <children>
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                    <children>
-                        <ImageView fitWidth="55" fitHeight="55" preserveRatio="true">
-                            <image>
-                                <Image url="@/images/logoeco.png"/>
-                            </image>
-                        </ImageView>
-                        <Label text="EcoTrack"
-                               style="-fx-text-fill: #2e7d32; -fx-font-size: 26px; -fx-font-weight: bold;"/>
-                    </children>
-                </HBox>
-
-                <Pane HBox.hgrow="ALWAYS"/>
-
-                <Button text="Home" fx:id="btnHome" onAction="#goHome"
-                        style="-fx-background-color: transparent; -fx-text-fill: #2e7d32; -fx-font-size: 18px;"/>
-                <Button text="Events" style="-fx-background-color: transparent; -fx-text-fill: #2e7d32; -fx-font-size: 18px; -fx-font-weight: bold;"/>
-                <Button text="Blogs" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
-                <Button text="Associations" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
-                <Button text="Recycling" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
-
-                <Button text="Profile" fx:id="btnProfile" onAction="#goProfile"
-                        style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
-                <Button text="Logout" fx:id="btnLogout" onAction="#logout"
-                        style="-fx-background-color: #1f5130; -fx-text-fill: white; -fx-font-size: 18px; -fx-padding: 12 24;"/>
-            </children>
-        </HBox>
+        <StackPane fx:id="navbarContainer"/>
     </top>
 
     <!-- CENTER: Contenu principal -->

@@ -38,17 +38,17 @@
 
                 <VBox style="-fx-padding: 12 16 0 16;">
                     <children>
-                <Label text="Accueil > Gestion des evenements > Nouveau"
-                       style="-fx-text-fill: #6b7280; -fx-font-size: 13px;"/>
-                <HBox alignment="CENTER_LEFT" spacing="12">
-                    <children>
-                        <Label fx:id="lblTitle" text="Nouvel evenement ecologique"
-                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
-                        <Pane HBox.hgrow="ALWAYS"/>
-                        <Button text="Retour" onAction="#cancel"
-                                style="-fx-background-color: transparent; -fx-border-color: #6b7280; -fx-text-fill: #374151;"/>
-                    </children>
-                </HBox>
+                        <Label text="Accueil > Gestion des evenements > Nouveau"
+                               style="-fx-text-fill: #6b7280; -fx-font-size: 13px;"/>
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <children>
+                                <Label fx:id="lblTitle" text="Nouvel evenement ecologique"
+                                       style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                                <Pane HBox.hgrow="ALWAYS"/>
+                                <Button text="Retour" onAction="#cancel"
+                                        style="-fx-background-color: transparent; -fx-border-color: #6b7280; -fx-text-fill: #374151;"/>
+                            </children>
+                        </HBox>
                     </children>
                 </VBox>
             </children>
@@ -150,4 +150,3 @@
     </center>
 
 </BorderPane>
-

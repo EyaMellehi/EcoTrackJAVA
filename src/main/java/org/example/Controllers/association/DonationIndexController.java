@@ -69,7 +69,7 @@ public class DonationIndexController {
 
     @FXML
     void logout() {
-        navigate("/login.fxml", "Login");
+        navigate("/home.fxml", "Login");
     }
 
     private void navigate(String path, String title) {

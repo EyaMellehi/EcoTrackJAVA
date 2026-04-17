@@ -6,52 +6,84 @@
 
 <HBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.Controllers.User.RegisterController"
-      prefWidth="900" prefHeight="500">
+      prefWidth="1400" prefHeight="800"
+      style="-fx-background-color: white;">
 
     <!-- LEFT -->
-    <StackPane prefWidth="450">
+    <StackPane prefWidth="700" HBox.hgrow="ALWAYS">
         <children>
 
             <Pane style="-fx-background-image: url('/images/nat.jpg');
-                      -fx-background-size: cover;
-                      -fx-background-repeat: no-repeat;
-                      -fx-background-position: center center;"/>
+                         -fx-background-size: cover;
+                         -fx-background-repeat: no-repeat;
+                         -fx-background-position: center center;"/>
 
             <Pane style="-fx-background-color: rgba(46,125,50,0.35);"/>
 
-            <VBox alignment="BOTTOM_LEFT" spacing="10">
+            <VBox alignment="BOTTOM_LEFT" spacing="12">
                 <padding>
-                    <Insets top="30" right="30" bottom="30" left="30"/>
+                    <Insets top="40" right="40" bottom="40" left="40"/>
                 </padding>
 
                 <Label text="EcoTrack"
-                       style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                       style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;"/>
 
                 <Label text="Create your account ✨"
-                       style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+                       style="-fx-text-fill: white; -fx-font-size: 34px; -fx-font-weight: bold;"/>
 
                 <Label text="Start earning points and tracking impact."
-                       style="-fx-text-fill: white;"/>
+                       style="-fx-text-fill: white; -fx-font-size: 18px;"/>
             </VBox>
 
         </children>
     </StackPane>
 
     <!-- RIGHT -->
-    <VBox alignment="CENTER" spacing="12" prefWidth="450" style="-fx-background-color: white;">
+    <VBox alignment="CENTER" spacing="16" prefWidth="700"
+          HBox.hgrow="ALWAYS"
+          style="-fx-background-color: white; -fx-padding: 40;">
 
         <Label text="Sign up"
-               style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+               style="-fx-font-size: 32px; -fx-font-weight: bold;"/>
 
-        <TextField fx:id="tfName" promptText="Your full name" prefWidth="250"/>
-        <TextField fx:id="tfPhone" promptText="8 digits" prefWidth="250"/>
-        <TextField fx:id="tfEmail" promptText="name@example.com" prefWidth="250"/>
-        <ComboBox fx:id="cbRegion" promptText="Select your region" prefWidth="250"/>
-        <PasswordField fx:id="pfPassword" promptText="Password" prefWidth="250"/>
+        <Label text="Create your EcoTrack account"
+               style="-fx-text-fill: gray; -fx-font-size: 16px;"/>
+
+        <TextField fx:id="tfName"
+                   promptText="Your full name"
+                   prefWidth="320"
+                   maxWidth="320"
+                   style="-fx-background-radius: 10; -fx-padding: 12; -fx-font-size: 14px;"/>
+
+        <TextField fx:id="tfPhone"
+                   promptText="8 digits"
+                   prefWidth="320"
+                   maxWidth="320"
+                   style="-fx-background-radius: 10; -fx-padding: 12; -fx-font-size: 14px;"/>
+
+        <TextField fx:id="tfEmail"
+                   promptText="name@example.com"
+                   prefWidth="320"
+                   maxWidth="320"
+                   style="-fx-background-radius: 10; -fx-padding: 12; -fx-font-size: 14px;"/>
+
+        <ComboBox fx:id="cbRegion"
+                  promptText="Select your region"
+                  prefWidth="320"
+                  maxWidth="320"
+                  style="-fx-background-radius: 10; -fx-font-size: 14px;"/>
+
+        <PasswordField fx:id="pfPassword"
+                       promptText="Password"
+                       prefWidth="320"
+                       maxWidth="320"
+                       style="-fx-background-radius: 10; -fx-padding: 12; -fx-font-size: 14px;"/>
 
         <Button text="Create account"
                 onAction="#register"
-                style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-background-radius: 10;"/>
+                prefWidth="320"
+                maxWidth="320"
+                style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-size: 15px; -fx-background-radius: 10; -fx-padding: 12 20;"/>
 
         <HBox spacing="5" alignment="CENTER">
             <Label text="Already have an account?"/>
