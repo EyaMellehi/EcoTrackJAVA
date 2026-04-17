@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
+import org.example.Controllers.EventsController;
 import org.example.Controllers.HomeConnectedController;
 import org.example.Controllers.User.ProfileController;
 import org.example.Controllers.annonces.ListAnnonceUserController;
@@ -96,6 +97,7 @@ public class NavbarCitoyenController {
             if (controller instanceof EditPointRecyclageController c) c.setLoggedUser(loggedUser);
             if (controller instanceof ShowPointRecyclageController c) c.setLoggedUser(loggedUser);
             if (controller instanceof AssocationClientIndex c) c.setLoggedUser(loggedUser);
+            if (controller instanceof EventsController c) c.setLoggedUser(loggedUser);
 
             Stage stage = (Stage) btnHome.getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -168,7 +170,7 @@ public class NavbarCitoyenController {
 
     @FXML
     void goToEvents() {
-        System.out.println("Open events");
+        navigate("/events.fxml", "Annonces");
     }
 
     @FXML

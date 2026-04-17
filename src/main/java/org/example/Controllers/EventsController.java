@@ -18,6 +18,7 @@ import org.example.Services.EventService;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import javafx.scene.layout.StackPane;
 
 public class EventsController {
 
@@ -48,13 +49,53 @@ public class EventsController {
     @FXML
     private Button btnHistory;
 
+    @FXML private StackPane navbarContainer;
+    private User loggedUser;
     private EventService eventService;
     private User currentUser;
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public void setLoggedUser(User user) {
+        this.loggedUser = user;
         this.currentUser = user;
+        loadNavbarByRole();
+
         updatePointsCounter();
+    }
+
+    private void loadNavbarByRole() {
+        try {
+            if (navbarContainer == null) {
+                return;
+            }
+
+            navbarContainer.getChildren().clear();
+
+            String roles = loggedUser != null && loggedUser.getRoles() != null ? loggedUser.getRoles() : "";
+            FXMLLoader loader;
+
+            if (roles.contains("ROLE_CITOYEN") || roles.contains("ROLE_AGENT_TERRAIN")) {
+                loader = new FXMLLoader(getClass().getResource("/components/navbar_citoyen.fxml"));
+            } else if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
+                loader = new FXMLLoader(getClass().getResource("/components/navbar_municipal.fxml"));
+            } else {
+                loader = new FXMLLoader(getClass().getResource("/components/navbar_citoyen.fxml"));
+            }
+
+            Parent navbar = loader.load();
+            Object controller = loader.getController();
+
+            if (controller instanceof org.example.Controllers.components.NavbarCitoyenController c) {
+                c.setLoggedUser(loggedUser);
+            } else if (controller instanceof org.example.Controllers.components.NavbarMunicipalController c) {
+                c.setLoggedUser(loggedUser);
+            }
+
+            navbarContainer.getChildren().add(navbar);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

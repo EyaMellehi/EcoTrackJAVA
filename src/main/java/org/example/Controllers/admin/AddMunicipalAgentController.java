@@ -300,4 +300,27 @@ public class AddMunicipalAgentController {
             e.printStackTrace();
         }
     }
+    public void goToAssociation() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/admin_association/association.fxml"));
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("associaitons");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void goToDonation() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/donation/donationIndex.fxml"));
+            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("donations");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

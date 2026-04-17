@@ -117,7 +117,8 @@ public class AssociationController {
 
     @FXML
     void logout() {
-        navigate("/login.fxml", "Login");
+
+        navigate("/home.fxml", "Events");
     }
 
 

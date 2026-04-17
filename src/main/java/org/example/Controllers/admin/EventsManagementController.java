@@ -20,7 +20,8 @@ import org.example.Services.EventService;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
+import javafx.scene.layout.StackPane;
+import org.example.Controllers.components.NavbarMunicipalController;
 public class EventsManagementController {
 
     @FXML
@@ -51,6 +52,7 @@ public class EventsManagementController {
     private TableColumn<Event, Number> colCreateur;
     @FXML
     private TableColumn<Event, Void> colActions;
+    @FXML private StackPane navbarContainer;
 
     private final EventService eventService = new EventService();
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -58,14 +60,34 @@ public class EventsManagementController {
 
     public void setLoggedUser(User user) {
         this.loggedUser = user;
+        loadNavbar();
         loadEvents();
+    }
+    private void loadNavbar() {
+        try {
+            if (navbarContainer == null) {
+                return;
+            }
+
+            navbarContainer.getChildren().clear();
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/components/navbar_municipal.fxml"));
+            Parent navbar = loader.load();
+
+            NavbarMunicipalController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
+            navbarContainer.getChildren().add(navbar);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Impossible de charger la navbar municipale.");
+        }
     }
 
     @FXML
     public void initialize() {
-        if (btnHome != null) {
-            btnHome.setOnAction(e -> goHome());
-        }
+
         cbStatut.setItems(FXCollections.observableArrayList("Tous", "brouillon", "publie", "termine", "annule"));
         cbSort.setItems(FXCollections.observableArrayList("date_deb", "titre", "lieu"));
         cbOrder.setItems(FXCollections.observableArrayList("ASC", "DESC"));

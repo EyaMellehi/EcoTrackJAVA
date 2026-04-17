@@ -133,7 +133,20 @@ public class NavbarMunicipalController {
 
     @FXML
     private void goEvents() {
-        System.out.println("Open events management");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin/events_management.fxml"));
+            Parent root = loader.load();
+
+            org.example.Controllers.admin.EventsManagementController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
+            Stage stage = getStage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Events Management");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

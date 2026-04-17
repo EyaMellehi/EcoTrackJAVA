@@ -4,26 +4,64 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
+<HBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.Controllers.User.VerifyCodeController"
-      alignment="CENTER" spacing="15" prefWidth="500" prefHeight="350"
+      prefWidth="1400" prefHeight="800"
       style="-fx-background-color: white;">
 
-    <padding>
-        <Insets top="30" right="30" bottom="30" left="30"/>
-    </padding>
+    <!-- LEFT -->
+    <StackPane prefWidth="700" HBox.hgrow="ALWAYS">
+        <children>
+            <Pane style="-fx-background-image: url('/images/nat.jpg');
+                         -fx-background-size: cover;
+                         -fx-background-repeat: no-repeat;
+                         -fx-background-position: center center;"/>
 
-    <Label text="Verify Reset Code"
-           style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            <Pane style="-fx-background-color: rgba(46,125,50,0.35);"/>
 
-    <Label fx:id="lblEmailInfo" text="Email"
-           style="-fx-text-fill: gray;"/>
+            <VBox alignment="BOTTOM_LEFT" spacing="12">
+                <padding>
+                    <Insets top="40" right="40" bottom="40" left="40"/>
+                </padding>
 
-    <TextField fx:id="tfCode" promptText="Enter 6-digit code" prefWidth="250"/>
+                <Label text="EcoTrack"
+                       style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;"/>
 
-    <Button text="Verify Code"
-            onAction="#verifyCode"
-            style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+                <Label text="Verify your reset code"
+                       style="-fx-text-fill: white; -fx-font-size: 34px; -fx-font-weight: bold;"/>
 
-    <Hyperlink text="Back to login" onAction="#goToLogin"/>
-</VBox>
+                <Label text="Enter the code sent to your email to continue."
+                       style="-fx-text-fill: white; -fx-font-size: 18px;"/>
+            </VBox>
+        </children>
+    </StackPane>
+
+    <!-- RIGHT -->
+    <VBox alignment="CENTER" spacing="18"
+          prefWidth="700"
+          HBox.hgrow="ALWAYS"
+          style="-fx-background-color: white; -fx-padding: 40;">
+
+        <Label text="Verify Reset Code"
+               style="-fx-font-size: 32px; -fx-font-weight: bold;"/>
+
+        <Label fx:id="lblEmailInfo"
+               text="Email"
+               style="-fx-text-fill: gray; -fx-font-size: 16px;"/>
+
+        <TextField fx:id="tfCode"
+                   promptText="Enter 6-digit code"
+                   prefWidth="320"
+                   maxWidth="320"
+                   style="-fx-background-radius: 10; -fx-padding: 12; -fx-font-size: 14px;"/>
+
+        <Button text="Verify Code"
+                onAction="#verifyCode"
+                prefWidth="320"
+                maxWidth="320"
+                style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-size: 15px; -fx-background-radius: 10; -fx-padding: 12 20;"/>
+
+        <Hyperlink text="Back to login" onAction="#goToLogin"/>
+    </VBox>
+
+</HBox>

@@ -346,4 +346,44 @@ public class UserService {
         return null;
     }
 
+    public User findByEmail(String email) throws Exception {
+        String sql = "SELECT * FROM user WHERE email = ?";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            User user = new User();
+            user.setId(rs.getInt("id"));
+            user.setEmail(rs.getString("email"));
+            user.setRoles(rs.getString("roles"));
+            user.setPassword(rs.getString("password"));
+            user.setName(rs.getString("name"));
+            user.setPhone(rs.getString("phone"));
+            user.setRegion(rs.getString("region"));
+            user.setPoints(rs.getInt("points"));
+            user.setActive(rs.getBoolean("is_active"));
+            user.setImage(rs.getString("image"));
+            user.setDelegation(rs.getString("delegation"));
+            user.setFaceioId(rs.getString("faceio_id"));
+            return user;
+        }
+        return null;
+    }
+    public void addGoogleUser(User user) throws Exception {
+        String sql = "INSERT INTO user (email, roles, password, name, phone, region, points, is_active, image, delegation, faceio_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setString(1, user.getEmail());
+        ps.setString(2, user.getRoles());
+        ps.setString(3, user.getPassword());
+        ps.setString(4, user.getName());
+        ps.setString(5, user.getPhone());
+        ps.setString(6, user.getRegion());
+        ps.setInt(7, user.getPoints());
+        ps.setBoolean(8, user.isActive());
+        ps.setString(9, user.getImage());
+        ps.setString(10, user.getDelegation());
+        ps.setString(11, user.getFaceioId());
+        ps.executeUpdate();
+    }
 }
