@@ -432,4 +432,14 @@ public class PointRecyclageService {
 
         return points;
     }
+
+    public void cancelAssignment(int pointId) throws SQLException {
+        String sql = "UPDATE point_recyclage " +
+                "SET agent_terrain_id = NULL, statut = 'PENDING', assigned_at = NULL " +
+                "WHERE id = ?";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, pointId);
+        ps.executeUpdate();
+    }
 }

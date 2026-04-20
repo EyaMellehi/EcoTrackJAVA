@@ -82,8 +82,7 @@
                                                    style="-fx-text-fill: #777; -fx-font-size: 15px;"/>
                                         </VBox>
                                         <Pane HBox.hgrow="ALWAYS"/>
-                                        <Label fx:id="lblStatusBadge"
-                                               text="PENDING"/>
+                                        <Label fx:id="lblStatusBadge" text="PENDING"/>
                                     </children>
                                 </HBox>
 
@@ -146,50 +145,90 @@
                                     <Label fx:id="lblSummaryReport" text="No" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
                                 </GridPane>
 
-                                <Label text="After assignment, changes are allowed only for 60 seconds."
+                                <Label text="After assignment, cancellation is allowed only for 60 seconds."
                                        wrapText="true"
                                        style="-fx-text-fill: #777; -fx-font-size: 14px;"/>
                             </VBox>
                         </children>
                     </HBox>
 
-                    <VBox spacing="18"
+                    <VBox fx:id="assignmentSection"
+                          spacing="18"
                           style="-fx-background-color: white; -fx-padding: 28; -fx-background-radius: 16;">
                         <Label text="Assign a field agent"
                                style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
-                        <Label text="Choose Auto or Manual."
+                        <Label text="Choose Auto or Manual. In manual mode, agents are shown as cards."
                                style="-fx-text-fill: #777; -fx-font-size: 15px;"/>
 
-                        <HBox spacing="12">
+                        <HBox spacing="14" alignment="CENTER_LEFT">
                             <children>
-                                <RadioButton fx:id="rbManual" text="Manual"/>
-                                <RadioButton fx:id="rbAuto" text="Auto (least loaded)"/>
+                                <RadioButton fx:id="rbManual"
+                                             text="Manual"
+                                             style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+
+                                <RadioButton fx:id="rbAuto"
+                                             text="Auto (least loaded)"
+                                             style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
                             </children>
                         </HBox>
 
                         <TextField fx:id="txtAgentSearch"
-                                   promptText="Search an agent..."
-                                   prefWidth="420"
-                                   style="-fx-background-color: #eef7ee;"/>
-
-                        <ComboBox fx:id="cbAgents"
-                                  prefWidth="700"
-                                  style="-fx-background-color: white;"/>
+                                   promptText="Search an agent by name or email..."
+                                   prefWidth="450"
+                                   style="-fx-background-color: #eef7ee; -fx-background-radius: 10; -fx-padding: 10 14;"/>
 
                         <Label fx:id="lblAutoInfo"
                                text=""
                                wrapText="true"
                                style="-fx-text-fill: #666; -fx-font-size: 14px;"/>
 
+                        <Label fx:id="lblTimer"
+                               text=""
+                               visible="false" managed="false"
+                               style="-fx-background-color: #fff7ed; -fx-text-fill: #c2410c; -fx-padding: 10 14; -fx-background-radius: 10; -fx-font-weight: bold;"/>
+
+                        <ScrollPane fx:id="agentsScrollPane"
+                                    fitToWidth="true"
+                                    hbarPolicy="NEVER"
+                                    vbarPolicy="AS_NEEDED"
+                                    prefHeight="330"
+                                    style="-fx-background-color: transparent;">
+                            <content>
+                                <FlowPane fx:id="agentsContainer"
+                                          hgap="16"
+                                          vgap="16"
+                                          prefWrapLength="1050"
+                                          style="-fx-padding: 6;"/>
+                            </content>
+                        </ScrollPane>
+
+                        <HBox alignment="CENTER_LEFT" spacing="12"
+                              style="-fx-background-color: #f8faf8; -fx-padding: 16; -fx-background-radius: 12;">
+                            <children>
+                                <Label text="Selected agent:"
+                                       style="-fx-text-fill: #666; -fx-font-size: 14px;"/>
+                                <Label fx:id="lblSelectedAgent"
+                                       text="None"
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                            </children>
+                        </HBox>
+
                         <HBox alignment="CENTER_RIGHT" spacing="12">
                             <children>
+                                <Button fx:id="btnCancelAssign"
+                                        text="Cancel assignment"
+                                        onAction="#cancelAssign"
+                                        visible="false" managed="false"
+                                        style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-background-radius: 18; -fx-padding: 10 26; -fx-font-weight: bold;"/>
+
                                 <Button text="Cancel"
                                         onAction="#goBack"
                                         style="-fx-background-color: white; -fx-border-color: #777; -fx-text-fill: #333; -fx-background-radius: 18; -fx-border-radius: 18; -fx-padding: 10 26;"/>
+
                                 <Button fx:id="btnConfirmAssign"
-                                        text="Confirm"
+                                        text="Confirm assignment"
                                         onAction="#confirmAssign"
-                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-background-radius: 18; -fx-padding: 10 32;"/>
+                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-background-radius: 18; -fx-padding: 10 32; -fx-font-weight: bold;"/>
                             </children>
                         </HBox>
                     </VBox>
