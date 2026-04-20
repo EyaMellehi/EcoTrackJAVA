@@ -54,10 +54,42 @@ public class CategorieService {
     }
 
     public void deleteCategorie(int id) throws SQLException {
-        String sql = "DELETE FROM categorie WHERE id = ?";
-        PreparedStatement ps = cnx.prepareStatement(sql);
-        ps.setInt(1, id);
-        ps.executeUpdate();
+        boolean oldAutoCommit = cnx.getAutoCommit();
+
+        try {
+            cnx.setAutoCommit(false);
+
+            String deleteRapports = """
+            DELETE FROM rapport_recyc
+            WHERE point_recy_id IN (
+                SELECT id FROM point_recyclage WHERE categorie_id = ?
+            )
+        """;
+            try (PreparedStatement ps = cnx.prepareStatement(deleteRapports)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            String deletePoints = "DELETE FROM point_recyclage WHERE categorie_id = ?";
+            try (PreparedStatement ps = cnx.prepareStatement(deletePoints)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            String deleteCategorie = "DELETE FROM categorie WHERE id = ?";
+            try (PreparedStatement ps = cnx.prepareStatement(deleteCategorie)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            cnx.commit();
+
+        } catch (SQLException e) {
+            cnx.rollback();
+            throw e;
+        } finally {
+            cnx.setAutoCommit(oldAutoCommit);
+        }
     }
 
     public Categorie getCategorieById(int id) throws SQLException {

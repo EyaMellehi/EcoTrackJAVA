@@ -89,7 +89,11 @@
                         <VBox spacing="10"
                               style="-fx-background-color: #eef7ee; -fx-padding: 14; -fx-background-radius: 10;">
                             <Label text="Localisation" style="-fx-text-fill: #666;"/>
-                            <WebView fx:id="webMap" prefHeight="360"/>
+                            <WebView fx:id="webMap"
+                                     prefWidth="900"
+                                     prefHeight="360"
+                                     minHeight="360"
+                                     maxHeight="360"/>
                             <Label fx:id="lblCoordinates" text="Coordonnées : -"/>
                         </VBox>
 

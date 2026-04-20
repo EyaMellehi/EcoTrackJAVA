@@ -110,22 +110,92 @@ public class TerrainPointDetailsController {
     }
 
     private void loadMap() {
-        String html =
-                "<html><head>" +
-                        "<link rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'/>" +
-                        "<script src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'></script>" +
-                        "</head><body style='margin:0;'>" +
-                        "<div id='map' style='width:100%;height:100%;'></div>" +
-                        "<script>" +
-                        "var map=L.map('map').setView([" + currentPoint.getLatitude() + "," + currentPoint.getLongitude() + "],15);" +
-                        "L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors'}).addTo(map);" +
-                        "L.marker([" + currentPoint.getLatitude() + "," + currentPoint.getLongitude() + "]).addTo(map);" +
-                        "</script></body></html>";
+        webMap.setContextMenuEnabled(false);
+
+        String html = String.format("""
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+          <script>
+            var L_DISABLE_3D = true;
+          </script>
+
+          <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+          <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+          <style>
+            html, body {
+              width: 100%%;
+              height: 100%%;
+              margin: 0;
+              padding: 0;
+              overflow: hidden;
+              background: white;
+            }
+
+            #map {
+              width: 100%%;
+              height: 100%%;
+              margin: 0;
+              padding: 0;
+              background: #e5e7eb;
+            }
+
+            .leaflet-container {
+              width: 100%% !important;
+              height: 100%% !important;
+              background: #e5e7eb;
+            }
+
+            .leaflet-tile,
+            .leaflet-pane,
+            .leaflet-map-pane,
+            .leaflet-tile-container,
+            .leaflet-zoom-animated {
+              transform: none !important;
+              -webkit-transform: none !important;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="map"></div>
+
+          <script>
+            var lat = %f;
+            var lng = %f;
+
+            var map = L.map('map', {
+              preferCanvas: true,
+              zoomAnimation: false,
+              fadeAnimation: false,
+              markerZoomAnimation: false,
+              inertia: false
+            }).setView([lat, lng], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19,
+              attribution: '&copy; OpenStreetMap contributors',
+              updateWhenZooming: false,
+              updateWhenIdle: true,
+              keepBuffer: 1
+            }).addTo(map);
+
+            L.marker([lat, lng]).addTo(map);
+
+            setTimeout(function () {
+              map.invalidateSize();
+            }, 300);
+          </script>
+        </body>
+        </html>
+        """, currentPoint.getLatitude(), currentPoint.getLongitude());
 
         WebEngine engine = webMap.getEngine();
         engine.loadContent(html);
     }
-
     @FXML
     private void goBack() {
         try {
@@ -138,6 +208,8 @@ public class TerrainPointDetailsController {
             Stage stage = (Stage) lblPointTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Mes points affectés");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
             stage.show();
 
         } catch (Exception e) {
@@ -169,6 +241,8 @@ public class TerrainPointDetailsController {
             Stage stage = (Stage) lblPointTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Créer rapport");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
             stage.show();
 
         } catch (Exception e) {
@@ -189,6 +263,8 @@ public class TerrainPointDetailsController {
             Stage stage = (Stage) lblPointTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Voir rapport");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
             stage.show();
 
         } catch (Exception e) {

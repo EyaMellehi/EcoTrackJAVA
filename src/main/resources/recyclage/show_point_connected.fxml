@@ -14,98 +14,111 @@
     </top>
 
     <center>
-        <HBox spacing="20" style="-fx-padding: 28;">
-            <children>
-
-                <VBox spacing="16" prefWidth="860"
-                      style="-fx-background-color: white; -fx-padding: 24; -fx-background-radius: 14; -fx-border-color: #e5e7eb; -fx-border-radius: 14;">
+        <ScrollPane fitToWidth="true"
+                    fitToHeight="false"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    pannable="true"
+                    style="-fx-background: #f6f7f6; -fx-background-color: #f6f7f6;">
+            <content>
+                <HBox spacing="20" style="-fx-padding: 28; -fx-background-color: #f6f7f6;">
                     <children>
-                        <HBox alignment="CENTER_LEFT">
-                            <children>
-                                <VBox spacing="6">
-                                    <Label text="Recyclage" style="-fx-text-fill: #2f9e44; -fx-font-size: 22px; -fx-font-weight: bold;"/>
-                                    <Label fx:id="lblTitle" text="Point #0" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
-                                    <Label fx:id="lblAddressTop" text="Adresse"
-                                           wrapText="true"
-                                           style="-fx-text-fill: #6b7280; -fx-font-size: 15px;"/>
-                                </VBox>
-                                <Pane HBox.hgrow="ALWAYS"/>
-                                <Label fx:id="lblStatut"
-                                       text="PENDING"
-                                       style="-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-padding: 8 16; -fx-background-radius: 999; -fx-font-weight: bold;"/>
-                            </children>
-                        </HBox>
 
-                        <HBox spacing="14">
+                        <VBox spacing="16" prefWidth="860"
+                              style="-fx-background-color: white; -fx-padding: 24; -fx-background-radius: 14; -fx-border-color: #e5e7eb; -fx-border-radius: 14;">
                             <children>
+                                <HBox alignment="CENTER_LEFT">
+                                    <children>
+                                        <VBox spacing="6">
+                                            <Label text="Recyclage" style="-fx-text-fill: #2f9e44; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+                                            <Label fx:id="lblTitle" text="Point #0" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                                            <Label fx:id="lblAddressTop" text="Adresse"
+                                                   wrapText="true"
+                                                   style="-fx-text-fill: #6b7280; -fx-font-size: 15px;"/>
+                                        </VBox>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                        <Label fx:id="lblStatut"
+                                               text="PENDING"
+                                               style="-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-padding: 8 16; -fx-background-radius: 999; -fx-font-weight: bold;"/>
+                                    </children>
+                                </HBox>
+
+                                <HBox spacing="14">
+                                    <children>
+                                        <VBox prefWidth="380" spacing="6"
+                                              style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                            <Label text="Catégorie" style="-fx-text-fill: #6b7280;"/>
+                                            <Label fx:id="lblCategorie" text="-" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                                        </VBox>
+
+                                        <VBox prefWidth="380" spacing="6"
+                                              style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                            <Label text="Quantité" style="-fx-text-fill: #6b7280;"/>
+                                            <Label fx:id="lblQuantite" text="0 kg" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+
                                 <VBox prefWidth="380" spacing="6"
                                       style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
-                                    <Label text="Catégorie" style="-fx-text-fill: #6b7280;"/>
-                                    <Label fx:id="lblCategorie" text="-" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                                    <Label text="Date" style="-fx-text-fill: #6b7280;"/>
+                                    <Label fx:id="lblDate" text="-" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
                                 </VBox>
 
-                                <VBox prefWidth="380" spacing="6"
-                                      style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
-                                    <Label text="Quantité" style="-fx-text-fill: #6b7280;"/>
-                                    <Label fx:id="lblQuantite" text="0 kg" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                                <VBox spacing="6" style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                    <Label text="Description" style="-fx-text-fill: #6b7280;"/>
+                                    <Label fx:id="lblDescription" text="-" wrapText="true" style="-fx-font-size: 16px;"/>
                                 </VBox>
+
+                                <VBox spacing="8" style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                    <Label text="Localisation" style="-fx-text-fill: #6b7280;"/>
+                                    <WebView fx:id="mapView"
+                                             prefWidth="780"
+                                             prefHeight="340"
+                                             minHeight="340"
+                                             maxHeight="340"/>
+                                    <Label fx:id="lblCoords" text="Coordonnées : -" style="-fx-text-fill: #6b7280;"/>
+                                </VBox>
+
+                                <HBox spacing="12">
+                                    <children>
+                                        <Button text="Retour"
+                                                onAction="#backToList"
+                                                style="-fx-background-color: white; -fx-border-color: #374151; -fx-text-fill: #374151; -fx-padding: 10 22; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+
+                                        <Button fx:id="btnEdit"
+                                                text="Modifier"
+                                                onAction="#goToEdit"
+                                                style="-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-padding: 10 22; -fx-background-radius: 8;"/>
+
+                                        <Button fx:id="btnViewReport"
+                                                text="Voir rapport"
+                                                onAction="#goToViewReport"
+                                                visible="false" managed="false"
+                                                style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-padding: 10 22; -fx-background-radius: 8;"/>
+                                    </children>
+                                </HBox>
                             </children>
-                        </HBox>
-
-                        <VBox prefWidth="380" spacing="6"
-                              style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
-                            <Label text="Date" style="-fx-text-fill: #6b7280;"/>
-                            <Label fx:id="lblDate" text="-" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
                         </VBox>
 
-                        <VBox spacing="6" style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
-                            <Label text="Description" style="-fx-text-fill: #6b7280;"/>
-                            <Label fx:id="lblDescription" text="-" wrapText="true" style="-fx-font-size: 16px;"/>
-                        </VBox>
-
-                        <VBox spacing="8" style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
-                            <Label text="Localisation" style="-fx-text-fill: #6b7280;"/>
-                            <WebView fx:id="mapView" prefHeight="340"/>
-                            <Label fx:id="lblCoords" text="Coordonnées : -" style="-fx-text-fill: #6b7280;"/>
-                        </VBox>
-
-                        <HBox spacing="12">
+                        <VBox prefWidth="320" spacing="14"
+                              style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 14; -fx-border-color: #e5e7eb; -fx-border-radius: 14;">
                             <children>
-                                <Button text="Retour"
-                                        onAction="#backToList"
-                                        style="-fx-background-color: white; -fx-border-color: #374151; -fx-text-fill: #374151; -fx-padding: 10 22; -fx-background-radius: 8; -fx-border-radius: 8;"/>
-
-                                <Button fx:id="btnEdit"
-                                        text="Modifier"
-                                        onAction="#goToEdit"
-                                        style="-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-padding: 10 22; -fx-background-radius: 8;"/>
-
-                                <Button fx:id="btnViewReport"
-                                        text="Voir rapport"
-                                        onAction="#goToViewReport"
-                                        visible="false" managed="false"
-                                        style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-padding: 10 22; -fx-background-radius: 8;"/>
+                                <Label text="Conseil" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1f2a44;"/>
+                                <Label text="Ajoutez une adresse précise et une quantité réaliste pour faciliter la collecte."
+                                       wrapText="true"
+                                       style="-fx-text-fill: #6b7280;"/>
+                                <VBox spacing="6" style="-fx-background-color: #edf7ee; -fx-padding: 14; -fx-background-radius: 10;">
+                                    <Label text="Astuce" style="-fx-text-fill: #6b7280;"/>
+                                    <Label text="Vous pouvez modifier uniquement un point avec le statut PENDING."
+                                           wrapText="true"/>
+                                </VBox>
                             </children>
-                        </HBox>
-                    </children>
-                </VBox>
-
-                <VBox prefWidth="320" spacing="14"
-                      style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 14; -fx-border-color: #e5e7eb; -fx-border-radius: 14;">
-                    <children>
-                        <Label text="Conseil" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1f2a44;"/>
-                        <Label text="Ajoutez une adresse précise et une quantité réaliste pour faciliter la collecte."
-                               wrapText="true"
-                               style="-fx-text-fill: #6b7280;"/>
-                        <VBox spacing="6" style="-fx-background-color: #edf7ee; -fx-padding: 14; -fx-background-radius: 10;">
-                            <Label text="Astuce" style="-fx-text-fill: #6b7280;"/>
-                            <Label text="Vous pouvez modifier uniquement un point avec le statut PENDING."
-                                   wrapText="true"/>
                         </VBox>
-                    </children>
-                </VBox>
 
-            </children>
-        </HBox>
+                    </children>
+                </HBox>
+            </content>
+        </ScrollPane>
     </center>
 </BorderPane>

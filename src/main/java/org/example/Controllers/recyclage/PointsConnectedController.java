@@ -241,6 +241,8 @@ public class PointsConnectedController {
             Stage stage = (Stage) tablePoints.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Créer un point");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -260,6 +262,8 @@ public class PointsConnectedController {
             Stage stage = (Stage) tablePoints.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Détails du point");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -279,6 +283,8 @@ public class PointsConnectedController {
             Stage stage = (Stage) tablePoints.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Modifier point");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
