@@ -38,6 +38,8 @@ public class EditPointRecyclageController {
     @FXML private Label lblTitle;
     @FXML private WebView mapView;
     @FXML private NavbarCitoyenController navbarController;
+    private volatile long geocodeRequestId = 0;
+    private volatile String lastResolvedAddress = "";
 
     private final CategorieService categorieService = new CategorieService();
     private final PointRecyclageService pointService = new PointRecyclageService();
@@ -108,51 +110,111 @@ public class EditPointRecyclageController {
     }
 
     private void initMap() {
+        mapView.setContextMenuEnabled(false);
+
         WebEngine engine = mapView.getEngine();
 
         String html = """
-                <!DOCTYPE html>
-                <html>
-                <head>
-                  <meta charset="UTF-8">
-                  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-                  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-                  <style>
-                    html, body, #map { height: 100%; margin: 0; }
-                  </style>
-                </head>
-                <body>
-                  <div id="map"></div>
-                  <script>
-                    var map = L.map('map').setView([36.8065, 10.1815], 12);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                      maxZoom: 19,
-                      attribution: '&copy; OpenStreetMap contributors'
-                    }).addTo(map);
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-                    var marker = L.marker([36.8065, 10.1815], {draggable:true}).addTo(map);
+          <script>
+            var L_DISABLE_3D = true;
+          </script>
 
-                    function notify(lat, lng){
-                      if(window.javaConnector){
-                        window.javaConnector.updatePosition(lat, lng);
-                      }
-                    }
+          <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+          <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-                    map.on('click', function(e){
-                      marker.setLatLng(e.latlng);
-                      notify(e.latlng.lat, e.latlng.lng);
-                    });
+          <style>
+            html, body {
+              width: 100%;
+              height: 100%;
+              margin: 0;
+              padding: 0;
+              overflow: hidden;
+              background: white;
+            }
 
-                    marker.on('dragend', function(){
-                      var p = marker.getLatLng();
-                      notify(p.lat, p.lng);
-                    });
+            #map {
+              width: 100%;
+              height: 100%;
+              margin: 0;
+              padding: 0;
+              background: #e5e7eb;
+            }
 
-                    notify(36.8065, 10.1815);
-                  </script>
-                </body>
-                </html>
-                """;
+            .leaflet-container {
+              width: 100% !important;
+              height: 100% !important;
+              background: #e5e7eb;
+            }
+
+            .leaflet-tile,
+            .leaflet-pane,
+            .leaflet-map-pane,
+            .leaflet-tile-container,
+            .leaflet-zoom-animated {
+              transform: none !important;
+              -webkit-transform: none !important;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="map"></div>
+
+          <script>
+            var map = L.map('map', {
+              preferCanvas: true,
+              zoomAnimation: false,
+              fadeAnimation: false,
+              markerZoomAnimation: false,
+              inertia: false
+            }).setView([36.8065, 10.1815], 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19,
+              attribution: '&copy; OpenStreetMap contributors',
+              updateWhenZooming: false,
+              updateWhenIdle: true,
+              keepBuffer: 1
+            }).addTo(map);
+
+            var marker = L.marker([36.8065, 10.1815], { draggable: true }).addTo(map);
+
+            function notify(lat, lng) {
+              if (window.javaConnector) {
+                window.javaConnector.updatePosition(lat, lng);
+              }
+            }
+
+            function moveMarker(lat, lng) {
+              map.setView([lat, lng], 15);
+              marker.setLatLng([lat, lng]);
+              setTimeout(function(){ map.invalidateSize(); }, 150);
+            }
+
+            map.on('click', function(e) {
+              marker.setLatLng(e.latlng);
+              notify(e.latlng.lat, e.latlng.lng);
+            });
+
+            marker.on('dragend', function() {
+              var p = marker.getLatLng();
+              notify(p.lat, p.lng);
+            });
+
+            setTimeout(function () {
+              map.invalidateSize();
+            }, 300);
+
+            notify(36.8065, 10.1815);
+          </script>
+        </body>
+        </html>
+        """;
 
         engine.loadContent(html);
 
@@ -160,16 +222,19 @@ public class EditPointRecyclageController {
             try {
                 JSObject window = (JSObject) engine.executeScript("window");
                 window.setMember("javaConnector", new JavaConnector());
+                engine.executeScript("setTimeout(function(){ map.invalidateSize(); }, 500);");
 
                 if (currentPoint != null) {
-                    String script = "map.setView([" + currentPoint.getLatitude() + "," + currentPoint.getLongitude() + "], 15);"
-                            + "marker.setLatLng([" + currentPoint.getLatitude() + "," + currentPoint.getLongitude() + "]);";
-                    engine.executeScript(script);
+                    engine.executeScript(
+                            "moveMarker(" + currentPoint.getLatitude() + "," + currentPoint.getLongitude() + ");"
+                    );
                 }
             } catch (Exception ignored) {
             }
         });
     }
+
+
 
     public class JavaConnector {
         public void updatePosition(double lat, double lng) {
@@ -186,47 +251,130 @@ public class EditPointRecyclageController {
     }
 
     private void loadAddressFromCoordinates(double lat, double lng) {
-        new Thread(() -> {
-            try {
-                String url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&accept-language=fr"
-                        + "&lat=" + lat + "&lon=" + lng;
+        final long requestId = ++geocodeRequestId;
 
-                HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+        Platform.runLater(() -> tfAddress.setText("Chargement de l'adresse..."));
+
+        Thread thread = new Thread(() -> {
+            HttpURLConnection con = null;
+            BufferedReader in = null;
+
+            try {
+                String url = "https://nominatim.openstreetmap.org/reverse"
+                        + "?format=jsonv2"
+                        + "&addressdetails=1"
+                        + "&accept-language=fr"
+                        + "&lat=" + lat
+                        + "&lon=" + lng;
+
+                con = (HttpURLConnection) new URL(url).openConnection();
                 con.setRequestMethod("GET");
                 con.setRequestProperty("Accept", "application/json");
                 con.setRequestProperty("User-Agent", "EcoTrackJavaFX/1.0");
+                con.setConnectTimeout(5000);
+                con.setReadTimeout(5000);
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                int responseCode = con.getResponseCode();
+                if (responseCode != 200) {
+                    if (requestId == geocodeRequestId) {
+                        Platform.runLater(() -> tfAddress.setText(lastResolvedAddress));
+                    }
+                    return;
+                }
+
+                in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 StringBuilder response = new StringBuilder();
                 String line;
+
                 while ((line = in.readLine()) != null) {
                     response.append(line);
                 }
-                in.close();
 
-                String json = response.toString();
-                String marker = "\"display_name\":\"";
-                int start = json.indexOf(marker);
+                String address = extractDisplayName(response.toString());
 
-                if (start != -1) {
-                    start += marker.length();
-                    int end = json.indexOf("\"", start);
-                    if (end != -1) {
-                        String address = json.substring(start, end)
-                                .replace("\\/", "/")
-                                .replace("\\u00e9", "é")
-                                .replace("\\u00e8", "è")
-                                .replace("\\u00e0", "à")
-                                .replace("\\u00f4", "ô")
-                                .replace("\\u00e7", "ç");
-
-                        Platform.runLater(() -> tfAddress.setText(address));
+                if (address == null || address.isBlank()) {
+                    if (requestId == geocodeRequestId) {
+                        Platform.runLater(() -> tfAddress.setText(lastResolvedAddress));
                     }
+                    return;
                 }
+
+                if (requestId == geocodeRequestId) {
+                    lastResolvedAddress = address;
+                    Platform.runLater(() -> tfAddress.setText(address));
+                }
+
             } catch (Exception e) {
-                e.printStackTrace();
+                if (requestId == geocodeRequestId) {
+                    Platform.runLater(() -> tfAddress.setText(lastResolvedAddress));
+                }
+            } finally {
+                try {
+                    if (in != null) in.close();
+                } catch (Exception ignored) {}
+                if (con != null) con.disconnect();
             }
-        }).start();
+        });
+
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private String extractDisplayName(String json) {
+        String marker = "\"display_name\":\"";
+        int start = json.indexOf(marker);
+
+        if (start == -1) return null;
+
+        start += marker.length();
+
+        StringBuilder result = new StringBuilder();
+        boolean escaped = false;
+
+        for (int i = start; i < json.length(); i++) {
+            char ch = json.charAt(i);
+
+            if (escaped) {
+                switch (ch) {
+                    case '"' -> result.append('"');
+                    case '\\' -> result.append('\\');
+                    case '/' -> result.append('/');
+                    case 'b' -> result.append('\b');
+                    case 'f' -> result.append('\f');
+                    case 'n' -> result.append('\n');
+                    case 'r' -> result.append('\r');
+                    case 't' -> result.append('\t');
+                    case 'u' -> {
+                        if (i + 4 < json.length()) {
+                            String hex = json.substring(i + 1, i + 5);
+                            try {
+                                result.append((char) Integer.parseInt(hex, 16));
+                                i += 4;
+                            } catch (NumberFormatException e) {
+                                result.append("\\u").append(hex);
+                                i += 4;
+                            }
+                        }
+                    }
+                    default -> result.append(ch);
+                }
+                escaped = false;
+                continue;
+            }
+
+            if (ch == '\\') {
+                escaped = true;
+                continue;
+            }
+
+            if (ch == '"') {
+                break;
+            }
+
+            result.append(ch);
+        }
+
+        return result.toString().trim();
     }
 
     @FXML
@@ -276,6 +424,8 @@ public class EditPointRecyclageController {
             Stage stage = (Stage) cbCategorie.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Points de recyclage");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

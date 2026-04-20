@@ -303,6 +303,8 @@ public class MunicipalPointDetailsController {
             Stage stage = (Stage) lblPointTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Recycling Points");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
             stage.show();
 
         } catch (Exception e) {

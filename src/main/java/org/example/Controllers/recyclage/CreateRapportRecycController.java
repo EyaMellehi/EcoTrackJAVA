@@ -102,6 +102,12 @@ public class CreateRapportRecycController {
                 return;
             }
 
+            if (qte > currentPoint.getQuantite()) {
+                showAlert(Alert.AlertType.WARNING, "Attention",
+                        "La quantité collectée ne doit pas dépasser la quantité déclarée.");
+                return;
+            }
+
             String commentaire = txtCommentaire.getText() != null ? txtCommentaire.getText().trim() : "";
 
             if (commentaire.isEmpty()) {
@@ -114,18 +120,31 @@ public class CreateRapportRecycController {
                 return;
             }
 
+            if (currentPoint.getCategorie() == null) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Catégorie introuvable pour ce point.");
+                return;
+            }
+
+            if (currentPoint.getCitoyen() == null) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Citoyen introuvable pour ce point.");
+                return;
+            }
+
+            int pointsGagnes = (int) Math.round(qte * currentPoint.getCategorie().getCoefPoints());
+
             RapportRecyc rapport = new RapportRecyc();
             rapport.setDateCollect(dpDateCollect.getValue().atStartOfDay());
             rapport.setQuantiteCollecte(qte);
             rapport.setCommentaire(commentaire);
-            rapport.setPointAttribue(currentPoint.getId());
+            rapport.setPointAttribue(pointsGagnes);
             rapport.setPointRecy(currentPoint);
             rapport.setAgentTerrain(loggedUser);
 
-            rapportService.createRapport(rapport);
+            rapportService.createRapportAndRewardCitizen(rapport, currentPoint.getCitoyen().getId());
             pointService.markPointCollected(currentPoint.getId());
 
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Rapport enregistré avec succès.");
+            showAlert(Alert.AlertType.INFORMATION, "Succès",
+                    "Rapport enregistré avec succès. " + pointsGagnes + " points ajoutés au citoyen.");
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/show_rapport_recyc_terrain.fxml"));
             Parent root = loader.load();
@@ -136,6 +155,8 @@ public class CreateRapportRecycController {
             Stage stage = (Stage) lblPointId.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Rapport");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
             stage.show();
 
         } catch (Exception e) {
@@ -156,6 +177,8 @@ public class CreateRapportRecycController {
             Stage stage = (Stage) lblPointId.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Point details");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
             stage.show();
 
         } catch (Exception e) {

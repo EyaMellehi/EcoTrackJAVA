@@ -280,6 +280,8 @@ public class MunicipalPointsController {
             Stage stage = (Stage) tablePoints.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Point details");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
             stage.show();
 
         } catch (Exception e) {

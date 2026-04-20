@@ -79,4 +79,41 @@ public class RapportRecycService {
 
         return null;
     }
+    public void createRapportAndRewardCitizen(RapportRecyc rapport, int citizenId) throws SQLException {
+        boolean oldAutoCommit = cnx.getAutoCommit();
+
+        try {
+            cnx.setAutoCommit(false);
+
+            String insertRapport = "INSERT INTO rapport_recyc " +
+                    "(date_collect, quantite_collecte, commentaire, point_attribue, point_recy_id, agent_terrain_id) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)";
+
+            try (PreparedStatement ps = cnx.prepareStatement(insertRapport)) {
+                ps.setTimestamp(1, Timestamp.valueOf(rapport.getDateCollect()));
+                ps.setDouble(2, rapport.getQuantiteCollecte());
+                ps.setString(3, rapport.getCommentaire());
+                ps.setInt(4, rapport.getPointAttribue());
+                ps.setInt(5, rapport.getPointRecy().getId());
+                ps.setInt(6, rapport.getAgentTerrain().getId());
+                ps.executeUpdate();
+            }
+
+            String updateCitizenPoints = "UPDATE user SET points = COALESCE(points, 0) + ? WHERE id = ?";
+
+            try (PreparedStatement ps = cnx.prepareStatement(updateCitizenPoints)) {
+                ps.setInt(1, rapport.getPointAttribue());
+                ps.setInt(2, citizenId);
+                ps.executeUpdate();
+            }
+
+            cnx.commit();
+
+        } catch (SQLException e) {
+            cnx.rollback();
+            throw e;
+        } finally {
+            cnx.setAutoCommit(oldAutoCommit);
+        }
+    }
 }
