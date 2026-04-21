@@ -238,6 +238,7 @@ public class EditFieldAgentController {
 
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Field Agents");
             stage.show();
         } catch (Exception e) {
@@ -256,6 +257,7 @@ public class EditFieldAgentController {
 
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Admin Dashboard");
             stage.show();
         } catch (Exception e) {
@@ -274,6 +276,7 @@ public class EditFieldAgentController {
 
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Subscribers");
             stage.show();
         } catch (Exception e) {
@@ -292,6 +295,7 @@ public class EditFieldAgentController {
 
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Municipal Agents");
             stage.show();
         } catch (Exception e) {
@@ -305,6 +309,7 @@ public class EditFieldAgentController {
             Parent root = FXMLLoader.load(getClass().getResource("/user/home.fxml"));
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("EcoTrack - Home");
             stage.show();
         } catch (Exception e) {
@@ -331,6 +336,7 @@ public class EditFieldAgentController {
 
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Field Agents");
             stage.show();
         } catch (Exception e) {
@@ -348,6 +354,7 @@ public class EditFieldAgentController {
 
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Catégories");
             stage.show();
         } catch (Exception e) {
@@ -359,6 +366,7 @@ public class EditFieldAgentController {
             Parent root = FXMLLoader.load(getClass().getResource("/admin_association/association.fxml"));
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("associaitons");
             stage.show();
         } catch (Exception e) {
@@ -371,6 +379,7 @@ public class EditFieldAgentController {
             Parent root = FXMLLoader.load(getClass().getResource("/donation/donationIndex.fxml"));
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("donations");
             stage.show();
         } catch (Exception e) {

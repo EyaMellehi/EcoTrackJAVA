@@ -18,6 +18,7 @@ public class MainFX extends Application {
         
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/home.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
+        stage.setMaximized(true);
         stage.setTitle("EcoTrack - Home");
         stage.setScene(scene);
         stage.show();

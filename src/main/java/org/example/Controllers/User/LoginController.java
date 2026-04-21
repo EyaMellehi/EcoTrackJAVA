@@ -17,6 +17,14 @@ import java.sql.SQLException;
 import org.example.Entities.GoogleUserInfo;
 import org.example.Services.GoogleAuthService;
 
+import javafx.stage.FileChooser;
+import org.example.Services.FaceAuthService;
+
+import java.io.File;
+import nu.pattern.OpenCV;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.videoio.VideoCapture;
 public class LoginController {
 
     @FXML
@@ -53,6 +61,7 @@ public class LoginController {
 
             Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Admin Dashboard");
             stage.show();
 
@@ -68,6 +77,7 @@ public class LoginController {
 
             Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("EcoTrack - Home");
             stage.show();
 
@@ -107,6 +117,7 @@ public class LoginController {
 
                 Stage stage = (Stage) tfEmail.getScene().getWindow();
                 stage.setScene(new Scene(root));
+                stage.setMaximized(true);
                 stage.setTitle("Verify 2FA");
                 stage.show();
             } else {
@@ -125,6 +136,7 @@ public class LoginController {
             Parent root = FXMLLoader.load(getClass().getResource("/User/Register.fxml"));
             Stage stage = (Stage) linkRegister.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Register");
             stage.show();
         } catch (IOException e) {
@@ -145,6 +157,7 @@ public class LoginController {
             Parent root = FXMLLoader.load(getClass().getResource("/User/forgot_password.fxml"));
             Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Forgot Password");
             stage.show();
         } catch (Exception e) {
@@ -173,12 +186,73 @@ public class LoginController {
 
             Stage stage = (Stage) tfEmail.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
+
             stage.setTitle("Complete Registration");
             stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Google Login Error", e.getMessage());
+        }
+    }
+    @FXML
+    void loginWithFace(ActionEvent event) {
+        try {
+            OpenCV.loadLocally();
+
+            VideoCapture capture = new VideoCapture(0);
+
+            if (!capture.isOpened()) {
+                showAlert(Alert.AlertType.ERROR, "Face Login", "Unable to open camera.");
+                return;
+            }
+
+            Mat frame = new Mat();
+
+            // on lit quelques frames pour laisser la caméra se stabiliser
+            for (int i = 0; i < 10; i++) {
+                capture.read(frame);
+                Thread.sleep(100);
+            }
+
+            capture.release();
+
+            if (frame.empty()) {
+                showAlert(Alert.AlertType.ERROR, "Face Login", "No image captured from camera.");
+                return;
+            }
+
+            File tempFile = new File("temp_login_face.jpg");
+            Imgcodecs.imwrite(tempFile.getAbsolutePath(), frame);
+
+            FaceAuthService faceAuthService = new FaceAuthService();
+            Integer userId = faceAuthService.identifyUserByFace(tempFile);
+
+            tempFile.delete();
+
+            if (userId == null) {
+                showAlert(Alert.AlertType.ERROR, "Face Login", "Face not recognized.");
+                return;
+            }
+
+            User user = userService.getUserById(userId);
+
+            if (user == null) {
+                showAlert(Alert.AlertType.ERROR, "Face Login", "User not found.");
+                return;
+            }
+
+            if (!user.isActive()) {
+                showAlert(Alert.AlertType.ERROR, "Face Login", "Your account is disabled.");
+                return;
+            }
+
+            openHomeAccordingToRole(user);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Face Login", "Error during face login.");
         }
     }
 }

@@ -58,6 +58,7 @@ public class ResetPasswordController {
             Parent root = FXMLLoader.load(getClass().getResource("/user/login.fxml"));
             Stage stage = (Stage) pfNewPassword.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Login");
             stage.show();
 
@@ -73,6 +74,7 @@ public class ResetPasswordController {
             Parent root = FXMLLoader.load(getClass().getResource("/user/login.fxml"));
             Stage stage = (Stage) pfNewPassword.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Login");
             stage.show();
         } catch (Exception e) {
