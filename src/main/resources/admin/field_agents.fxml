@@ -11,42 +11,60 @@
     <children>
 
         <!-- SIDEBAR -->
-        <VBox prefWidth="240"
-              style="-fx-background-color: #121b3a; -fx-padding: 26 0 26 0;">
+        <!-- SIDEBAR -->
+        <VBox prefWidth="290" minWidth="290" maxWidth="290"
+              style="-fx-background-color: linear-gradient(to bottom, #0f172a, #132043); -fx-padding: 24 14 24 14;">
             <children>
 
-                <VBox spacing="8" style="-fx-padding: 0 24 24 24;">
-                    <Label text="EcoTrack"
-                           style="-fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold;"/>
+                <!-- HEADER -->
+                <VBox spacing="4" style="-fx-padding: 10 14 20 14;">
+                    <children>
+                        <Label text="EcoTrack"
+                               style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;"/>
+                        <Label text="Admin Dashboard"
+                               style="-fx-text-fill: #94a3b8; -fx-font-size: 14px;"/>
+                    </children>
                 </VBox>
 
-                <Button text="Dashboard"
-                        onAction="#goToDashboard"
-                        style="-fx-background-color: #0d1530; -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; -fx-alignment: CENTER-LEFT; -fx-padding: 16 24; -fx-pref-width: 240;"/>
+                <Separator style="-fx-opacity: 0.25; -fx-padding: 0 10 10 10;"/>
 
-                <Button text="Subscribers"
-                        onAction="#goToSubscribers"
-                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+                <!-- MENU -->
+                <VBox spacing="10" style="-fx-padding: 12 4 12 4;">
+                    <children>
 
-                <Button text="Municipal Agents"
-                        onAction="#goToMunicipalAgents"
-                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+                        <Button text="Dashboard"
+                                onAction="#goToDashboard"
+                                style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
 
-                <Button text="Field Agents"
-                        onAction="#goToFieldAgents"
-                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+                        <Button text="Subscribers"
+                                onAction="#goToSubscribers"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
 
-                <Button text="Categories"
-                        onAction="#goToCategories"
-                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+                        <Button text="Municipal Agents"
+                                onAction="#goToMunicipalAgents"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
 
-                <Button text="Associations"
-                        onAction="#goToAssociation"
-                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+                        <Button text="Field Agents"
+                                onAction="#goToFieldAgents"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
 
-                <Button text="Donation"
-                        onAction="#goToDonation"
-                        style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 17px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 24; -fx-pref-width: 240;"/>
+                        <Button text="Categories"
+                                onAction="#goToCategories"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
+
+                        <Button text="Associations"
+                                onAction="#goToAssociation"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
+
+                        <Button text="Donation"
+                                onAction="#goToDonation"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
+
+                    </children>
+                </VBox>
+
+                <Pane VBox.vgrow="ALWAYS"/>
+
 
 
             </children>

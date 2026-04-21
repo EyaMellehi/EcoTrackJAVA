@@ -120,6 +120,10 @@ public class AssociationController {
 
         navigate("/home.fxml", "Events");
     }
+    @FXML
+    private void goToAssociation() {
+        // already on this page
+    }
 
 
     /* =======================================================

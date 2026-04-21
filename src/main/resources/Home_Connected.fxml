@@ -137,22 +137,26 @@
                     <HBox alignment="CENTER" spacing="80" style="-fx-background-color: #6d8f72; -fx-padding: 60 20;">
                         <children>
                             <VBox alignment="CENTER" spacing="10">
-                                <Label text="5" style="-fx-text-fill: white; -fx-font-size: 48px; -fx-font-weight: bold;"/>
+                                <Label fx:id="lblReportsCount" text="0"
+                                       style="-fx-text-fill: white; -fx-font-size: 48px; -fx-font-weight: bold;"/>
                                 <Label text="Reports" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
                             </VBox>
 
                             <VBox alignment="CENTER" spacing="10">
-                                <Label text="5" style="-fx-text-fill: white; -fx-font-size: 48px; -fx-font-weight: bold;"/>
+                                <Label fx:id="lblRecyclingCount" text="0"
+                                       style="-fx-text-fill: white; -fx-font-size: 48px; -fx-font-weight: bold;"/>
                                 <Label text="Recycling" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
                             </VBox>
 
                             <VBox alignment="CENTER" spacing="10">
-                                <Label text="1" style="-fx-text-fill: white; -fx-font-size: 48px; -fx-font-weight: bold;"/>
+                                <Label fx:id="lblAssociationsCount" text="0"
+                                       style="-fx-text-fill: white; -fx-font-size: 48px; -fx-font-weight: bold;"/>
                                 <Label text="Associations" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
                             </VBox>
 
                             <VBox alignment="CENTER" spacing="10">
-                                <Label text="1" style="-fx-text-fill: white; -fx-font-size: 48px; -fx-font-weight: bold;"/>
+                                <Label fx:id="lblEventsCount" text="0"
+                                       style="-fx-text-fill: white; -fx-font-size: 48px; -fx-font-weight: bold;"/>
                                 <Label text="Events" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
                             </VBox>
                         </children>
@@ -171,7 +175,7 @@
                             <Pane HBox.hgrow="ALWAYS"/>
 
                             <Button text="Report now"
-                                     onAction="#goToMySignalements"
+                                    onAction="#goToMySignalements"
                                     style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-size: 18px; -fx-padding: 14 28;"/>
                         </children>
                     </HBox>
