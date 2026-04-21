@@ -113,7 +113,44 @@ public class AnnonceService {
         PreparedStatement ps = cnx.prepareStatement(sql);
         ps.setInt(1, id);
         ps.setInt(2, auteurId);
-        ps.executeUpdate();
+        int affected = ps.executeUpdate();
+        if (affected == 0) {
+            throw new SQLException("Suppression impossible: annonce introuvable ou droits insuffisants.");
+        }
+    }
+
+    // DELETE admin (hard delete)
+    public void deleteById(int annonceId) throws SQLException {
+        boolean oldAutoCommit = cnx.getAutoCommit();
+        try {
+            cnx.setAutoCommit(false);
+
+            // Fallback applicatif si la FK n'est pas encore en ON DELETE CASCADE.
+            try (PreparedStatement deleteComments = cnx.prepareStatement(
+                    "DELETE FROM commentaire_annonce WHERE annonce_id = ?")) {
+                deleteComments.setInt(1, annonceId);
+                deleteComments.executeUpdate();
+            }
+
+            int affected;
+            try (PreparedStatement deleteAnnonce = cnx.prepareStatement(
+                    "DELETE FROM annonce WHERE id = ?")) {
+                deleteAnnonce.setInt(1, annonceId);
+                affected = deleteAnnonce.executeUpdate();
+            }
+
+            if (affected == 0) {
+                cnx.rollback();
+                throw new SQLException("Suppression impossible: annonce introuvable.");
+            }
+
+            cnx.commit();
+        } catch (SQLException e) {
+            cnx.rollback();
+            throw e;
+        } finally {
+            cnx.setAutoCommit(oldAutoCommit);
+        }
     }
 
     // SEARCH
