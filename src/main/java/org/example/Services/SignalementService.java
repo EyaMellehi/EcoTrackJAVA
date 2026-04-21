@@ -252,4 +252,25 @@ public class SignalementService {
 
         throw new SQLException("Failed to retrieve generated signalement ID.");
     }
+
+    public int countInProgressSignalementsForFieldAgent(int agentId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM signalement WHERE agent_assigne_id = ? AND statut = 'EN_COURS'";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, agentId);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            return rs.getInt(1);
+        }
+        return 0;
+    }
+
+    public void cancelAssignment(int signalementId) throws SQLException {
+        String sql = "UPDATE signalement SET agent_assigne_id = NULL, statut = 'EN_ATTENTE', assigned_at = NULL WHERE id = ?";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, signalementId);
+        ps.executeUpdate();
+    }
+
+
 }

@@ -386,4 +386,35 @@ public class UserService {
         ps.setString(11, user.getFaceioId());
         ps.executeUpdate();
     }
+
+    public User findBestFieldAgentForDelegation(String delegation) throws SQLException {
+        List<User> agents = getFieldAgentsByDelegation(delegation);
+
+        if (agents == null || agents.isEmpty()) {
+            return null;
+        }
+
+        User bestAgent = null;
+        int minLoad = Integer.MAX_VALUE;
+
+        String sql = "SELECT COUNT(*) FROM signalement WHERE agent_assigne_id = ? AND statut = 'EN_COURS'";
+
+        for (User agent : agents) {
+            PreparedStatement ps = cnx.prepareStatement(sql);
+            ps.setInt(1, agent.getId());
+            ResultSet rs = ps.executeQuery();
+
+            int currentLoad = 0;
+            if (rs.next()) {
+                currentLoad = rs.getInt(1);
+            }
+
+            if (currentLoad < minLoad) {
+                minLoad = currentLoad;
+                bestAgent = agent;
+            }
+        }
+
+        return bestAgent;
+    }
 }

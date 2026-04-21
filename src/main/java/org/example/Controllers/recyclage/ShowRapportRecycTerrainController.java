@@ -1,3 +1,7 @@
+
+
+
+
 package org.example.Controllers.recyclage;
 
 import javafx.fxml.FXML;
@@ -14,6 +18,7 @@ import org.example.Services.RapportRecycService;
 
 import java.sql.SQLException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class ShowRapportRecycTerrainController {
 
@@ -68,17 +73,9 @@ public class ShowRapportRecycTerrainController {
             lblDateCollecte.setText(currentRapport.getDateCollect() != null ? currentRapport.getDateCollect().toString() : "-");
             lblQuantiteCollectee.setText(currentRapport.getQuantiteCollecte() + " kg");
             lblAgent.setText(currentRapport.getAgentTerrain() != null ? currentRapport.getAgentTerrain().getName() : "-");
-            lblPointAttribue.setText("#" + currentRapport.getPointAttribue());
+            lblPointAttribue.setText(currentRapport.getPointAttribue() + " points");
 
-            if (currentPoint.getDateDec() != null && currentRapport.getDateCollect() != null) {
-                Duration d = Duration.between(currentPoint.getDateDec().atStartOfDay(), currentRapport.getDateCollect());
-                long days = d.toDays();
-                long hours = d.toHours() % 24;
-                long minutes = d.toMinutes() % 60;
-                lblTempsTraitement.setText(days + "j : " + hours + "h : " + minutes + "min");
-            } else {
-                lblTempsTraitement.setText("-");
-            }
+            lblTempsTraitement.setText(calculateProcessingTime());
 
             lblDescriptionPoint.setText(
                     currentPoint.getDescription() != null && !currentPoint.getDescription().isEmpty()
@@ -95,6 +92,36 @@ public class ShowRapportRecycTerrainController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private String calculateProcessingTime() {
+        if (currentPoint == null || currentRapport == null || currentRapport.getDateCollect() == null) {
+            return "-";
+        }
+
+        LocalDateTime start;
+
+        if (currentPoint.getAssignedAt() != null) {
+            start = currentPoint.getAssignedAt();
+        } else if (currentPoint.getDateDec() != null) {
+            start = currentPoint.getDateDec().atStartOfDay();
+        } else {
+            return "-";
+        }
+
+        LocalDateTime end = currentRapport.getDateCollect();
+
+        if (end.isBefore(start)) {
+            return "0j : 0h : 0min";
+        }
+
+        Duration d = Duration.between(start, end);
+
+        long days = d.toDays();
+        long hours = d.toHours() % 24;
+        long minutes = d.toMinutes() % 60;
+
+        return days + "j : " + hours + "h : " + minutes + "min";
     }
 
     private void applyStatusStyle(String statut) {
@@ -143,3 +170,11 @@ public class ShowRapportRecycTerrainController {
         }
     }
 }
+
+
+
+
+
+
+
+

@@ -68,18 +68,18 @@ public class MunicipalPointsController {
     @FXML
     public void initialize() {
         cbStatus.setItems(FXCollections.observableArrayList(
-                "All statuses", "PENDING", "IN_PROGRESS", "COLLECTE", "VALIDE", "REFUSE"
+                "Tous", "PENDING", "IN_PROGRESS", "COLLECTE", "VALIDE", "REFUSE"
         ));
-        cbStatus.setValue("All statuses");
+        cbStatus.setValue("Tous");
 
         cbPriority.setItems(FXCollections.observableArrayList(
-                "All priorities", "LOW", "MEDIUM", "HIGH", "URGENT", "None"
+                "Toutes", "LOW", "MEDIUM", "HIGH", "URGENT", "None"
         ));
-        cbPriority.setValue("All priorities");
+        cbPriority.setValue("Toutes");
 
         initTable();
-        tablePoints.setPlaceholder(new Label("No recycling points found."));
-        tablePoints.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        tablePoints.setPlaceholder(new Label("Aucun point de recyclage trouvé."));
+        tablePoints.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
         txtSearch.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
         cbStatus.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
@@ -90,9 +90,9 @@ public class MunicipalPointsController {
         this.loggedUser = user;
 
         if (user != null) {
-            lblDelegation.setText("Delegation: " + safe(user.getDelegation()));
+            lblDelegation.setText("Délégation : " + safe(user.getDelegation()));
         } else {
-            lblDelegation.setText("Delegation: -");
+            lblDelegation.setText("Délégation : -");
         }
 
         if (navbarIncludeController != null) {
@@ -122,7 +122,7 @@ public class MunicipalPointsController {
         ));
 
         colDate.setCellValueFactory(data -> new SimpleStringProperty(
-                data.getValue().getDateDec() != null ? data.getValue().getDateDec().toString() : ""
+                data.getValue().getDateDec() != null ? data.getValue().getDateDec().toString() : "-"
         ));
 
         colStatus.setCellValueFactory(data -> new SimpleStringProperty(
@@ -140,41 +140,71 @@ public class MunicipalPointsController {
             return new SimpleStringProperty("Not assigned");
         });
 
-        addActionsColumn();
         styleStatusColumn();
         stylePriorityColumn();
+        addActionsColumn();
+
         tablePoints.setItems(filteredList);
+    }
+
+    private void styleStatusColumn() {
+        colStatus.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String statut, boolean empty) {
+                super.updateItem(statut, empty);
+
+                if (empty || statut == null || statut.isBlank()) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                Label badge = new Label(statut.toUpperCase());
+                badge.setStyle(getStatusBadgeStyle(statut));
+                setGraphic(badge);
+                setText(null);
+                setAlignment(Pos.CENTER);
+            }
+        });
+    }
+
+    private void stylePriorityColumn() {
+        colPriority.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String priority, boolean empty) {
+                super.updateItem(priority, empty);
+
+                if (empty || priority == null || priority.isBlank()) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                Label badge = new Label(priority.toUpperCase());
+                badge.setStyle(getPriorityBadgeStyle(priority));
+                setGraphic(badge);
+                setText(null);
+                setAlignment(Pos.CENTER);
+            }
+        });
     }
 
     private void addActionsColumn() {
         colActions.setCellFactory(param -> new TableCell<>() {
             private final Button btnOpen = new Button("Open");
             private final Button btnRefuse = new Button("Refuse");
-            private final HBox pane = new HBox(8, btnOpen, btnRefuse);
+            private final HBox box = new HBox(8, btnOpen, btnRefuse);
 
             {
-                btnOpen.setStyle(
-                        "-fx-background-color: #ecfdf5;" +
-                                "-fx-text-fill: #166534;" +
-                                "-fx-font-weight: bold;" +
-                                "-fx-background-radius: 8;" +
-                                "-fx-padding: 8 14;"
-                );
+                btnOpen.setStyle("-fx-background-color: #eef7ee; -fx-text-fill: #2e7d32; -fx-font-weight: bold;");
+                btnRefuse.setStyle("-fx-background-color: #ffebee; -fx-text-fill: #c62828; -fx-font-weight: bold;");
 
-                btnRefuse.setStyle(
-                        "-fx-background-color: #fef2f2;" +
-                                "-fx-text-fill: #b91c1c;" +
-                                "-fx-font-weight: bold;" +
-                                "-fx-background-radius: 8;" +
-                                "-fx-padding: 8 14;"
-                );
-
-                btnOpen.setOnAction(event -> {
+                btnOpen.setOnAction(e -> {
                     PointRecyclage point = getTableView().getItems().get(getIndex());
                     handleOpen(point);
                 });
 
-                btnRefuse.setOnAction(event -> {
+                btnRefuse.setOnAction(e -> {
                     PointRecyclage point = getTableView().getItems().get(getIndex());
                     handleRefuse(point);
                 });
@@ -186,34 +216,37 @@ public class MunicipalPointsController {
 
                 if (empty) {
                     setGraphic(null);
-                } else {
-                    PointRecyclage point = getTableView().getItems().get(getIndex());
-
-                    boolean canRefuse = point != null &&
-                            !"COLLECTE".equalsIgnoreCase(safe(point.getStatut())) &&
-                            !"VALIDE".equalsIgnoreCase(safe(point.getStatut())) &&
-                            !"REFUSE".equalsIgnoreCase(safe(point.getStatut()));
-
-                    btnRefuse.setVisible(canRefuse);
-                    btnRefuse.setManaged(canRefuse);
-
-                    setGraphic(pane);
+                    return;
                 }
+
+                PointRecyclage point = getTableView().getItems().get(getIndex());
+
+                if (point == null) {
+                    setGraphic(null);
+                    return;
+                }
+
+                String statut = safe(point.getStatut()).toUpperCase();
+                boolean canRefuse = !statut.equals("COLLECTE")
+                        && !statut.equals("VALIDE")
+                        && !statut.equals("REFUSE");
+
+                btnRefuse.setVisible(canRefuse);
+                btnRefuse.setManaged(canRefuse);
+
+                setGraphic(box);
             }
         });
     }
 
     private void loadPoints() {
-        if (loggedUser == null) {
-            return;
-        }
+        if (loggedUser == null) return;
 
         try {
             List<PointRecyclage> points = pointService.getPointsForMunicipal(loggedUser);
             masterList.setAll(points);
             applyFilters();
             updateStats();
-
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les points.");
@@ -221,14 +254,14 @@ public class MunicipalPointsController {
     }
 
     private void applyFilters() {
-        String search = txtSearch.getText() == null ? "" : txtSearch.getText().toLowerCase().trim();
+        String keyword = txtSearch.getText() == null ? "" : txtSearch.getText().trim().toLowerCase();
         String selectedStatus = cbStatus.getValue();
         String selectedPriority = cbPriority.getValue();
 
         List<PointRecyclage> result = new ArrayList<>();
 
         for (PointRecyclage p : masterList) {
-            if (matchesSearch(p, search) && matchesStatus(p, selectedStatus) && matchesPriority(p, selectedPriority)) {
+            if (matchesSearch(p, keyword) && matchesStatus(p, selectedStatus) && matchesPriority(p, selectedPriority)) {
                 result.add(p);
             }
         }
@@ -251,40 +284,23 @@ public class MunicipalPointsController {
     }
 
     private boolean matchesStatus(PointRecyclage p, String selectedStatus) {
-        if (selectedStatus == null || selectedStatus.equals("All statuses")) return true;
-        return safe(p.getStatut()).equalsIgnoreCase(selectedStatus);
+        return selectedStatus == null
+                || selectedStatus.equals("Tous")
+                || safe(p.getStatut()).equalsIgnoreCase(selectedStatus);
     }
 
     private boolean matchesPriority(PointRecyclage p, String selectedPriority) {
-        if (selectedPriority == null || selectedPriority.equals("All priorities")) return true;
+        if (selectedPriority == null || selectedPriority.equals("Toutes")) return true;
 
         String priority = p.getAiPriority() != null ? p.getAiPriority() : "None";
         return priority.equalsIgnoreCase(selectedPriority);
     }
 
     private void updateStats() {
-        int total = masterList.size();
-        int pending = 0;
-        int inProgress = 0;
-        int collected = 0;
-
-        for (PointRecyclage p : masterList) {
-            String s = safe(p.getStatut()).toUpperCase();
-
-            if (s.equals("PENDING") || s.equals("DECLARE") || s.equals("EN_ATTENTE")) {
-                pending++;
-            } else if (s.equals("IN_PROGRESS")) {
-                inProgress++;
-            } else if (s.equals("COLLECTE")) {
-                collected++;
-            }
-        }
-
-        lblTotal.setText(String.valueOf(total));
-        lblPending.setText(String.valueOf(pending));
-        lblInProgress.setText(String.valueOf(inProgress));
-        lblCollected.setText(String.valueOf(collected));
-
+        lblTotal.setText(String.valueOf(masterList.size()));
+        lblPending.setText(String.valueOf(masterList.stream().filter(p -> "PENDING".equalsIgnoreCase(safe(p.getStatut()))).count()));
+        lblInProgress.setText(String.valueOf(masterList.stream().filter(p -> "IN_PROGRESS".equalsIgnoreCase(safe(p.getStatut()))).count()));
+        lblCollected.setText(String.valueOf(masterList.stream().filter(p -> "COLLECTE".equalsIgnoreCase(safe(p.getStatut()))).count()));
         updateAssignedLabel();
     }
 
@@ -306,7 +322,7 @@ public class MunicipalPointsController {
 
             Stage stage = (Stage) tablePoints.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setTitle("Point details");
+            stage.setTitle("Détails du point");
             stage.setFullScreen(false);
             stage.setMaximized(true);
             stage.show();
@@ -356,16 +372,14 @@ public class MunicipalPointsController {
         );
 
         String delegation = loggedUser != null && loggedUser.getDelegation() != null && !loggedUser.getDelegation().isBlank()
-                ? loggedUser.getDelegation().replaceAll("[^a-zA-Z0-9-_]", "_")
+                ? loggedUser.getDelegation().replaceAll("[^a-zA-Z0-9-]", "")
                 : "delegation";
 
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm"));
-        fileChooser.setInitialFileName("recycling_points_" + delegation + "_" + timestamp + ".pdf");
+        fileChooser.setInitialFileName("municipal_points_" + delegation + "_" + timestamp + ".pdf");
 
         File file = fileChooser.showSaveDialog(tablePoints.getScene().getWindow());
-        if (file == null) {
-            return;
-        }
+        if (file == null) return;
 
         Document document = new Document(PageSize.A4.rotate(), 24, 24, 24, 24);
 
@@ -374,11 +388,10 @@ public class MunicipalPointsController {
             document.open();
 
             Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20);
-            Font sectionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
             Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
             Font smallFont = FontFactory.getFont(FontFactory.HELVETICA, 9);
 
-            Paragraph title = new Paragraph("Recycling Points Report", titleFont);
+            Paragraph title = new Paragraph("Municipal Recycling Points Report", titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
             title.setSpacingAfter(10f);
             document.add(title);
@@ -389,23 +402,22 @@ public class MunicipalPointsController {
                     normalFont
             );
             subtitle.setAlignment(Element.ALIGN_CENTER);
-            subtitle.setSpacingAfter(16f);
+            subtitle.setSpacingAfter(14f);
             document.add(subtitle);
 
-            PdfPTable summaryTable = new PdfPTable(4);
-            summaryTable.setWidthPercentage(100);
-            summaryTable.setSpacingAfter(16f);
-            summaryTable.setWidths(new float[]{1f, 1f, 1f, 1f});
-
-            addSummaryCell(summaryTable, "Total", lblTotal.getText(), sectionFont, normalFont);
-            addSummaryCell(summaryTable, "Pending", lblPending.getText(), sectionFont, normalFont);
-            addSummaryCell(summaryTable, "In progress", lblInProgress.getText(), sectionFont, normalFont);
-            addSummaryCell(summaryTable, "Collected", lblCollected.getText(), sectionFont, normalFont);
-
-            document.add(summaryTable);
+            Paragraph stats = new Paragraph(
+                    "Total: " + lblTotal.getText() +
+                            " | Pending: " + lblPending.getText() +
+                            " | In progress: " + lblInProgress.getText() +
+                            " | Collected: " + lblCollected.getText() +
+                            " | Assigned: " + lblAssigned.getText(),
+                    normalFont
+            );
+            stats.setSpacingAfter(12f);
+            document.add(stats);
 
             Paragraph filters = new Paragraph(
-                    "Filters → Search: " + safe(txtSearch.getText()) +
+                    "Filters -> Search: " + safe(txtSearch.getText()) +
                             " | Status: " + safe(cbStatus.getValue()) +
                             " | Priority: " + safe(cbPriority.getValue()),
                     smallFont
@@ -415,7 +427,7 @@ public class MunicipalPointsController {
 
             PdfPTable table = new PdfPTable(8);
             table.setWidthPercentage(100);
-            table.setWidths(new float[]{0.7f, 1.4f, 1.2f, 1f, 2.8f, 1.1f, 1.1f, 1.5f});
+            table.setWidths(new float[]{0.8f, 1.6f, 1.3f, 1f, 3f, 1.2f, 1.3f, 1.6f});
 
             addHeaderCell(table, "#");
             addHeaderCell(table, "Citizen");
@@ -451,15 +463,6 @@ public class MunicipalPointsController {
         }
     }
 
-    private void addSummaryCell(PdfPTable table, String label, String value, Font labelFont, Font valueFont) {
-        PdfPCell cell = new PdfPCell();
-        cell.setPadding(10f);
-        cell.setBorderColor(new java.awt.Color(220, 220, 220));
-        cell.addElement(new Paragraph(label, labelFont));
-        cell.addElement(new Paragraph(value, valueFont));
-        table.addCell(cell);
-    }
-
     private void addHeaderCell(PdfPTable table, String text) {
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, java.awt.Color.WHITE);
         PdfPCell cell = new PdfPCell(new Phrase(text, font));
@@ -478,72 +481,50 @@ public class MunicipalPointsController {
         table.addCell(cell);
     }
 
-    private String safe(String value) {
-        return value == null ? "" : value;
+    private String safe(String s) {
+        return s == null ? "" : s;
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    private void showAlert(Alert.AlertType type, String title, String msg) {
+        Alert a = new Alert(type);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 
-    private void styleStatusColumn() {
-        colStatus.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
+    private String getStatusBadgeStyle(String statut) {
+        String s = safe(statut).toUpperCase();
 
-                if (empty || item == null || item.isBlank()) {
-                    setText(null);
-                    setStyle("");
-                    return;
-                }
+        String base = "-fx-padding: 6 12; "
+                + "-fx-background-radius: 14; "
+                + "-fx-font-weight: bold; "
+                + "-fx-font-size: 12px;";
 
-                setText(item);
-                setAlignment(Pos.CENTER);
-
-                String base = "-fx-font-weight: bold; -fx-padding: 6 12; -fx-background-radius: 999; -fx-alignment: CENTER;";
-
-                switch (item.toUpperCase()) {
-                    case "PENDING" -> setStyle(base + "-fx-background-color: #fef3c7; -fx-text-fill: #92400e;");
-                    case "IN_PROGRESS" -> setStyle(base + "-fx-background-color: #dbeafe; -fx-text-fill: #1d4ed8;");
-                    case "COLLECTE" -> setStyle(base + "-fx-background-color: #dcfce7; -fx-text-fill: #166534;");
-                    case "VALIDE" -> setStyle(base + "-fx-background-color: #ede9fe; -fx-text-fill: #6d28d9;");
-                    case "REFUSE" -> setStyle(base + "-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c;");
-                    default -> setStyle(base + "-fx-background-color: #e5e7eb; -fx-text-fill: #374151;");
-                }
-            }
-        });
+        return switch (s) {
+            case "PENDING" -> base + "-fx-background-color: #facc15; -fx-text-fill: #111827;";
+            case "COLLECTE" -> base + "-fx-background-color: #16a34a; -fx-text-fill: white;";
+            case "IN_PROGRESS" -> base + "-fx-background-color: #2563eb; -fx-text-fill: white;";
+            case "REFUSE" -> base + "-fx-background-color: #ef4444; -fx-text-fill: white;";
+            case "VALIDE" -> base + "-fx-background-color: #7c3aed; -fx-text-fill: white;";
+            default -> base + "-fx-background-color: #9ca3af; -fx-text-fill: white;";
+        };
     }
 
-    private void stylePriorityColumn() {
-        colPriority.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
+    private String getPriorityBadgeStyle(String priority) {
+        String s = safe(priority).toUpperCase();
 
-                if (empty || item == null || item.isBlank()) {
-                    setText(null);
-                    setStyle("");
-                    return;
-                }
+        String base = "-fx-padding: 6 12; "
+                + "-fx-background-radius: 14; "
+                + "-fx-font-weight: bold; "
+                + "-fx-font-size: 12px;";
 
-                setText(item);
-                setAlignment(Pos.CENTER);
-
-                String base = "-fx-font-weight: bold; -fx-padding: 6 12; -fx-background-radius: 999; -fx-alignment: CENTER;";
-
-                switch (item.toUpperCase()) {
-                    case "LOW" -> setStyle(base + "-fx-background-color: #ecfccb; -fx-text-fill: #3f6212;");
-                    case "MEDIUM" -> setStyle(base + "-fx-background-color: #fef9c3; -fx-text-fill: #854d0e;");
-                    case "HIGH" -> setStyle(base + "-fx-background-color: #fed7aa; -fx-text-fill: #9a3412;");
-                    case "URGENT" -> setStyle(base + "-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c;");
-                    default -> setStyle(base + "-fx-background-color: #f3f4f6; -fx-text-fill: #4b5563;");
-                }
-            }
-        });
+        return switch (s) {
+            case "LOW" -> base + "-fx-background-color: #dcfce7; -fx-text-fill: #166534;";
+            case "MEDIUM" -> base + "-fx-background-color: #fef9c3; -fx-text-fill: #854d0e;";
+            case "HIGH" -> base + "-fx-background-color: #fed7aa; -fx-text-fill: #9a3412;";
+            case "URGENT" -> base + "-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c;";
+            default -> base + "-fx-background-color: #e5e7eb; -fx-text-fill: #374151;";
+        };
     }
 }

@@ -1,3 +1,4 @@
+
 package org.example.Services;
 
 import org.example.Entities.PointRecyclage;
@@ -38,12 +39,11 @@ public class RapportRecycService {
                 "FROM rapport_recyc r " +
                 "LEFT JOIN user u ON r.agent_terrain_id = u.id " +
                 "LEFT JOIN point_recyclage p ON r.point_recy_id = p.id " +
-                "WHERE r.point_recy_id = ? OR r.point_attribue = ? " +
+                "WHERE r.point_recy_id = ? " +
                 "LIMIT 1";
 
         PreparedStatement ps = cnx.prepareStatement(sql);
         ps.setInt(1, pointId);
-        ps.setInt(2, pointId);
 
         ResultSet rs = ps.executeQuery();
 
@@ -79,6 +79,7 @@ public class RapportRecycService {
 
         return null;
     }
+
     public void createRapportAndRewardCitizen(RapportRecyc rapport, int citizenId) throws SQLException {
         boolean oldAutoCommit = cnx.getAutoCommit();
 
@@ -117,3 +118,16 @@ public class RapportRecycService {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

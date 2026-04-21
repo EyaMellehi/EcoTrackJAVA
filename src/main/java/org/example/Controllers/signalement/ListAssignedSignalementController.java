@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.example.Controllers.HomeConnectedController;
+import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.Media;
 import org.example.Entities.RapportSignalement;
 import org.example.Entities.Signalement;
@@ -34,13 +35,13 @@ public class ListAssignedSignalementController {
     @FXML private FlowPane reportsContainer;
     @FXML private ComboBox<String> cbSort;
 
-    @FXML private javafx.scene.layout.HBox navbarCitoyen;
-    @FXML private javafx.scene.layout.HBox navbarMunicipal;
+    @FXML private HBox navbarCitoyen;
+    @FXML private NavbarCitoyenController navbarCitoyenController;
 
-    @FXML private org.example.Controllers.components.NavbarCitoyenController navbarCitoyenController;
-    @FXML private org.example.Controllers.components.NavbarMunicipalController navbarMunicipalController;
+    @FXML private Label lblTotalReports;
+    @FXML private Label lblInProgress;
+    @FXML private Label lblResolved;
 
-    private User user;
     private final SignalementService signalementService = new SignalementService();
     private final RapportSignalementService rapportService = new RapportSignalementService();
     private final MediaService mediaService = new MediaService();
@@ -50,48 +51,12 @@ public class ListAssignedSignalementController {
 
     public void setLoggedUser(User loggedUser) {
         this.loggedUser = loggedUser;
-        this.user = loggedUser;
-        configureNavbar();
+
+        if (navbarCitoyenController != null) {
+            navbarCitoyenController.setLoggedUser(loggedUser);
+        }
+
         loadAssignedSignalements();
-    }
-    private void configureNavbar() {
-        if (user == null || user.getRoles() == null) {
-            showCitoyenNavbar();
-            return;
-        }
-
-        String roles = user.getRoles();
-
-        if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
-            showMunicipalNavbar();
-
-            if (navbarMunicipalController != null) {
-                navbarMunicipalController.setLoggedUser(user);
-            }
-        } else {
-            // citoyen + agent terrain => same navbar
-            showCitoyenNavbar();
-
-            if (navbarCitoyenController != null) {
-                navbarCitoyenController.setLoggedUser(user);
-            }
-        }
-    }
-
-    private void showCitoyenNavbar() {
-        navbarCitoyen.setVisible(true);
-        navbarCitoyen.setManaged(true);
-
-        navbarMunicipal.setVisible(false);
-        navbarMunicipal.setManaged(false);
-    }
-
-    private void showMunicipalNavbar() {
-        navbarMunicipal.setVisible(true);
-        navbarMunicipal.setManaged(true);
-
-        navbarCitoyen.setVisible(false);
-        navbarCitoyen.setManaged(false);
     }
 
     @FXML
@@ -117,6 +82,20 @@ public class ListAssignedSignalementController {
         }
     }
 
+    private void loadStats(List<Signalement> list) {
+        long total = list.size();
+        long inProgress = list.stream()
+                .filter(s -> "EN_COURS".equalsIgnoreCase(safe(s.getStatut())))
+                .count();
+        long resolved = list.stream()
+                .filter(s -> "TRAITE".equalsIgnoreCase(safe(s.getStatut())))
+                .count();
+
+        if (lblTotalReports != null) lblTotalReports.setText(String.valueOf(total));
+        if (lblInProgress != null) lblInProgress.setText(String.valueOf(inProgress));
+        if (lblResolved != null) lblResolved.setText(String.valueOf(resolved));
+    }
+
     private void renderCards(List<Signalement> list) {
         reportsContainer.getChildren().clear();
 
@@ -130,8 +109,13 @@ public class ListAssignedSignalementController {
         for (Signalement s : list) {
             VBox card = new VBox(10);
             card.setPrefWidth(330);
-            card.setStyle("-fx-background-color: white; -fx-padding: 0 0 20 0; -fx-background-radius: 10; "
-                    + "-fx-border-color: #eeeeee; -fx-border-radius: 10;");
+            card.setStyle(
+                    "-fx-background-color: white; " +
+                            "-fx-padding: 0 0 20 0; " +
+                            "-fx-background-radius: 10; " +
+                            "-fx-border-color: #eeeeee; " +
+                            "-fx-border-radius: 10;"
+            );
 
             VBox content = new VBox(10);
             content.setPadding(new Insets(0, 20, 0, 20));
@@ -171,7 +155,9 @@ public class ListAssignedSignalementController {
             titre.setStyle("-fx-text-fill: #111827; -fx-font-size: 16px; -fx-font-weight: bold;");
 
             String descText = s.getDescription() != null ? s.getDescription() : "";
-            if (descText.length() > 80) descText = descText.substring(0, 80) + "...";
+            if (descText.length() > 80) {
+                descText = descText.substring(0, 80) + "...";
+            }
             Label desc = new Label(descText);
             desc.setWrapText(true);
             desc.setStyle("-fx-text-fill: #6b7280; -fx-font-size: 14px;");
@@ -218,7 +204,10 @@ public class ListAssignedSignalementController {
     }
 
     private String statusStyle(String statut) {
-        if (statut == null) return "-fx-background-color: #6b7280; -fx-text-fill: white; -fx-padding: 6 12; -fx-background-radius: 14;";
+        if (statut == null) {
+            return "-fx-background-color: #6b7280; -fx-text-fill: white; -fx-padding: 6 12; -fx-background-radius: 14;";
+        }
+
         return switch (statut.toUpperCase()) {
             case "EN_ATTENTE", "PENDING" ->
                     "-fx-background-color: #6b7280; -fx-text-fill: white; -fx-padding: 6 12; -fx-background-radius: 14;";
@@ -261,16 +250,21 @@ public class ListAssignedSignalementController {
         if (sort != null) {
             switch (sort) {
                 case "Newest first" ->
-                        result.sort(Comparator.comparing(Signalement::getDateCreation,
-                                Comparator.nullsLast(Comparator.reverseOrder())));
+                        result.sort(Comparator.comparing(
+                                Signalement::getDateCreation,
+                                Comparator.nullsLast(Comparator.reverseOrder())
+                        ));
                 case "Oldest first" ->
-                        result.sort(Comparator.comparing(Signalement::getDateCreation,
-                                Comparator.nullsLast(Comparator.naturalOrder())));
+                        result.sort(Comparator.comparing(
+                                Signalement::getDateCreation,
+                                Comparator.nullsLast(Comparator.naturalOrder())
+                        ));
                 case "Status" ->
                         result.sort(Comparator.comparing(s -> s.getStatut() == null ? "" : s.getStatut()));
             }
         }
 
+        loadStats(result);
         renderCards(result);
     }
 
@@ -364,6 +358,10 @@ public class ListAssignedSignalementController {
             showAlert(Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private String safe(String s) {
+        return s == null ? "" : s;
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
