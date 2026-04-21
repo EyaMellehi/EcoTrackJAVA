@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.web.WebView?>
 
 <HBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.Controllers.User.RegisterController"
@@ -78,6 +79,10 @@
                        prefWidth="320"
                        maxWidth="320"
                        style="-fx-background-radius: 10; -fx-padding: 12; -fx-font-size: 14px;"/>
+        <WebView fx:id="captchaWebView"
+                 prefWidth="320"
+                 maxWidth="320"
+                 prefHeight="120" />
 
         <Button text="Create account"
                 onAction="#register"

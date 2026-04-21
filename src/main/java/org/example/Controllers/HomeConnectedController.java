@@ -20,6 +20,7 @@ import org.example.Entities.User;
 
 import java.io.IOException;
 import javafx.scene.layout.StackPane;
+import org.example.Services.UserService;
 
 public class HomeConnectedController {
 
@@ -34,8 +35,13 @@ public class HomeConnectedController {
     @FXML private MenuItem menuLogout;
     @FXML private Label lblWelcomeUser;
     @FXML private StackPane navbarContainer;
+    @FXML private Label lblReportsCount;
+    @FXML private Label lblRecyclingCount;
+    @FXML private Label lblAssociationsCount;
+    @FXML private Label lblEventsCount;
 
     private User loggedUser;
+    private final UserService userService = new UserService();
 
     public void setLoggedUser(User user) {
         this.loggedUser = user;
@@ -50,6 +56,21 @@ public class HomeConnectedController {
             lblWelcomeUser.setText("Welcome, " + user.getName());
         } else {
             lblWelcomeUser.setText("Welcome");
+        }
+        loadStats();
+    }
+    private void loadStats() {
+        try {
+            if (loggedUser == null) {
+                return;
+            }
+
+            lblReportsCount.setText(String.valueOf(userService.countReportsForUser(loggedUser)));
+            lblRecyclingCount.setText(String.valueOf(userService.countRecyclingForUser(loggedUser)));
+            lblAssociationsCount.setText(String.valueOf(userService.countAssociations()));
+            lblEventsCount.setText(String.valueOf(userService.countPublishedEvents()));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     private void loadNavbarByRole() {
@@ -227,16 +248,16 @@ public class HomeConnectedController {
 
     @FXML
     void goToAssociations() {
-    
- 
+
+
         try {
             FXMLLoader loader;
             Parent root;
 
-                 loader = new FXMLLoader(getClass().getResource("/client_association/index.fxml"));
-                root = loader.load();
+            loader = new FXMLLoader(getClass().getResource("/client_association/index.fxml"));
+            root = loader.load();
 
- 
+
 
             Stage stage = (Stage) btnRecycling.getScene().getWindow();
             stage.setScene(new Scene(root));
