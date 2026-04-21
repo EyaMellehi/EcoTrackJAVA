@@ -107,6 +107,7 @@ public class LoginController {
 
                 Stage stage = (Stage) btnLogin.getScene().getWindow();
                 stage.setScene(new Scene(root));
+                stage.setMaximized(true);
                 stage.setTitle("Admin Dashboard");
                 stage.show();
 

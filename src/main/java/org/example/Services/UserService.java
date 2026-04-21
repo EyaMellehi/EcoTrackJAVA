@@ -10,6 +10,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 public class UserService {
     private Connection cnx;
@@ -24,6 +36,75 @@ public class UserService {
         ps.setString(1, email);
         ResultSet rs = ps.executeQuery();
         return rs.next();
+    }
+    public int countReportsForUser(User user) throws SQLException {
+        if (user == null || user.getRoles() == null) {
+            return 0;
+        }
+
+        String sql;
+
+        if (user.getRoles().contains("ROLE_AGENT_TERRAIN")) {
+            sql = "SELECT COUNT(*) FROM signalement WHERE agent_assigne_id = ?";
+        } else if (user.getRoles().contains("ROLE_AGENT_MUNICIPAL")) {
+            if (user.getRegion() == null || user.getRegion().isBlank()) {
+                return 0;
+            }
+            sql = "SELECT COUNT(*) FROM signalement WHERE delegation IS NOT NULL AND delegation LIKE ?";
+            PreparedStatement ps = cnx.prepareStatement(sql);
+            ps.setString(1, "%" + user.getRegion() + "%");
+            ResultSet rs = ps.executeQuery();
+            return rs.next() ? rs.getInt(1) : 0;
+        } else {
+            sql = "SELECT COUNT(*) FROM signalement WHERE citoyen_id = ?";
+        }
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, user.getId());
+        ResultSet rs = ps.executeQuery();
+        return rs.next() ? rs.getInt(1) : 0;
+    }
+
+    public int countRecyclingForUser(User user) throws SQLException {
+        if (user == null || user.getRoles() == null) {
+            return 0;
+        }
+
+        String sql;
+
+        if (user.getRoles().contains("ROLE_AGENT_TERRAIN")) {
+            sql = "SELECT COUNT(*) FROM point_recyclage WHERE agent_terrain_id = ?";
+        } else if (user.getRoles().contains("ROLE_AGENT_MUNICIPAL")) {
+            if (user.getRegion() == null || user.getRegion().isBlank()) {
+                return 0;
+            }
+            sql = "SELECT COUNT(*) FROM point_recyclage WHERE address LIKE ?";
+            PreparedStatement ps = cnx.prepareStatement(sql);
+            ps.setString(1, "%" + user.getRegion() + "%");
+            ResultSet rs = ps.executeQuery();
+            return rs.next() ? rs.getInt(1) : 0;
+        } else {
+            sql = "SELECT COUNT(*) FROM point_recyclage WHERE citoyen_id = ?";
+        }
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, user.getId());
+        ResultSet rs = ps.executeQuery();
+        return rs.next() ? rs.getInt(1) : 0;
+    }
+
+    public int countAssociations() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM association";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() ? rs.getInt(1) : 0;
+    }
+
+    public int countPublishedEvents() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM event WHERE statut = 'publie'";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() ? rs.getInt(1) : 0;
     }
 
     public void registerCitoyen(User user) throws SQLException {
@@ -386,35 +467,143 @@ public class UserService {
         ps.setString(11, user.getFaceioId());
         ps.executeUpdate();
     }
-
-    public User findBestFieldAgentForDelegation(String delegation) throws SQLException {
-        List<User> agents = getFieldAgentsByDelegation(delegation);
-
-        if (agents == null || agents.isEmpty()) {
-            return null;
-        }
-
-        User bestAgent = null;
-        int minLoad = Integer.MAX_VALUE;
-
-        String sql = "SELECT COUNT(*) FROM signalement WHERE agent_assigne_id = ? AND statut = 'EN_COURS'";
-
-        for (User agent : agents) {
-            PreparedStatement ps = cnx.prepareStatement(sql);
-            ps.setInt(1, agent.getId());
-            ResultSet rs = ps.executeQuery();
-
-            int currentLoad = 0;
-            if (rs.next()) {
-                currentLoad = rs.getInt(1);
-            }
-
-            if (currentLoad < minLoad) {
-                minLoad = currentLoad;
-                bestAgent = agent;
-            }
-        }
-
-        return bestAgent;
+    public int countSubscribers() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM user WHERE roles LIKE '%ROLE_CITOYEN%'";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() ? rs.getInt(1) : 0;
     }
+
+    public int countMunicipalAgents() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM user WHERE roles LIKE '%ROLE_AGENT_MUNICIPAL%'";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() ? rs.getInt(1) : 0;
+    }
+
+    public int countFieldAgents() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM user WHERE roles LIKE '%ROLE_AGENT_TERRAIN%'";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() ? rs.getInt(1) : 0;
+    }
+
+
+    public List<User> getTopCitoyensByPoints(int limit) throws SQLException {
+        List<User> users = new ArrayList<>();
+
+        String sql = "SELECT * FROM `user` WHERE roles LIKE '%ROLE_CITOYEN%' ORDER BY points DESC, id ASC LIMIT ?";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, limit);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            User user = new User();
+            user.setId(rs.getInt("id"));
+            user.setEmail(rs.getString("email"));
+            user.setRoles(rs.getString("roles"));
+            user.setPassword(rs.getString("password"));
+            user.setName(rs.getString("name"));
+            user.setPhone(rs.getString("phone"));
+            user.setRegion(rs.getString("region"));
+            user.setPoints(rs.getInt("points"));
+            user.setActive(rs.getBoolean("is_active"));
+            user.setImage(rs.getString("image"));
+
+            users.add(user);
+        }
+
+        return users;
+    }
+    public java.util.Map<String, Integer> countSignalementsByDelegation() throws SQLException {
+        java.util.Map<String, Integer> data = new java.util.LinkedHashMap<>();
+        String sql = "SELECT delegation, COUNT(*) as total FROM signalement WHERE delegation IS NOT NULL AND delegation <> '' GROUP BY delegation ORDER BY total DESC";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            data.put(rs.getString("delegation"), rs.getInt("total"));
+        }
+        return data;
+    }
+    public java.util.Map<String, Integer> countRecyclageByStatut() throws SQLException {
+        java.util.Map<String, Integer> data = new java.util.LinkedHashMap<>();
+        String sql = "SELECT statut, COUNT(*) as total FROM point_recyclage GROUP BY statut ORDER BY total DESC";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            data.put(rs.getString("statut"), rs.getInt("total"));
+        }
+        return data;
+    }
+    public java.util.Map<String, Integer> countAssociationsByRegion() throws SQLException {
+        java.util.Map<String, Integer> data = new java.util.LinkedHashMap<>();
+        String sql = "SELECT region, COUNT(*) as total FROM association WHERE region IS NOT NULL AND region <> '' GROUP BY region ORDER BY total DESC";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            data.put(rs.getString("region"), rs.getInt("total"));
+        }
+        return data;
+    }
+    public java.util.Map<String, Integer> countAnnoncesByCategorie() throws SQLException {
+        java.util.Map<String, Integer> data = new java.util.LinkedHashMap<>();
+        String sql = "SELECT categorie, COUNT(*) as total FROM annonce WHERE categorie IS NOT NULL AND categorie <> '' GROUP BY categorie ORDER BY total DESC";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            data.put(rs.getString("categorie"), rs.getInt("total"));
+        }
+        return data;
+    }
+    public java.util.Map<String, Integer> countEventsByStatut() throws SQLException {
+        java.util.Map<String, Integer> data = new java.util.LinkedHashMap<>();
+        String sql = "SELECT statut, COUNT(*) as total FROM event GROUP BY statut ORDER BY total DESC";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            data.put(rs.getString("statut"), rs.getInt("total"));
+        }
+        return data;
+    }
+    public boolean verifyRecaptcha(String token, String secretKey) {
+        try {
+            String url = "https://www.google.com/recaptcha/api/siteverify";
+            String params = "secret=" + URLEncoder.encode(secretKey, StandardCharsets.UTF_8)
+                    + "&response=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(params.getBytes(StandardCharsets.UTF_8));
+            }
+
+            StringBuilder response = new StringBuilder();
+            try (Scanner scanner = new Scanner(conn.getInputStream(), StandardCharsets.UTF_8)) {
+                while (scanner.hasNextLine()) {
+                    response.append(scanner.nextLine());
+                }
+            }
+
+            return response.toString().contains("\"success\": true")
+                    || response.toString().contains("\"success\":true");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
