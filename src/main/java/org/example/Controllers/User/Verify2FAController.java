@@ -73,6 +73,7 @@ public class Verify2FAController {
 
             Stage stage = (Stage) tfOtpCode.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Admin Dashboard");
             stage.show();
 
@@ -88,6 +89,7 @@ public class Verify2FAController {
 
             Stage stage = (Stage) tfOtpCode.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("EcoTrack - Home");
             stage.show();
 
@@ -102,6 +104,7 @@ public class Verify2FAController {
             Parent root = FXMLLoader.load(getClass().getResource("/User/login.fxml"));
             Stage stage = (Stage) tfOtpCode.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Login");
             stage.show();
         } catch (Exception e) {

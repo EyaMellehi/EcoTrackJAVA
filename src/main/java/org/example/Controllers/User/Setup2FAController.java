@@ -82,6 +82,7 @@ public class Setup2FAController {
 
             Stage stage = (Stage) tfOtpCode.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Profile");
             stage.show();
 
@@ -102,6 +103,7 @@ public class Setup2FAController {
 
             Stage stage = (Stage) tfOtpCode.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Profile");
             stage.show();
         } catch (Exception e) {

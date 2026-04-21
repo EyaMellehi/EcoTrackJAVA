@@ -39,3 +39,20 @@ build/
 
 src/main/resources/credentials.json
 credentials.json
+# Python
+ai-face-api/.venv/
+ai-face-api/__pycache__/
+ai-face-api/*.pyc
+
+# Face data
+var/faces/*
+!var/faces/.gitkeep
+
+# Optional uploaded/generated files
+uploads/
+temp_frame.jpg
+temp_login_face.jpg
+
+# IDE / build
+.idea/
+target/

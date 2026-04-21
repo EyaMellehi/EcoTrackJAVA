@@ -69,6 +69,11 @@
                 prefWidth="320"
                 maxWidth="320"
                 style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-size: 15px; -fx-background-radius: 10; -fx-padding: 12 20;"/>
+        <Button text="Login with Face"
+                onAction="#loginWithFace"
+                prefWidth="320"
+                maxWidth="320"
+                style="-fx-background-color: transparent; -fx-border-color: #2e7d32; -fx-text-fill: #2e7d32; -fx-font-size: 15px; -fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 12 20;"/>
 
         <HBox alignment="CENTER" spacing="10"
               prefWidth="320" maxWidth="320"

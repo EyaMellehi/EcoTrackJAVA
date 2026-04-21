@@ -169,6 +169,7 @@ public class ChangePasswordController {
 
             Stage stage = (Stage) pfCurrentPassword.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("My Profile");
             stage.show();
         } catch (Exception e) {

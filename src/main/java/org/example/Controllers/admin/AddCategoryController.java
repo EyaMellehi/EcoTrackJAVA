@@ -88,6 +88,7 @@ public class AddCategoryController {
             Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
             Stage stage = (Stage) tfNom.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle(title);
             stage.show();
         } catch (IOException e) {
