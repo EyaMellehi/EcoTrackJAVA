@@ -121,10 +121,17 @@
                                                     managed="false"
                                                     style="-fx-background-color: transparent; -fx-border-color: #b42318; -fx-border-radius: 6; -fx-background-radius: 6; -fx-text-fill: #b42318; -fx-font-size: 15px; -fx-padding: 12 18;"/>
 
-                                            <Button text="Change Password"
-                                                    onAction="#changePassword"
-                                                    prefWidth="180"
-                                                    style="-fx-background-color: transparent; -fx-border-color: #123b2c; -fx-border-radius: 6; -fx-background-radius: 6; -fx-text-fill: #123b2c; -fx-font-size: 16px; -fx-padding: 12 18;"/>
+                                            <Button text="Enable Face Login"
+                                                    onAction="#face_id"
+                                                    prefWidth="190"
+                                                    style="-fx-background-color: #eef8f0;
+                                                               -fx-border-color: #2e7d32;
+                                                               -fx-border-radius: 10;
+                                                               -fx-background-radius: 10;
+                                                               -fx-text-fill: #1f5f2b;
+                                                               -fx-font-size: 15px;
+                                                               -fx-font-weight: bold;
+                                                               -fx-padding: 12 18;"/>
                                         </children>
                                     </HBox>
                                 </children>

@@ -182,6 +182,7 @@ public class ProfileController {
 
             Stage stage = (Stage) lblFullName.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Edit Profile");
             stage.show();
         } catch (Exception e) {
@@ -200,6 +201,7 @@ public class ProfileController {
 
             Stage stage = (Stage) lblFullName.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Change Password");
             stage.show();
         } catch (Exception e) {
@@ -241,6 +243,25 @@ public class ProfileController {
             update2FAUI(false);
 
             System.out.println("2FA désactivé avec succès.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    private void face_id() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/face_enroll.fxml"));
+            Parent root = loader.load();
+
+            FaceEnrollController controller = loader.getController();
+            controller.setUser(user);
+
+            Stage stage = (Stage) lblFullName.getScene().getWindow();
+            stage.setScene(new Scene(root));
+
+            stage.setTitle("Face Enrollment");
+            stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -123,6 +123,7 @@ public class HomeConnectedController {
             Parent root = FXMLLoader.load(getClass().getResource("/home.fxml"));
             Stage stage = (Stage) lblWelcomeUser.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("EcoTrack - Home");
             stage.show();
         } catch (Exception e) {
@@ -141,6 +142,7 @@ public class HomeConnectedController {
 
             Stage stage = (Stage) lblWelcomeUser.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("My Profile");
             stage.show();
 
@@ -186,6 +188,7 @@ public class HomeConnectedController {
 
             Stage stage = (Stage) btnRecycling.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Points de recyclage");
             stage.show();
 

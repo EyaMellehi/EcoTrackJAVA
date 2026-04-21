@@ -103,6 +103,7 @@ public class CompleteGoogleRegisterController {
 
             Stage stage = (Stage) btnComplete.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("EcoTrack - Home");
             stage.show();
 
@@ -118,6 +119,7 @@ public class CompleteGoogleRegisterController {
             Parent root = FXMLLoader.load(getClass().getResource("/User/login.fxml"));
             Stage stage = (Stage) btnComplete.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.setTitle("Login");
             stage.show();
         } catch (Exception e) {

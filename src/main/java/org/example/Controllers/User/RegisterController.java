@@ -254,6 +254,7 @@ public class RegisterController {
             Stage stage = (Stage) tfName.getScene().getWindow();
             Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/user/login.fxml")));
             stage.setScene(scene);
+            stage.setMaximized(true);
             stage.setTitle("Login");
             stage.show();
 
@@ -269,6 +270,7 @@ public class RegisterController {
             Stage stage = (Stage) tfName.getScene().getWindow();
             Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/user/login.fxml")));
             stage.setScene(scene);
+            stage.setMaximized(true);
             stage.setTitle("Login");
             stage.show();
         } catch (Exception e) {
