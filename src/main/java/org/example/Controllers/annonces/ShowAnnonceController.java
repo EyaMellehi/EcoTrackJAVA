@@ -20,9 +20,22 @@ import org.example.Utils.InputValidationUtil;
 import java.io.File;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ShowAnnonceController {
+
+    private enum ReactionType {
+        LIKE,
+        DISLIKE
+    }
+
+    // Store session (non persistant) des reactions utilisateur par annonce.
+    private static final Map<Integer, Set<Integer>> LIKE_USERS_BY_ANNONCE = new HashMap<>();
+    private static final Map<Integer, Set<Integer>> DISLIKE_USERS_BY_ANNONCE = new HashMap<>();
 
     private enum CommentActionMode {
         NEW,
@@ -40,9 +53,13 @@ public class ShowAnnonceController {
     @FXML private VBox commentsContainer;
     @FXML private Label lblCommentCount;
     @FXML private Label lblCommentStatus;
+    @FXML private Label lblLikeCount;
+    @FXML private Label lblDislikeCount;
     @FXML private Label lblCommentFeedback;
     @FXML private TextArea taCommentaire;
     @FXML private Button btnPostComment;
+    @FXML private Button btnLike;
+    @FXML private Button btnDislike;
 
     private final AnnonceService annonceService = new AnnonceService();
     private final CommentaireAnnonceService commentaireService = new CommentaireAnnonceService();
@@ -54,19 +71,118 @@ public class ShowAnnonceController {
     public void setAnnonce(Annonce a) {
         this.annonce = a;
         displayAnnonceData();
+        refreshReactionUi();
         loadComments();
     }
 
     public void setLoggedUser(User user) {
         this.loggedUser = user;
+        refreshReactionUi();
+        if (annonce != null) {
+            loadComments();
+        }
     }
 
     @FXML
     public void initialize() {
         btnPostComment.setOnAction(e -> postComment());
+        if (btnLike != null) {
+            btnLike.setOnAction(e -> handleLike());
+        }
+        if (btnDislike != null) {
+            btnDislike.setOnAction(e -> handleDislike());
+        }
         taCommentaire.setWrapText(true);
         setCommentFeedback("", true);
         resetCommentComposer();
+        refreshReactionUi();
+    }
+
+    private boolean isCitizenUser() {
+        return loggedUser != null
+                && loggedUser.getRoles() != null
+                && loggedUser.getRoles().contains("ROLE_CITOYEN");
+    }
+
+    private Set<Integer> likeUsers() {
+        if (annonce == null) {
+            return java.util.Collections.emptySet();
+        }
+        return LIKE_USERS_BY_ANNONCE.computeIfAbsent(annonce.getId(), key -> new HashSet<>());
+    }
+
+    private Set<Integer> dislikeUsers() {
+        if (annonce == null) {
+            return java.util.Collections.emptySet();
+        }
+        return DISLIKE_USERS_BY_ANNONCE.computeIfAbsent(annonce.getId(), key -> new HashSet<>());
+    }
+
+    private void handleLike() {
+        applyReactionToggle(ReactionType.LIKE);
+    }
+
+    private void handleDislike() {
+        applyReactionToggle(ReactionType.DISLIKE);
+    }
+
+    private void applyReactionToggle(ReactionType reactionType) {
+        if (!isCitizenUser()) {
+            setCommentFeedback("Seul un citoyen connecté peut liker/disliker une annonce.", false);
+            return;
+        }
+        if (annonce == null || loggedUser == null) {
+            setCommentFeedback("Annonce introuvable ou utilisateur non connecté.", false);
+            return;
+        }
+
+        int userId = loggedUser.getId();
+        Set<Integer> likes = likeUsers();
+        Set<Integer> dislikes = dislikeUsers();
+
+        if (reactionType == ReactionType.LIKE) {
+            if (likes.contains(userId)) {
+                likes.remove(userId);
+                setCommentFeedback("Like retiré.", true);
+            } else {
+                likes.add(userId);
+                dislikes.remove(userId);
+                setCommentFeedback("Annonce likée.", true);
+            }
+        } else {
+            if (dislikes.contains(userId)) {
+                dislikes.remove(userId);
+                setCommentFeedback("Dislike retiré.", true);
+            } else {
+                dislikes.add(userId);
+                likes.remove(userId);
+                setCommentFeedback("Annonce dislikée.", true);
+            }
+        }
+
+        refreshReactionUi();
+    }
+
+    private void refreshReactionUi() {
+        int likeCount = annonce == null ? 0 : likeUsers().size();
+        int dislikeCount = annonce == null ? 0 : dislikeUsers().size();
+
+        if (lblLikeCount != null) {
+            lblLikeCount.setText(likeCount + " like(s)");
+        }
+        if (lblDislikeCount != null) {
+            lblDislikeCount.setText(dislikeCount + " dislike(s)");
+        }
+
+        boolean allowed = isCitizenUser() && annonce != null;
+        if (btnLike != null) {
+            btnLike.setDisable(!allowed);
+            btnLike.setStyle("-fx-background-color: " + (allowed ? "#e8f5e9" : "#f3f4f6") + "; -fx-text-fill: #166534; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 6 12;");
+        }
+        if (btnDislike != null) {
+            btnDislike.setDisable(!allowed);
+            btnDislike.setStyle("-fx-background-color: " + (allowed ? "#fee2e2" : "#f3f4f6") + "; -fx-text-fill: #b91c1c; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 6 12;");
+        }
     }
 
     private void resetCommentComposer() {
@@ -164,18 +280,23 @@ public class ShowAnnonceController {
 
         for (CommentaireAnnonce comment : comments) {
             VBox commentBox = createCommentItem(comment);
-            commentsContainer.getChildren().add(commentBox);
 
             try {
                 Integer viewerId = loggedUser != null ? loggedUser.getId() : null;
                 List<CommentaireAnnonce> replies = commentaireService.getByParentIdForViewer(comment.getId(), viewerId);
-                for (CommentaireAnnonce reply : replies) {
-                    VBox replyBox = createReplyItem(reply);
-                    commentsContainer.getChildren().add(replyBox);
+                if (!replies.isEmpty()) {
+                    VBox repliesContainer = new VBox(8);
+                    repliesContainer.setStyle("-fx-padding: 8 0 0 28;");
+                    for (CommentaireAnnonce reply : replies) {
+                        repliesContainer.getChildren().add(createReplyItem(reply));
+                    }
+                    commentBox.getChildren().add(repliesContainer);
                 }
             } catch (SQLException e) {
                 setCommentFeedback("Impossible de charger une réponse: " + e.getMessage(), false);
             }
+
+            commentsContainer.getChildren().add(commentBox);
         }
     }
 
@@ -186,7 +307,7 @@ public class ShowAnnonceController {
 
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
-        Label nameLabel = new Label(comment.getAuteurNom() != null ? comment.getAuteurNom() : "Anonyme");
+        Label nameLabel = new Label(resolveAuthorName(comment));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         Label dateLabel = new Label(comment.getDateComm().format(formatter));
         dateLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #7a8087;");
@@ -238,12 +359,12 @@ public class ShowAnnonceController {
     private VBox createReplyItem(CommentaireAnnonce reply) {
         VBox box = new VBox(5);
         box.setStyle("-fx-padding: 12 15; -fx-border-color: #e5e7eb; -fx-background-color: #ffffff; " +
-                     "-fx-background-radius: 4; -fx-border-radius: 4; -fx-margin: 0 0 0 40;");
+                     "-fx-background-radius: 4; -fx-border-radius: 4;");
 
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
 
-        Label nameLabel = new Label(reply.getAuteurNom() != null ? reply.getAuteurNom() : "Anonyme");
+        Label nameLabel = new Label(resolveAuthorName(reply));
         nameLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #2e7d32; -fx-font-size: 12px;");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -339,7 +460,7 @@ public class ShowAnnonceController {
         currentMode = CommentActionMode.REPLY;
         currentTargetComment = parentComment;
         taCommentaire.clear();
-        taCommentaire.setPromptText("Réponse à " + (parentComment.getAuteurNom() != null ? parentComment.getAuteurNom() : "cet utilisateur") + "...");
+        taCommentaire.setPromptText("Réponse à " + resolveAuthorName(parentComment) + "...");
         btnPostComment.setText("Publier la réponse");
         taCommentaire.requestFocus();
         setCommentFeedback("Mode réponse activé. Écrivez votre réponse puis cliquez sur Publier la réponse.", true);
@@ -381,6 +502,22 @@ public class ShowAnnonceController {
         alert.setTitle(title);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private String resolveAuthorName(CommentaireAnnonce comment) {
+        if (comment == null) {
+            return "Anonyme";
+        }
+        if (loggedUser != null && comment.getAuteurId() != null && comment.getAuteurId() == loggedUser.getId()) {
+            String connectedName = loggedUser.getName();
+            if (connectedName != null && !connectedName.isBlank()) {
+                return connectedName;
+            }
+        }
+        if (comment.getAuteurNom() != null && !comment.getAuteurNom().isBlank()) {
+            return comment.getAuteurNom();
+        }
+        return "Anonyme";
     }
 }
 

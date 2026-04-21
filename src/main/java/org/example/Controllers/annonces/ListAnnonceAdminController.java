@@ -249,7 +249,7 @@ public class ListAnnonceAdminController {
 
         if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             try {
-                annonceService.delete(a.getId(), loggedUser.getId());
+                annonceService.deleteById(a.getId());
                 loadAnnonces();
                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Annonce supprimée avec succès");
             } catch (SQLException e) {
