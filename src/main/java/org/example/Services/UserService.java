@@ -124,6 +124,7 @@ public class UserService {
         ps.setString(10, null);
         ps.setString(11, null);
 
+
         ps.executeUpdate();
     }
 
@@ -159,6 +160,8 @@ public class UserService {
                 user.setImage(rs.getString("image"));
                 user.setDelegation(rs.getString("delegation"));
                 user.setFaceioId(rs.getString("faceio_id"));
+                user.setTwoFactorEnabled(rs.getBoolean("two_factor_enabled"));
+                user.setTwoFactorSecret(rs.getString("two_factor_secret"));
                 return user;
             }
         }
@@ -210,6 +213,8 @@ public class UserService {
             user.setPoints(rs.getInt("points"));
             user.setActive(rs.getBoolean("is_active"));
             user.setImage(rs.getString("image"));
+            user.setTwoFactorEnabled(rs.getBoolean("two_factor_enabled"));
+            user.setTwoFactorSecret(rs.getString("two_factor_secret"));
 
             users.add(user);
         }
@@ -253,6 +258,8 @@ public class UserService {
             user.setPoints(rs.getInt("points"));
             user.setActive(rs.getBoolean("is_active"));
             user.setImage(rs.getString("image"));
+            user.setTwoFactorEnabled(rs.getBoolean("two_factor_enabled"));
+            user.setTwoFactorSecret(rs.getString("two_factor_secret"));
 
             users.add(user);
         }
@@ -279,6 +286,8 @@ public class UserService {
             user.setPoints(rs.getInt("points"));
             user.setActive(rs.getBoolean("is_active"));
             user.setImage(rs.getString("image"));
+            user.setTwoFactorEnabled(rs.getBoolean("two_factor_enabled"));
+            user.setTwoFactorSecret(rs.getString("two_factor_secret"));
 
             users.add(user);
         }
@@ -393,6 +402,8 @@ public class UserService {
             user.setPoints(rs.getInt("points"));
             user.setActive(rs.getBoolean("is_active"));
             user.setImage(rs.getString("image"));
+            user.setTwoFactorEnabled(rs.getBoolean("two_factor_enabled"));
+            user.setTwoFactorSecret(rs.getString("two_factor_secret"));
 
             users.add(user);
         }
@@ -421,6 +432,8 @@ public class UserService {
             user.setImage(rs.getString("image"));
             user.setDelegation(rs.getString("delegation"));
             user.setFaceioId(rs.getString("faceio_id"));
+            user.setTwoFactorEnabled(rs.getBoolean("two_factor_enabled"));
+            user.setTwoFactorSecret(rs.getString("two_factor_secret"));
             return user;
         }
 
@@ -447,6 +460,8 @@ public class UserService {
             user.setImage(rs.getString("image"));
             user.setDelegation(rs.getString("delegation"));
             user.setFaceioId(rs.getString("faceio_id"));
+            user.setTwoFactorEnabled(rs.getBoolean("two_factor_enabled"));
+            user.setTwoFactorSecret(rs.getString("two_factor_secret"));
             return user;
         }
         return null;
@@ -606,4 +621,44 @@ public class UserService {
         }
     }
 
+    public void enableTwoFactor(int userId, String secret) throws SQLException {
+        String sql = "UPDATE user SET two_factor_enabled = ?, two_factor_secret = ? WHERE id = ?";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setBoolean(1, true);
+        ps.setString(2, secret);
+        ps.setInt(3, userId);
+        ps.executeUpdate();
+    }
+
+    public void disableTwoFactor(int userId) throws SQLException {
+        String sql = "UPDATE user SET two_factor_enabled = ?, two_factor_secret = NULL WHERE id = ?";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setBoolean(1, false);
+        ps.setInt(2, userId);
+        ps.executeUpdate();
+    }
+
+    public boolean isTwoFactorEnabled(int userId) throws SQLException {
+        String sql = "SELECT two_factor_enabled FROM user WHERE id = ?";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, userId);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            return rs.getBoolean("two_factor_enabled");
+        }
+        return false;
+    }
+
+    public String getTwoFactorSecret(int userId) throws SQLException {
+        String sql = "SELECT two_factor_secret FROM user WHERE id = ?";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setInt(1, userId);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            return rs.getString("two_factor_secret");
+        }
+        return null;
+    }
 }
