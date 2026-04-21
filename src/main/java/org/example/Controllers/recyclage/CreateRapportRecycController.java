@@ -13,6 +13,8 @@ import org.example.Services.PointRecyclageService;
 import org.example.Services.RapportRecycService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class CreateRapportRecycController {
 
@@ -132,8 +134,10 @@ public class CreateRapportRecycController {
 
             int pointsGagnes = (int) Math.round(qte * currentPoint.getCategorie().getCoefPoints());
 
+            LocalDateTime dateCollecte = LocalDateTime.of(dpDateCollect.getValue(), LocalTime.now());
+
             RapportRecyc rapport = new RapportRecyc();
-            rapport.setDateCollect(dpDateCollect.getValue().atStartOfDay());
+            rapport.setDateCollect(dateCollecte);
             rapport.setQuantiteCollecte(qte);
             rapport.setCommentaire(commentaire);
             rapport.setPointAttribue(pointsGagnes);
@@ -194,3 +198,9 @@ public class CreateRapportRecycController {
         alert.showAndWait();
     }
 }
+
+
+
+
+
+

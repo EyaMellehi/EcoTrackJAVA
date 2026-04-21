@@ -1,387 +1,368 @@
 package org.example.Controllers.signalement;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import org.example.Controllers.HomeConnectedController;
-import org.example.Entities.Media;
+import org.example.Controllers.components.NavbarMunicipalController;
+import org.example.Entities.RapportSignalement;
 import org.example.Entities.Signalement;
 import org.example.Entities.User;
-import org.example.Services.MediaService;
+import org.example.Services.RapportSignalementService;
 import org.example.Services.SignalementService;
 import org.example.Services.UserService;
 
-import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class ListMunicipalSignalementController {
 
-    @FXML private TextField tfSearch;
-    @FXML private ComboBox<User> cbAgents;
-    @FXML private FlowPane reportsContainer;
-    @FXML private ComboBox<String> cbSort;
-    @FXML private javafx.scene.layout.HBox navbarCitoyen;
-    @FXML private javafx.scene.layout.HBox navbarMunicipal;
+    @FXML private NavbarMunicipalController navbarIncludeController;
 
-    @FXML private org.example.Controllers.components.NavbarCitoyenController navbarCitoyenController;
-    @FXML private org.example.Controllers.components.NavbarMunicipalController navbarMunicipalController;
+    @FXML private Label lblDelegation;
+    @FXML private Label lblTotal;
+    @FXML private Label lblPending;
+    @FXML private Label lblInProgress;
+    @FXML private Label lblResolved;
+    @FXML private Label lblAssigned;
 
-    private User user;
-    private final SignalementService signalementService = new SignalementService();
-    private final UserService userService = new UserService();
-    private final MediaService mediaService = new MediaService();
+    @FXML private TextField txtSearch;
+    @FXML private ComboBox<String> cbStatus;
+
+    @FXML private TableView<Signalement> tableSignalements;
+    @FXML private TableColumn<Signalement, String> colId;
+    @FXML private TableColumn<Signalement, String> colCitizen;
+    @FXML private TableColumn<Signalement, String> colType;
+    @FXML private TableColumn<Signalement, String> colTitle;
+    @FXML private TableColumn<Signalement, String> colAddress;
+    @FXML private TableColumn<Signalement, String> colDate;
+    @FXML private TableColumn<Signalement, String> colStatus;
+    @FXML private TableColumn<Signalement, String> colAssignment;
+    @FXML private TableColumn<Signalement, Void> colActions;
 
     private User loggedUser;
-    private ObservableList<Signalement> signalementList = FXCollections.observableArrayList();
 
-    public void setLoggedUser(User loggedUser) {
-        this.loggedUser = loggedUser;
-        this.user = loggedUser;
+    private final SignalementService signalementService = new SignalementService();
+    private final UserService userService = new UserService();
+    private final RapportSignalementService rapportService = new RapportSignalementService();
 
-        loadMunicipalSignalements();
-        loadFieldAgents();
-        configureNavbar();
-    }
-    private void configureNavbar() {
-        if (navbarCitoyen == null || navbarMunicipal == null) {
-            return;
-        }
-
-        if (loggedUser == null || loggedUser.getRoles() == null) {
-            showCitoyenNavbar();
-            return;
-        }
-
-        String roles = loggedUser.getRoles();
-
-        if (roles.contains("ROLE_AGENT_MUNICIPAL")) {
-            showMunicipalNavbar();
-
-            if (navbarMunicipalController != null) {
-                navbarMunicipalController.setLoggedUser(loggedUser);
-            }
-        } else {
-            showCitoyenNavbar();
-
-            if (navbarCitoyenController != null) {
-                navbarCitoyenController.setLoggedUser(loggedUser);
-            }
-        }
-    }
-
-    private void showCitoyenNavbar() {
-        navbarCitoyen.setVisible(true);
-        navbarCitoyen.setManaged(true);
-
-        navbarMunicipal.setVisible(false);
-        navbarMunicipal.setManaged(false);
-    }
-
-    private void showMunicipalNavbar() {
-        navbarMunicipal.setVisible(true);
-        navbarMunicipal.setManaged(true);
-
-        navbarCitoyen.setVisible(false);
-        navbarCitoyen.setManaged(false);
-    }
+    private final ObservableList<Signalement> masterList = FXCollections.observableArrayList();
+    private final ObservableList<Signalement> filteredList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        if (cbSort != null) {
-            cbSort.getItems().addAll(
-                    "Newest first",
-                    "Oldest first",
-                    "Status"
-            );
-        }
+        cbStatus.setItems(FXCollections.observableArrayList(
+                "All", "EN_ATTENTE", "EN_COURS", "TRAITE"
+        ));
+        cbStatus.setValue("All");
 
-        cbAgents.setCellFactory(param -> new ListCell<>() {
-            @Override
-            protected void updateItem(User item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getName() + " - " + item.getDelegation());
-            }
-        });
+        initTable();
 
-        cbAgents.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(User item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getName() + " - " + item.getDelegation());
-            }
-        });
+        tableSignalements.setPlaceholder(new Label("No signalement found."));
+        tableSignalements.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+
+        txtSearch.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+        cbStatus.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
     }
 
-    @FXML
-    public void loadMunicipalSignalements() {
-        if (loggedUser == null || loggedUser.getDelegation() == null) return;
+    public void setLoggedUser(User user) {
+        this.loggedUser = user;
 
-        try {
-            List<Signalement> list = signalementService.getByDelegation(loggedUser.getDelegation());
-            signalementList = FXCollections.observableArrayList(list);
-            applyFiltersAndSort();
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
-            e.printStackTrace();
+        if (user != null) {
+            lblDelegation.setText("Delegation: " + safe(user.getDelegation()));
+        } else {
+            lblDelegation.setText("Delegation: -");
         }
+
+        if (navbarIncludeController != null) {
+            navbarIncludeController.setLoggedUser(user);
+        }
+
+        loadSignalements();
     }
 
-    private void loadFieldAgents() {
-        if (loggedUser == null || loggedUser.getDelegation() == null) return;
+    private void initTable() {
+        colId.setCellValueFactory(data ->
+                new SimpleStringProperty("#" + data.getValue().getId())
+        );
 
-        try {
-            List<User> agents = userService.getFieldAgentsByDelegation(loggedUser.getDelegation());
-            cbAgents.setItems(FXCollections.observableArrayList(agents));
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void renderCards(List<Signalement> list) {
-        reportsContainer.getChildren().clear();
-
-        if (list.isEmpty()) {
-            Label empty = new Label("No signalements found for your delegation.");
-            empty.setStyle("-fx-text-fill: #7a8087; -fx-font-size: 16px;");
-            reportsContainer.getChildren().add(empty);
-            return;
-        }
-
-        for (Signalement s : list) {
-            VBox card = new VBox(10);
-            card.setPrefWidth(340);
-            card.setStyle("-fx-background-color: white; -fx-padding: 0 0 20 0; -fx-background-radius: 10; "
-                    + "-fx-border-color: #eeeeee; -fx-border-radius: 10;");
-
-            VBox content = new VBox(10);
-            content.setPadding(new Insets(0, 20, 0, 20));
-
+        colCitizen.setCellValueFactory(data -> {
             try {
-                Media firstMedia = mediaService.getFirstBySignalementId(s.getId());
-                if (firstMedia != null) {
-                    File file = new File(firstMedia.getUrl());
-                    if (file.exists()) {
-                        ImageView imageView = new ImageView(new Image(file.toURI().toString()));
-                        imageView.setFitWidth(340);
-                        imageView.setFitHeight(170);
-                        imageView.setPreserveRatio(false);
-                        card.getChildren().add(imageView);
-                    }
+                Integer citoyenId = data.getValue().getCitoyenId();
+                if (citoyenId != null) {
+                    User citizen = userService.getUserById(citoyenId);
+                    return new SimpleStringProperty(citizen != null ? safe(citizen.getName()) : "-");
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
+            }
+            return new SimpleStringProperty("-");
+        });
+
+        colType.setCellValueFactory(data ->
+                new SimpleStringProperty(safe(data.getValue().getType()))
+        );
+
+        colTitle.setCellValueFactory(data ->
+                new SimpleStringProperty(safe(data.getValue().getTitre()))
+        );
+
+        colAddress.setCellValueFactory(data ->
+                new SimpleStringProperty(safe(data.getValue().getAddresse()))
+        );
+
+        colDate.setCellValueFactory(data ->
+                new SimpleStringProperty(
+                        data.getValue().getDateCreation() != null
+                                ? data.getValue().getDateCreation().toString()
+                                : "-"
+                )
+        );
+
+        colStatus.setCellValueFactory(data ->
+                new SimpleStringProperty(safe(data.getValue().getStatut()))
+        );
+
+        colAssignment.setCellValueFactory(data -> {
+            try {
+                Integer agentId = data.getValue().getAgentAssigneId();
+                if (agentId != null) {
+                    User agent = userService.getUserById(agentId);
+                    return new SimpleStringProperty("Assigned: " + (agent != null ? safe(agent.getName()) : "Agent"));
+                }
+            } catch (Exception ignored) {
+            }
+            return new SimpleStringProperty("Not assigned");
+        });
+
+        styleStatusColumn();
+        addActionsColumn();
+
+        tableSignalements.setItems(filteredList);
+    }
+
+    private void styleStatusColumn() {
+        colStatus.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String statut, boolean empty) {
+                super.updateItem(statut, empty);
+
+                if (empty || statut == null || statut.isBlank()) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                Label badge = new Label(statut.toUpperCase());
+                badge.setStyle(getStatusBadgeStyle(statut));
+                setGraphic(badge);
+                setText(null);
+                setAlignment(Pos.CENTER);
+            }
+        });
+    }
+
+    private void addActionsColumn() {
+        colActions.setCellFactory(param -> new TableCell<>() {
+            private final Button btnOpen = new Button("Open");
+            private final Button btnDelete = new Button("Delete");
+            private final HBox box = new HBox(8, btnOpen, btnDelete);
+
+            {
+                btnOpen.setStyle("-fx-background-color: #eef7ee; -fx-text-fill: #2e7d32; -fx-font-weight: bold;");
+                btnDelete.setStyle("-fx-background-color: #ffebee; -fx-text-fill: #c62828; -fx-font-weight: bold;");
+
+                btnOpen.setOnAction(e -> {
+                    Signalement signalement = getTableView().getItems().get(getIndex());
+                    handleOpen(signalement);
+                });
+
+                btnDelete.setOnAction(e -> {
+                    Signalement signalement = getTableView().getItems().get(getIndex());
+                    handleDelete(signalement);
+                });
             }
 
-            HBox top = new HBox();
-            Label type = new Label(s.getType() != null ? s.getType() : "");
-            type.setStyle("-fx-text-fill: #104b2c; -fx-font-size: 18px; -fx-font-weight: bold;");
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
 
-            Label badge = new Label(formatStatus(s.getStatut()));
-            badge.setStyle(statusStyle(s.getStatut()));
+                if (empty) {
+                    setGraphic(null);
+                    return;
+                }
 
-            Region spacer = new Region();
-            HBox.setHgrow(spacer, Priority.ALWAYS);
-            top.getChildren().addAll(type, spacer, badge);
+                Signalement signalement = getTableView().getItems().get(getIndex());
 
-            Label addr = new Label(s.getAddresse() != null ? s.getAddresse() : "");
-            addr.setWrapText(true);
-            addr.setStyle("-fx-text-fill: #7a8087; -fx-font-size: 14px;");
+                if (signalement == null) {
+                    setGraphic(null);
+                    return;
+                }
 
-            Label titre = new Label(s.getTitre() != null ? s.getTitre() : "");
-            titre.setStyle("-fx-text-fill: #111827; -fx-font-size: 16px; -fx-font-weight: bold;");
+                String statut = safe(signalement.getStatut()).toUpperCase();
+                boolean canDelete = !statut.equals("TRAITE");
 
-            String descText = s.getDescription() != null ? s.getDescription() : "";
-            if (descText.length() > 80) descText = descText.substring(0, 80) + "...";
-            Label desc = new Label(descText);
-            desc.setWrapText(true);
-            desc.setStyle("-fx-text-fill: #6b7280; -fx-font-size: 14px;");
+                btnDelete.setVisible(canDelete);
+                btnDelete.setManaged(canDelete);
 
-            Label assignedInfo = new Label(
-                    s.getAgentAssigneId() != null ? "Already assigned" : "Not assigned"
-            );
-            assignedInfo.setStyle(s.getAgentAssigneId() != null
-                    ? "-fx-text-fill: #d97706; -fx-font-size: 13px; -fx-font-weight: bold;"
-                    : "-fx-text-fill: #16a34a; -fx-font-size: 13px; -fx-font-weight: bold;");
-
-            HBox actions = new HBox(8);
-
-            Button showBtn = new Button("Show");
-            showBtn.setStyle("-fx-background-color: white; -fx-border-color: #2563eb; -fx-text-fill: #2563eb;");
-            showBtn.setOnAction(e -> openShowSignalement(s));
-
-            Button assignBtn = new Button("Assign");
-            assignBtn.setStyle("-fx-background-color: #2e7d32; -fx-text-fill: white;");
-            assignBtn.setOnAction(e -> assignSignalement(s));
-
-            boolean assignable = s.getAgentAssigneId() == null && !"TRAITE".equalsIgnoreCase(s.getStatut());
-            assignBtn.setDisable(!assignable);
-
-            actions.getChildren().addAll(showBtn, assignBtn);
-
-            content.getChildren().addAll(top, addr, titre, desc, assignedInfo, actions);
-            card.getChildren().add(content);
-            reportsContainer.getChildren().add(card);
-        }
-    }
-
-    private String formatStatus(String statut) {
-        if (statut == null) return "";
-        return switch (statut.toUpperCase()) {
-            case "EN_ATTENTE", "PENDING" -> "Pending";
-            case "EN_COURS", "IN_PROGRESS" -> "In progress";
-            case "TRAITE", "RESOLVED" -> "Resolved";
-            default -> statut;
-        };
-    }
-
-    private String statusStyle(String statut) {
-        if (statut == null) return "-fx-background-color: #6b7280; -fx-text-fill: white; -fx-padding: 6 12; -fx-background-radius: 14;";
-        return switch (statut.toUpperCase()) {
-            case "EN_ATTENTE", "PENDING" ->
-                    "-fx-background-color: #6b7280; -fx-text-fill: white; -fx-padding: 6 12; -fx-background-radius: 14;";
-            case "EN_COURS", "IN_PROGRESS" ->
-                    "-fx-background-color: #facc15; -fx-text-fill: #111827; -fx-padding: 6 12; -fx-background-radius: 14;";
-            case "TRAITE", "RESOLVED" ->
-                    "-fx-background-color: #16a34a; -fx-text-fill: white; -fx-padding: 6 12; -fx-background-radius: 14;";
-            default ->
-                    "-fx-background-color: #111827; -fx-text-fill: white; -fx-padding: 6 12; -fx-background-radius: 14;";
-        };
-    }
-
-    @FXML
-    public void searchSignalements() {
-        applyFiltersAndSort();
-    }
-
-    @FXML
-    public void sortSignalements() {
-        applyFiltersAndSort();
-    }
-
-    private void applyFiltersAndSort() {
-        List<Signalement> result = new ArrayList<>(signalementList);
-
-        String keyword = tfSearch.getText() != null ? tfSearch.getText().trim().toLowerCase() : "";
-        if (!keyword.isEmpty()) {
-            result = result.stream()
-                    .filter(s ->
-                            (s.getTitre() != null && s.getTitre().toLowerCase().contains(keyword)) ||
-                                    (s.getType() != null && s.getType().toLowerCase().contains(keyword)) ||
-                                    (s.getStatut() != null && s.getStatut().toLowerCase().contains(keyword)) ||
-                                    (s.getAddresse() != null && s.getAddresse().toLowerCase().contains(keyword)) ||
-                                    (s.getDelegation() != null && s.getDelegation().toLowerCase().contains(keyword))
-                    )
-                    .collect(Collectors.toList());
-        }
-
-        String sort = cbSort.getValue();
-        if (sort != null) {
-            switch (sort) {
-                case "Newest first" ->
-                        result.sort(Comparator.comparing(Signalement::getDateCreation,
-                                Comparator.nullsLast(Comparator.reverseOrder())));
-                case "Oldest first" ->
-                        result.sort(Comparator.comparing(Signalement::getDateCreation,
-                                Comparator.nullsLast(Comparator.naturalOrder())));
-                case "Status" ->
-                        result.sort(Comparator.comparing(s -> s.getStatut() == null ? "" : s.getStatut()));
+                setGraphic(box);
             }
-        }
-
-        renderCards(result);
+        });
     }
 
-    private void openShowSignalement(Signalement selected) {
+    private void loadSignalements() {
+        if (loggedUser == null) return;
+
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/signalement/show_signalement.fxml"));
+            List<Signalement> signalements = signalementService.getByDelegation(loggedUser.getDelegation());
+            masterList.setAll(signalements);
+            applyFilters();
+            updateStats();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Unable to load signalements.");
+        }
+    }
+
+    private void applyFilters() {
+        String keyword = txtSearch.getText() == null ? "" : txtSearch.getText().trim().toLowerCase();
+        String selectedStatus = cbStatus.getValue();
+
+        List<Signalement> result = new ArrayList<>();
+
+        for (Signalement s : masterList) {
+            if (matchesSearch(s, keyword) && matchesStatus(s, selectedStatus)) {
+                result.add(s);
+            }
+        }
+
+        filteredList.setAll(result);
+        updateAssignedLabel();
+    }
+
+    private boolean matchesSearch(Signalement s, String search) {
+        if (search.isEmpty()) return true;
+
+        String titre = safe(s.getTitre());
+        String type = safe(s.getType());
+        String address = safe(s.getAddresse());
+        String status = safe(s.getStatut());
+        String delegation = safe(s.getDelegation());
+
+        String citizen = "";
+        try {
+            if (s.getCitoyenId() != null) {
+                User user = userService.getUserById(s.getCitoyenId());
+                citizen = user != null ? safe(user.getName()) : "";
+            }
+        } catch (Exception ignored) {
+        }
+
+        String all = (titre + " " + type + " " + address + " " + status + " " + delegation + " " + citizen).toLowerCase();
+        return all.contains(search);
+    }
+
+    private boolean matchesStatus(Signalement s, String selectedStatus) {
+        return selectedStatus == null
+                || selectedStatus.equals("All")
+                || safe(s.getStatut()).equalsIgnoreCase(selectedStatus);
+    }
+
+    private void updateStats() {
+        lblTotal.setText(String.valueOf(masterList.size()));
+        lblPending.setText(String.valueOf(masterList.stream().filter(s -> "EN_ATTENTE".equalsIgnoreCase(safe(s.getStatut()))).count()));
+        lblInProgress.setText(String.valueOf(masterList.stream().filter(s -> "EN_COURS".equalsIgnoreCase(safe(s.getStatut()))).count()));
+        lblResolved.setText(String.valueOf(masterList.stream().filter(s -> "TRAITE".equalsIgnoreCase(safe(s.getStatut()))).count()));
+        updateAssignedLabel();
+    }
+
+    private void updateAssignedLabel() {
+        long assigned = filteredList.stream()
+                .filter(s -> s.getAgentAssigneId() != null)
+                .count();
+
+        lblAssigned.setText("Assigned: " + assigned + "/" + filteredList.size());
+    }
+
+    private void handleOpen(Signalement signalement) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/signalement/municipal_signalement_details.fxml"));
             Parent root = loader.load();
 
-            ShowSignalementController controller = loader.getController();
-            controller.setLoggedUser(loggedUser);
-            controller.setSignalement(selected);
+            MunicipalSignalementDetailsController controller = loader.getController();
+            controller.setData(loggedUser, signalement);
 
-            Stage stage = (Stage) reportsContainer.getScene().getWindow();
+            Stage stage = (Stage) tableSignalements.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Signalement Details");
+            stage.setMaximized(true);
             stage.show();
 
-        } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        } catch (Exception e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Unable to open signalement details.");
         }
     }
 
-    private void assignSignalement(Signalement selected) {
-        User selectedAgent = cbAgents.getValue();
+    private void handleDelete(Signalement signalement) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirmation");
+        confirm.setHeaderText("Delete signalement");
+        confirm.setContentText("Do you really want to delete this signalement?");
 
-        if (selected == null) {
-            showAlert(Alert.AlertType.WARNING, "Warning", "Please select a signalement.");
-            return;
-        }
+        Optional<ButtonType> result = confirm.showAndWait();
 
-        if (selectedAgent == null) {
-            showAlert(Alert.AlertType.WARNING, "Warning", "Please select a field agent.");
-            return;
-        }
-
-        if ("TRAITE".equalsIgnoreCase(selected.getStatut())) {
-            showAlert(Alert.AlertType.WARNING, "Warning", "This signalement is already treated.");
-            return;
-        }
-
-        if (selected.getAgentAssigneId() != null) {
-            showAlert(Alert.AlertType.WARNING, "Warning", "This signalement is already assigned to an agent.");
-            return;
-        }
-
-        try {
-            signalementService.assignAgent(selected.getId(), selectedAgent.getId());
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Signalement assigned successfully.");
-            loadMunicipalSignalements();
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
-            e.printStackTrace();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                signalementService.delete(signalement.getId());
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Signalement deleted successfully.");
+                loadSignalements();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Error", "Unable to delete signalement.");
+            }
         }
     }
 
     @FXML
-    public void goHome() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/home_connected.fxml"));
-            Parent root = loader.load();
-
-            HomeConnectedController controller = loader.getController();
-            controller.setLoggedUser(loggedUser);
-
-            Stage stage = (Stage) reportsContainer.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("EcoTrack - Home");
-            stage.show();
-        } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
-            e.printStackTrace();
-        }
+    private void refreshTable() {
+        loadSignalements();
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    private String safe(String s) {
+        return s == null ? "" : s;
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String msg) {
+        Alert a = new Alert(type);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
+    }
+
+    private String getStatusBadgeStyle(String statut) {
+        String s = safe(statut).toUpperCase();
+
+        String base = "-fx-padding: 6 12; "
+                + "-fx-background-radius: 14; "
+                + "-fx-font-weight: bold; "
+                + "-fx-font-size: 12px;";
+
+        return switch (s) {
+            case "EN_ATTENTE" -> base + "-fx-background-color: #facc15; -fx-text-fill: #111827;";
+            case "EN_COURS" -> base + "-fx-background-color: #2563eb; -fx-text-fill: white;";
+            case "TRAITE" -> base + "-fx-background-color: #16a34a; -fx-text-fill: white;";
+            default -> base + "-fx-background-color: #9ca3af; -fx-text-fill: white;";
+        };
     }
 }

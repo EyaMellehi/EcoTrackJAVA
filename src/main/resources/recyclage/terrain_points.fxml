@@ -96,6 +96,10 @@
 
                                     <Pane HBox.hgrow="ALWAYS"/>
 
+                                    <Button text="Export PDF"
+                                            onAction="#exportPdf"
+                                            style="-fx-background-color: #0f766e; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8;"/>
+
                                     <Button text="Refresh"
                                             onAction="#refreshTable"
                                             style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8;"/>
@@ -128,3 +132,13 @@
     </center>
 
 </BorderPane>
+
+
+
+
+
+
+
+
+
+
