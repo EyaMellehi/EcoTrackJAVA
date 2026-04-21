@@ -1,6 +1,5 @@
 package org.example.Entities;
 
-
 public class User {
     private int id;
     private String email;
@@ -15,6 +14,9 @@ public class User {
     private String delegation;
     private String faceioId;
 
+    private boolean twoFactorEnabled;
+    private String twoFactorSecret;
+
     public User() {
     }
 
@@ -28,7 +30,8 @@ public class User {
     }
 
     public User(int id, String email, String roles, String password, String name, String phone, String region,
-                int points, boolean isActive, String image, String delegation, String faceioId) {
+                int points, boolean isActive, String image, String delegation, String faceioId,
+                boolean twoFactorEnabled, String twoFactorSecret) {
         this.id = id;
         this.email = email;
         this.roles = roles;
@@ -41,9 +44,16 @@ public class User {
         this.image = image;
         this.delegation = delegation;
         this.faceioId = faceioId;
+        this.twoFactorEnabled = twoFactorEnabled;
+        this.twoFactorSecret = twoFactorSecret;
     }
 
     public User(String email, String password, String name, String phone, String region) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.region = region;
     }
 
     public int getId() { return id; }
@@ -81,4 +91,10 @@ public class User {
 
     public String getFaceioId() { return faceioId; }
     public void setFaceioId(String faceioId) { this.faceioId = faceioId; }
+
+    public boolean isTwoFactorEnabled() { return twoFactorEnabled; }
+    public void setTwoFactorEnabled(boolean twoFactorEnabled) { this.twoFactorEnabled = twoFactorEnabled; }
+
+    public String getTwoFactorSecret() { return twoFactorSecret; }
+    public void setTwoFactorSecret(String twoFactorSecret) { this.twoFactorSecret = twoFactorSecret; }
 }
