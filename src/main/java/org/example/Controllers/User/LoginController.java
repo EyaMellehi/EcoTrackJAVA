@@ -98,36 +98,19 @@ public class LoginController {
                 return;
             }
 
-            if (user.getRoles().contains("ROLE_ADMIN")) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin/admin_dashboard.fxml"));
+            if (user.isTwoFactorEnabled()) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/User/verify_2fa.fxml"));
                 Parent root = loader.load();
 
-                AdminDashboardController controller = loader.getController();
-                controller.setLoggedUser(user);
+                Verify2FAController controller = loader.getController();
+                controller.setUser(user);
 
-                Stage stage = (Stage) btnLogin.getScene().getWindow();
+                Stage stage = (Stage) tfEmail.getScene().getWindow();
                 stage.setScene(new Scene(root));
-                stage.setMaximized(true);
-                stage.setTitle("Admin Dashboard");
+                stage.setTitle("Verify 2FA");
                 stage.show();
-
-            } else if (user.getRoles().contains("ROLE_CITOYEN")
-                    || user.getRoles().contains("ROLE_AGENT_TERRAIN")
-                    || user.getRoles().contains("ROLE_AGENT_MUNICIPAL")) {
-
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Home_Connected.fxml"));
-                Parent root = loader.load();
-
-                HomeConnectedController controller = loader.getController();
-                controller.setLoggedUser(user);
-
-                Stage stage = (Stage) btnLogin.getScene().getWindow();
-                stage.setScene(new Scene(root));
-                stage.setTitle("EcoTrack - Home");
-                stage.show();
-
             } else {
-                showAlert(Alert.AlertType.ERROR, "Error", "Unknown role.");
+                openHomeAccordingToRole(user);
             }
 
         } catch (Exception e) {
