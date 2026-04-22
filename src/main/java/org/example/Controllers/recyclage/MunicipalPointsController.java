@@ -51,7 +51,6 @@ public class MunicipalPointsController {
     @FXML private TableColumn<PointRecyclage, String> colCitizen;
     @FXML private TableColumn<PointRecyclage, String> colCategory;
     @FXML private TableColumn<PointRecyclage, String> colQuantity;
-    @FXML private TableColumn<PointRecyclage, String> colAddress;
     @FXML private TableColumn<PointRecyclage, String> colDate;
     @FXML private TableColumn<PointRecyclage, String> colStatus;
     @FXML private TableColumn<PointRecyclage, String> colPriority;
@@ -117,9 +116,7 @@ public class MunicipalPointsController {
                 data.getValue().getQuantite() + " kg"
         ));
 
-        colAddress.setCellValueFactory(data -> new SimpleStringProperty(
-                safe(data.getValue().getAddress())
-        ));
+
 
         colDate.setCellValueFactory(data -> new SimpleStringProperty(
                 data.getValue().getDateDec() != null ? data.getValue().getDateDec().toString() : "-"
