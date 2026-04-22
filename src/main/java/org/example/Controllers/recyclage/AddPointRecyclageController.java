@@ -15,7 +15,9 @@ import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.Categorie;
 import org.example.Entities.PointRecyclage;
 import org.example.Entities.User;
+import org.example.Services.AiEstimateResult;
 import org.example.Services.CategorieService;
+import org.example.Services.CohereRecyclageEstimator;
 import org.example.Services.PointRecyclageService;
 
 import java.io.BufferedReader;
@@ -25,6 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,11 +44,13 @@ public class AddPointRecyclageController {
     @FXML private TextArea taDescription;
     @FXML private Label lblPickInfo;
     @FXML private WebView mapView;
+
     private volatile long geocodeRequestId = 0;
     private volatile String lastResolvedAddress = "";
 
     private final CategorieService categorieService = new CategorieService();
     private final PointRecyclageService pointService = new PointRecyclageService();
+    private final CohereRecyclageEstimator cohereEstimator = new CohereRecyclageEstimator();
 
     private User loggedUser;
 
@@ -125,7 +130,6 @@ public class AddPointRecyclageController {
                   background: #e5e7eb;
                 }
 
-                /* très important pour JavaFX WebView */
                 .leaflet-tile,
                 .leaflet-pane,
                 .leaflet-map-pane,
@@ -241,11 +245,8 @@ public class AddPointRecyclageController {
                 if (responseCode != 200) {
                     if (requestId == geocodeRequestId) {
                         Platform.runLater(() -> {
-                            if (!lastResolvedAddress.isEmpty()) {
-                                tfAddress.setText(lastResolvedAddress);
-                            } else {
-                                tfAddress.setText("");
-                            }
+                            if (!lastResolvedAddress.isEmpty()) tfAddress.setText(lastResolvedAddress);
+                            else tfAddress.setText("");
                         });
                     }
                     return;
@@ -265,11 +266,8 @@ public class AddPointRecyclageController {
                 if (address == null || address.isBlank()) {
                     if (requestId == geocodeRequestId) {
                         Platform.runLater(() -> {
-                            if (!lastResolvedAddress.isEmpty()) {
-                                tfAddress.setText(lastResolvedAddress);
-                            } else {
-                                tfAddress.setText("");
-                            }
+                            if (!lastResolvedAddress.isEmpty()) tfAddress.setText(lastResolvedAddress);
+                            else tfAddress.setText("");
                         });
                     }
                     return;
@@ -283,11 +281,8 @@ public class AddPointRecyclageController {
             } catch (Exception e) {
                 if (requestId == geocodeRequestId) {
                     Platform.runLater(() -> {
-                        if (!lastResolvedAddress.isEmpty()) {
-                            tfAddress.setText(lastResolvedAddress);
-                        } else {
-                            tfAddress.setText("");
-                        }
+                        if (!lastResolvedAddress.isEmpty()) tfAddress.setText(lastResolvedAddress);
+                        else tfAddress.setText("");
                     });
                 }
             } finally {
@@ -295,9 +290,7 @@ public class AddPointRecyclageController {
                     if (in != null) in.close();
                 } catch (Exception ignored) {
                 }
-                if (con != null) {
-                    con.disconnect();
-                }
+                if (con != null) con.disconnect();
             }
         });
 
@@ -438,9 +431,29 @@ public class AddPointRecyclageController {
             point.setCitoyen(loggedUser);
             point.setAgentTerrain(null);
 
+            try {
+                AiEstimateResult estimate = cohereEstimator.estimate(point);
+                point.setAiScore(estimate.getScore());
+                point.setAiPriority(estimate.getPriority());
+                point.setAiExplanation(estimate.getExplanation());
+                point.setAiEstimatedAt(LocalDateTime.now());
+            } catch (Exception aiEx) {
+                System.err.println("AI estimation failed: " + aiEx.getMessage());
+                point.setAiScore(null);
+                point.setAiPriority(null);
+                point.setAiExplanation(null);
+                point.setAiEstimatedAt(null);
+            }
+
             pointService.addPoint(point);
 
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Point ajouté avec succès.");
+            String successMessage = "Point ajouté avec succès.";
+            if (point.getAiPriority() != null) {
+                successMessage += "\nPriorité AI : " + point.getAiPriority()
+                        + " (score " + point.getAiScore() + ")";
+            }
+
+            showAlert(Alert.AlertType.INFORMATION, "Succès", successMessage);
             backToList();
 
         } catch (SQLException e) {

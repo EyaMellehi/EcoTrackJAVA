@@ -107,18 +107,30 @@
                                     <Label text="Address" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: #777;"/>
                                     <Label fx:id="lblAddress" text="-" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" style="-fx-font-weight: bold;"/>
 
-                                    <Label text="Latitude" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-text-fill: #777;"/>
-                                    <Label fx:id="lblLatitude" text="-" GridPane.columnIndex="0" GridPane.rowIndex="7" style="-fx-font-weight: bold;"/>
+                                    <Label text="Description" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblDescription" text="No description"
+                                           wrapText="true"
+                                           GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="2"
+                                           style="-fx-background-color: #f8faf8; -fx-padding: 10 12; -fx-background-radius: 12; -fx-text-fill: #374151; -fx-font-size: 13px;"/>
 
-                                    <Label text="Longitude" GridPane.columnIndex="1" GridPane.rowIndex="6" style="-fx-text-fill: #777;"/>
-                                    <Label fx:id="lblLongitude" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7" style="-fx-font-weight: bold;"/>
+                                    <Label text="Latitude" GridPane.columnIndex="0" GridPane.rowIndex="8" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblLatitude" text="-" GridPane.columnIndex="0" GridPane.rowIndex="9" style="-fx-font-weight: bold;"/>
 
-                                    <Label text="AI Priority" GridPane.columnIndex="0" GridPane.rowIndex="8" style="-fx-text-fill: #777;"/>
-                                    <Label fx:id="lblAiPriority" text="Not estimated" GridPane.columnIndex="0" GridPane.rowIndex="9"
-                                           style="-fx-background-color: #e8f5e9; -fx-padding: 6 12; -fx-background-radius: 16; -fx-font-weight: bold;"/>
+                                    <Label text="Longitude" GridPane.columnIndex="1" GridPane.rowIndex="8" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblLongitude" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9" style="-fx-font-weight: bold;"/>
 
-                                    <Label text="Field agent" GridPane.columnIndex="0" GridPane.rowIndex="10" style="-fx-text-fill: #777;"/>
-                                    <Label fx:id="lblFieldAgent" text="Not assigned" GridPane.columnIndex="0" GridPane.rowIndex="11" GridPane.columnSpan="2"
+                                    <Label text="AI Priority" GridPane.columnIndex="0" GridPane.rowIndex="10" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblAiPriority" text="Not estimated" GridPane.columnIndex="0" GridPane.rowIndex="11"
+                                           style="-fx-padding: 6 12; -fx-background-radius: 16; -fx-font-weight: bold;"/>
+
+                                    <Label text="AI Explanation" GridPane.columnIndex="1" GridPane.rowIndex="10" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblAiExplanation" text="No explanation available"
+                                           wrapText="true"
+                                           GridPane.columnIndex="1" GridPane.rowIndex="11"
+                                           style="-fx-background-color: #f8faf8; -fx-padding: 10 12; -fx-background-radius: 12; -fx-text-fill: #374151; -fx-font-size: 13px;"/>
+
+                                    <Label text="Field agent" GridPane.columnIndex="0" GridPane.rowIndex="12" style="-fx-text-fill: #777;"/>
+                                    <Label fx:id="lblFieldAgent" text="Not assigned" GridPane.columnIndex="0" GridPane.rowIndex="13" GridPane.columnSpan="2"
                                            style="-fx-font-weight: bold; -fx-text-fill: #d32f2f;"/>
                                 </GridPane>
                             </VBox>

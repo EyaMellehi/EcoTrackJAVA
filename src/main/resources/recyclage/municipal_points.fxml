@@ -162,7 +162,6 @@
                                     <TableColumn fx:id="colCitizen" text="Citizen" prefWidth="140"/>
                                     <TableColumn fx:id="colCategory" text="Category" prefWidth="120"/>
                                     <TableColumn fx:id="colQuantity" text="Quantity" prefWidth="100"/>
-                                    <TableColumn fx:id="colAddress" text="Address" prefWidth="320"/>
                                     <TableColumn fx:id="colDate" text="Date" prefWidth="110"/>
                                     <TableColumn fx:id="colStatus" text="Status" prefWidth="120"/>
                                     <TableColumn fx:id="colPriority" text="Priority" prefWidth="110"/>

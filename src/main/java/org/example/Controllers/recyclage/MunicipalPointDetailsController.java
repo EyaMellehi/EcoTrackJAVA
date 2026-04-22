@@ -2,7 +2,6 @@ package org.example.Controllers.recyclage;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -41,9 +40,11 @@ public class MunicipalPointDetailsController {
     @FXML private Label lblQuantity;
     @FXML private Label lblReportedOn;
     @FXML private Label lblAddress;
+    @FXML private Label lblDescription;
     @FXML private Label lblLatitude;
     @FXML private Label lblLongitude;
     @FXML private Label lblAiPriority;
+    @FXML private Label lblAiExplanation;
     @FXML private Label lblFieldAgent;
     @FXML private Label lblStatusBadge;
 
@@ -132,14 +133,25 @@ public class MunicipalPointDetailsController {
         lblQuantity.setText(currentPoint.getQuantite() + " kg");
         lblReportedOn.setText(currentPoint.getDateDec() != null ? currentPoint.getDateDec().toString() : "-");
         lblAddress.setText(safe(currentPoint.getAddress()));
+
+        String description = currentPoint.getDescription();
+        if (description == null || description.isBlank()) {
+            lblDescription.setText("No description.");
+        } else {
+            lblDescription.setText(description);
+        }
+
         lblLatitude.setText(String.valueOf(currentPoint.getLatitude()));
         lblLongitude.setText(String.valueOf(currentPoint.getLongitude()));
-        lblAiPriority.setText(currentPoint.getAiPriority() != null ? currentPoint.getAiPriority() : "Not estimated");
+
+        fillAiSection();
 
         if (currentPoint.getAgentTerrain() != null) {
             lblFieldAgent.setText(currentPoint.getAgentTerrain().getName() + " — " + currentPoint.getAgentTerrain().getEmail());
+            lblFieldAgent.setStyle("-fx-font-weight: bold; -fx-text-fill: #0f3d23;");
         } else {
             lblFieldAgent.setText("Not assigned");
+            lblFieldAgent.setStyle("-fx-font-weight: bold; -fx-text-fill: #d32f2f;");
         }
 
         lblStatusBadge.setText(safe(currentPoint.getStatut()));
@@ -163,6 +175,59 @@ public class MunicipalPointDetailsController {
         }
 
         refreshAssignMode();
+    }
+
+    private void fillAiSection() {
+        String priority = currentPoint.getAiPriority();
+        String explanation = currentPoint.getAiExplanation();
+
+        if (priority == null || priority.isBlank()) {
+            lblAiPriority.setText("Not estimated");
+            lblAiPriority.setStyle(
+                    "-fx-background-color: #f3f4f6;" +
+                            "-fx-text-fill: #4b5563;" +
+                            "-fx-padding: 6 12;" +
+                            "-fx-background-radius: 16;" +
+                            "-fx-font-weight: bold;"
+            );
+        } else {
+            lblAiPriority.setText(priority.toUpperCase());
+            applyAiPriorityStyle(lblAiPriority, priority);
+        }
+
+        if (explanation == null || explanation.isBlank()) {
+            lblAiExplanation.setText("No explanation available.");
+        } else {
+            lblAiExplanation.setText(explanation);
+        }
+    }
+
+    private void applyAiPriorityStyle(Label label, String priority) {
+        String p = safe(priority).toUpperCase();
+
+        String base =
+                "-fx-padding: 6 12;" +
+                        "-fx-background-radius: 16;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-size: 12px;";
+
+        switch (p) {
+            case "LOW":
+                label.setStyle(base + "-fx-background-color: #dcfce7; -fx-text-fill: #166534;");
+                break;
+            case "MEDIUM":
+                label.setStyle(base + "-fx-background-color: #fef9c3; -fx-text-fill: #854d0e;");
+                break;
+            case "HIGH":
+                label.setStyle(base + "-fx-background-color: #fed7aa; -fx-text-fill: #9a3412;");
+                break;
+            case "URGENT":
+                label.setStyle(base + "-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c;");
+                break;
+            default:
+                label.setStyle(base + "-fx-background-color: #f3f4f6; -fx-text-fill: #4b5563;");
+                break;
+        }
     }
 
     private void applyStatusStyle(Label label, String status) {
@@ -536,12 +601,14 @@ public class MunicipalPointDetailsController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+
     private void styleModeButtons() {
         updateModeButtonStyle();
 
         rbManual.selectedProperty().addListener((obs, oldVal, newVal) -> updateModeButtonStyle());
         rbAuto.selectedProperty().addListener((obs, oldVal, newVal) -> updateModeButtonStyle());
     }
+
     private void updateModeButtonStyle() {
         String selectedStyle =
                 "-fx-background-color: linear-gradient(to right, #2e7d32, #43a047);" +
