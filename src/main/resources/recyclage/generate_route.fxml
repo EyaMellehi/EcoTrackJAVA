@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.GenerateRouteController"
+            prefWidth="1450" prefHeight="900"
+            style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <VBox spacing="0">
+            <children>
+
+                <fx:include fx:id="navbarCitoyen" source="/components/navbar_citoyen.fxml"/>
+
+                <StackPane prefHeight="220">
+                    <children>
+                        <ImageView fitHeight="220" preserveRatio="false" StackPane.alignment="CENTER">
+                            <image>
+                                <Image url="@/images/carousel-1.jpg"/>
+                            </image>
+                            <viewport>
+                                <Rectangle2D width="1500" height="220"/>
+                            </viewport>
+                        </ImageView>
+
+                        <Pane style="-fx-background-color: rgba(0,0,0,0.45);"/>
+
+                        <VBox alignment="CENTER" spacing="10">
+                            <children>
+                                <Label text="Agent de terrain"
+                                       style="-fx-text-fill: #6ed46e; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+                                <Label text="Ma tournée du jour"
+                                       style="-fx-text-fill: white; -fx-font-size: 42px; -fx-font-weight: bold;"/>
+                                <Label text="Capacité voiture + Priorité IA + Distance"
+                                       style="-fx-text-fill: #dcefdc; -fx-font-size: 16px;"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </StackPane>
+
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="24" style="-fx-padding: 30; -fx-background-color: #f6f7f6;">
+
+                    <VBox spacing="14"
+                          style="-fx-background-color: white; -fx-padding: 24; -fx-background-radius: 14;">
+                        <children>
+
+                            <HBox alignment="CENTER_LEFT">
+                                <children>
+                                    <VBox spacing="4">
+                                        <Label text="Paramètres de la tournée"
+                                               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                                        <Label text="1) Position auto ou recherche d’adresse  2) Ajuster le marqueur  3) Générer"
+                                               style="-fx-text-fill: #777; -fx-font-size: 14px;"/>
+                                    </VBox>
+
+                                    <Pane HBox.hgrow="ALWAYS"/>
+
+                                    <Button text="← Retour"
+                                            onAction="#goBack"
+                                            style="-fx-background-color: white; -fx-border-color: #1f5130; -fx-text-fill: #1f5130; -fx-background-radius: 18; -fx-border-radius: 18; -fx-padding: 10 22;"/>
+                                </children>
+                            </HBox>
+
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <children>
+                                    <TextField fx:id="tfCapacity"
+                                               promptText="Capacité voiture (kg)"
+                                               prefWidth="220"
+                                               style="-fx-background-color: #eef7ee; -fx-background-radius: 8; -fx-padding: 10 12;"/>
+
+                                    <Button text="Prendre ma position"
+                                            onAction="#takeMyLocation"
+                                            style="-fx-background-color: white; -fx-border-color: #2563eb; -fx-text-fill: #2563eb; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+
+                                    <Button text="Récupérer l’adresse"
+                                            onAction="#resolveSelectedAddress"
+                                            style="-fx-background-color: white; -fx-border-color: #0f766e; -fx-text-fill: #0f766e; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+
+                                    <Button text="Générer ma tournée"
+                                            onAction="#generateRoute"
+                                            style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8;"/>
+
+                                    <Pane HBox.hgrow="ALWAYS"/>
+
+                                    <Label fx:id="lblLocationStatus"
+                                           text="Localisation : non récupérée"
+                                           style="-fx-background-color: #f3f4f6; -fx-text-fill: #374151; -fx-padding: 8 14; -fx-background-radius: 18;"/>
+                                </children>
+                            </HBox>
+
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <children>
+                                    <TextField fx:id="tfSearchAddress"
+                                               promptText="Rechercher une adresse ou une ville..."
+                                               prefWidth="420"
+                                               style="-fx-background-color: #eef7ee; -fx-background-radius: 8; -fx-padding: 10 12;"/>
+
+                                    <Button text="Aller à l’adresse"
+                                            onAction="#goToAddress"
+                                            style="-fx-background-color: white; -fx-border-color: #7c3aed; -fx-text-fill: #7c3aed; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+                                </children>
+                            </HBox>
+
+                            <TextField fx:id="tfStartAddress"
+                                       promptText="Adresse de départ"
+                                       editable="false"
+                                       style="-fx-background-color: #eef7ee; -fx-background-radius: 8; -fx-padding: 10 12;"/>
+
+                            <HBox spacing="12">
+                                <children>
+                                    <TextField fx:id="tfStartLat"
+                                               promptText="Latitude"
+                                               editable="false"
+                                               prefWidth="220"
+                                               style="-fx-background-color: #eef7ee; -fx-background-radius: 8;"/>
+
+                                    <TextField fx:id="tfStartLng"
+                                               promptText="Longitude"
+                                               editable="false"
+                                               prefWidth="220"
+                                               style="-fx-background-color: #eef7ee; -fx-background-radius: 8;"/>
+                                </children>
+                            </HBox>
+
+                            <Label text="Conseil : pour aller loin sur la carte, utilise 'Aller à l’adresse' au lieu du zoom out."
+                                   style="-fx-text-fill: #6b7280; -fx-font-size: 12px;"/>
+
+                            <WebView fx:id="mapView"
+                                     prefWidth="1100"
+                                     prefHeight="360"
+                                     minHeight="360"
+                                     maxHeight="360"/>
+                        </children>
+                    </VBox>
+
+                    <HBox spacing="18" alignment="CENTER_LEFT">
+                        <children>
+                            <VBox prefWidth="240" spacing="8"
+                                  style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14;">
+                                <Label text="Chargé" style="-fx-font-size: 15px; -fx-text-fill: #6b7280;"/>
+                                <Label fx:id="lblTotalKg" text="0 kg"
+                                       style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                                <Label fx:id="lblSelectedCount" text="0 points sélectionnés"
+                                       style="-fx-text-fill: #6b7280;"/>
+                            </VBox>
+
+                            <VBox prefWidth="240" spacing="8"
+                                  style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14;">
+                                <Label text="Distance approx." style="-fx-font-size: 15px; -fx-text-fill: #6b7280;"/>
+                                <Label fx:id="lblTotalKm" text="0 km"
+                                       style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                                <Label text="Distance à vol d’oiseau"
+                                       style="-fx-text-fill: #6b7280;"/>
+                            </VBox>
+
+                            <VBox prefWidth="320" spacing="8"
+                                  style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14;">
+                                <Label text="Logique" style="-fx-font-size: 15px; -fx-text-fill: #6b7280;"/>
+                                <Label text="Priorité IA → plus proche voisin"
+                                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                                <Label text="Heuristique rapide"
+                                       style="-fx-text-fill: #6b7280;"/>
+                            </VBox>
+                        </children>
+                    </HBox>
+
+                    <VBox spacing="16"
+                          style="-fx-background-color: white; -fx-padding: 24; -fx-background-radius: 14;">
+                        <children>
+                            <VBox spacing="4">
+                                <Label text="Étapes de la tournée"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                                <Label text="Chaque carte correspond à un arrêt."
+                                       style="-fx-text-fill: #777; -fx-font-size: 14px;"/>
+                            </VBox>
+
+                            <VBox fx:id="stepsContainer" spacing="14"/>
+                        </children>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

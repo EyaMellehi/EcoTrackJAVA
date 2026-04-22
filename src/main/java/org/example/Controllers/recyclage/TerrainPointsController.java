@@ -1,4 +1,3 @@
-
 package org.example.Controllers.recyclage;
 
 import com.lowagie.text.*;
@@ -247,6 +246,28 @@ public class TerrainPointsController {
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir les détails du point.");
+        }
+    }
+
+    @FXML
+    private void goToRouteGenerator() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/generate_route.fxml"));
+            Parent root = loader.load();
+
+            GenerateRouteController controller = loader.getController();
+            controller.setLoggedUser(loggedUser);
+
+            Stage stage = (Stage) tablePoints.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Ma tournée du jour");
+            stage.setFullScreen(false);
+            stage.setMaximized(true);
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page de tournée.");
         }
     }
 
