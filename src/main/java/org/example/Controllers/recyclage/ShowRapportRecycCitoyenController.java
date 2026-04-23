@@ -107,6 +107,7 @@ public class ShowRapportRecycCitoyenController {
             stage.setScene(new Scene(root));
             stage.setTitle("Détails du point");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (Exception e) {

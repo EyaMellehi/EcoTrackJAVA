@@ -595,6 +595,7 @@ public class GenerateRouteController {
             stage.setScene(new Scene(root));
             stage.setTitle("Point details");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (Exception e) {
@@ -616,6 +617,7 @@ public class GenerateRouteController {
             stage.setScene(new Scene(root));
             stage.setTitle("Mes points affectés");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (IOException e) {

@@ -240,6 +240,7 @@ public class TerrainPointsController {
             stage.setScene(new Scene(root));
             stage.setTitle("Point details");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (Exception e) {
@@ -261,6 +262,7 @@ public class TerrainPointsController {
             stage.setScene(new Scene(root));
             stage.setTitle("Ma tournée du jour");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (Exception e) {

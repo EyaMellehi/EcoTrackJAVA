@@ -162,6 +162,7 @@ public class ShowRapportRecycTerrainController {
             stage.setScene(new Scene(root));
             stage.setTitle("Point details");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (Exception e) {

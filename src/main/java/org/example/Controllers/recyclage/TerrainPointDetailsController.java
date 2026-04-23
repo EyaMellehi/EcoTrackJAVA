@@ -256,6 +256,7 @@ public class TerrainPointDetailsController {
             stage.setScene(new Scene(root));
             stage.setTitle("Mes points affectés");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (Exception e) {
@@ -288,6 +289,7 @@ public class TerrainPointDetailsController {
             stage.setScene(new Scene(root));
             stage.setTitle("Créer rapport");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (Exception e) {
@@ -309,6 +311,7 @@ public class TerrainPointDetailsController {
             stage.setScene(new Scene(root));
             stage.setTitle("Voir rapport");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (Exception e) {

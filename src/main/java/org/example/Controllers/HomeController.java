@@ -62,6 +62,7 @@ public class HomeController {
             stage.setMaximized(true);
             stage.setTitle(title);
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
