@@ -12,6 +12,7 @@ import org.example.Entities.RapportRecyc;
 import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
 import org.example.Services.RapportRecycService;
+import org.example.Utils.ModernNotification;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -92,7 +93,7 @@ public class CreateRapportRecycController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d’ouvrir l’assistant IA.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d’ouvrir l’assistant IA.");
         }
     }
 
@@ -100,22 +101,22 @@ public class CreateRapportRecycController {
     private void saveRapport() {
         try {
             if (loggedUser == null) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun agent connecté.");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Aucun agent connecté.");
                 return;
             }
 
             if (currentPoint == null) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun point sélectionné.");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Aucun point sélectionné.");
                 return;
             }
 
             if (dpDateCollect.getValue() == null) {
-                showAlert(Alert.AlertType.WARNING, "Attention", "Choisis une date de collecte.");
+                ModernNotification.showWarning(getCurrentStage(), "Attention", "Choisis une date de collecte.");
                 return;
             }
 
             if (dpDateCollect.getValue().isAfter(LocalDate.now())) {
-                showAlert(Alert.AlertType.WARNING, "Attention", "La date de collecte ne peut pas être dans le futur.");
+                ModernNotification.showWarning(getCurrentStage(), "Attention", "La date de collecte ne peut pas être dans le futur.");
                 return;
             }
 
@@ -124,7 +125,7 @@ public class CreateRapportRecycController {
                     : "";
 
             if (quantiteText.isEmpty()) {
-                showAlert(Alert.AlertType.WARNING, "Attention", "Saisis la quantité collectée.");
+                ModernNotification.showWarning(getCurrentStage(), "Attention", "Saisis la quantité collectée.");
                 return;
             }
 
@@ -132,29 +133,29 @@ public class CreateRapportRecycController {
             try {
                 qte = Double.parseDouble(quantiteText);
             } catch (NumberFormatException e) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "La quantité doit être un nombre valide.");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "La quantité doit être un nombre valide.");
                 return;
             }
 
             if (qte <= 0) {
-                showAlert(Alert.AlertType.WARNING, "Attention", "La quantité collectée doit être supérieure à 0.");
+                ModernNotification.showWarning(getCurrentStage(), "Attention", "La quantité collectée doit être supérieure à 0.");
                 return;
             }
 
             String commentaire = txtCommentaire.getText() != null ? txtCommentaire.getText().trim() : "";
 
             if (commentaire.isEmpty()) {
-                showAlert(Alert.AlertType.WARNING, "Attention", "La description est obligatoire.");
+                ModernNotification.showWarning(getCurrentStage(), "Attention", "La description est obligatoire.");
                 return;
             }
 
             if (currentPoint.getCategorie() == null) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Catégorie introuvable pour ce point.");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Catégorie introuvable pour ce point.");
                 return;
             }
 
             if (currentPoint.getCitoyen() == null) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Citoyen introuvable pour ce point.");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Citoyen introuvable pour ce point.");
                 return;
             }
 
@@ -173,8 +174,11 @@ public class CreateRapportRecycController {
             rapportService.createRapportAndRewardCitizen(rapport, currentPoint.getCitoyen().getId());
             pointService.markPointCollected(currentPoint.getId());
 
-            showAlert(Alert.AlertType.INFORMATION, "Succès",
-                    "Rapport enregistré avec succès. " + pointsGagnes + " points ajoutés au citoyen.");
+            ModernNotification.showSuccess(
+                    getCurrentStage(),
+                    "Succès",
+                    "Rapport enregistré avec succès. " + pointsGagnes + " points ajoutés au citoyen."
+            );
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/show_rapport_recyc_terrain.fxml"));
             Parent root = loader.load();
@@ -187,12 +191,11 @@ public class CreateRapportRecycController {
             stage.setTitle("Rapport");
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
-
             stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'enregistrer le rapport.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'enregistrer le rapport.");
         }
     }
 
@@ -214,14 +217,13 @@ public class CreateRapportRecycController {
 
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de revenir aux détails du point.");
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    private Stage getCurrentStage() {
+        return lblPointId != null && lblPointId.getScene() != null
+                ? (Stage) lblPointId.getScene().getWindow()
+                : null;
     }
 }

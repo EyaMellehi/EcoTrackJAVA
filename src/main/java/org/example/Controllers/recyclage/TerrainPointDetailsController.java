@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.web.WebEngine;
@@ -16,6 +15,7 @@ import org.example.Entities.RapportRecyc;
 import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
 import org.example.Services.RapportRecycService;
+import org.example.Utils.ModernNotification;
 
 import java.awt.Desktop;
 import java.net.URI;
@@ -121,7 +121,7 @@ public class TerrainPointDetailsController {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Impossible de charger les détails du point.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de charger les détails du point.");
         }
     }
 
@@ -252,7 +252,7 @@ public class TerrainPointDetailsController {
             TerrainPointsController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) lblPointTitle.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Mes points affectés");
             stage.setFullScreen(true);
@@ -261,6 +261,7 @@ public class TerrainPointDetailsController {
 
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de revenir à la liste.");
         }
     }
 
@@ -272,7 +273,7 @@ public class TerrainPointDetailsController {
             ));
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Erreur", "Impossible d'ouvrir Google Maps.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir Google Maps.");
         }
     }
 
@@ -285,7 +286,7 @@ public class TerrainPointDetailsController {
             CreateRapportRecycController controller = loader.getController();
             controller.setData(loggedUser, currentPoint);
 
-            Stage stage = (Stage) lblPointTitle.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Créer rapport");
             stage.setFullScreen(true);
@@ -294,7 +295,7 @@ public class TerrainPointDetailsController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Erreur", "Impossible d'ouvrir la page de création du rapport.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir la page de création du rapport.");
         }
     }
 
@@ -307,7 +308,7 @@ public class TerrainPointDetailsController {
             ShowRapportRecycTerrainController controller = loader.getController();
             controller.setData(loggedUser, currentPoint);
 
-            Stage stage = (Stage) lblPointTitle.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Voir rapport");
             stage.setFullScreen(true);
@@ -316,7 +317,7 @@ public class TerrainPointDetailsController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Erreur", "Impossible d'ouvrir le rapport.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir le rapport.");
         }
     }
 
@@ -324,11 +325,7 @@ public class TerrainPointDetailsController {
         return value == null ? "" : value;
     }
 
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    private Stage getCurrentStage() {
+        return (Stage) lblPointTitle.getScene().getWindow();
     }
 }

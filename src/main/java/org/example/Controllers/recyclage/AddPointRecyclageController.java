@@ -20,6 +20,7 @@ import org.example.Services.AiEstimateResult;
 import org.example.Services.CategorieService;
 import org.example.Services.CohereRecyclageEstimator;
 import org.example.Services.PointRecyclageService;
+import org.example.Utils.ModernNotification;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -84,7 +85,7 @@ public class AddPointRecyclageController {
             cbCategorie.getItems().setAll(categories);
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les catégories.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de charger les catégories.");
         }
     }
 
@@ -383,7 +384,7 @@ public class AddPointRecyclageController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d’ouvrir l’assistant IA.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d’ouvrir l’assistant IA.");
         }
     }
 
@@ -397,12 +398,12 @@ public class AddPointRecyclageController {
         String description = taDescription.getText().trim();
 
         if (loggedUser == null) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun utilisateur connecté.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Aucun utilisateur connecté.");
             return;
         }
 
         if (categorie == null) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "La catégorie est obligatoire.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "La catégorie est obligatoire.");
             return;
         }
 
@@ -410,16 +411,16 @@ public class AddPointRecyclageController {
         try {
             quantite = Double.parseDouble(quantiteText);
             if (quantite <= 0 || quantite > 100000) {
-                showAlert(Alert.AlertType.WARNING, "Validation", "La quantité doit être > 0 et <= 100000.");
+                ModernNotification.showWarning(getCurrentStage(), "Validation", "La quantité doit être > 0 et <= 100000.");
                 return;
             }
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Quantité invalide.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "Quantité invalide.");
             return;
         }
 
         if (address.isEmpty() || address.length() < 5 || address.length() > 255) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "L'adresse doit contenir entre 5 et 255 caractères.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "L'adresse doit contenir entre 5 et 255 caractères.");
             return;
         }
 
@@ -429,22 +430,22 @@ public class AddPointRecyclageController {
             latitude = Double.parseDouble(latitudeText);
             longitude = Double.parseDouble(longitudeText);
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Latitude ou longitude invalide.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "Latitude ou longitude invalide.");
             return;
         }
 
         if (latitude < 30 || latitude > 38) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Latitude invalide pour la Tunisie.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "Latitude invalide pour la Tunisie.");
             return;
         }
 
         if (longitude < 7 || longitude > 12) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Longitude invalide pour la Tunisie.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "Longitude invalide pour la Tunisie.");
             return;
         }
 
         if (description.length() > 255) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "La description ne doit pas dépasser 255 caractères.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "La description ne doit pas dépasser 255 caractères.");
             return;
         }
 
@@ -483,12 +484,12 @@ public class AddPointRecyclageController {
                         + " (score " + point.getAiScore() + ")";
             }
 
-            showAlert(Alert.AlertType.INFORMATION, "Succès", successMessage);
+            ModernNotification.showSuccess(getCurrentStage(), "Succès", successMessage);
             backToList();
 
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ajouter le point.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ajouter le point.");
         }
     }
 
@@ -509,14 +510,13 @@ public class AddPointRecyclageController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de revenir à la liste.");
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert a = new Alert(type);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.setContentText(content);
-        a.showAndWait();
+    private Stage getCurrentStage() {
+        return cbCategorie != null && cbCategorie.getScene() != null
+                ? (Stage) cbCategorie.getScene().getWindow()
+                : null;
     }
 }

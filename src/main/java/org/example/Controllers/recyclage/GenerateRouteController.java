@@ -18,6 +18,7 @@ import org.example.Services.PointRecyclageService;
 import org.example.Services.RecyclageRouteOptimizer;
 import org.example.Services.RouteResult;
 import org.example.Services.RouteStep;
+import org.example.Utils.ModernNotification;
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
@@ -94,7 +95,7 @@ public class GenerateRouteController {
             assignedPoints = pointService.getPointsForFieldAgent(loggedUser);
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les points affectés.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de charger les points affectés.");
         }
     }
 
@@ -263,11 +264,13 @@ public class GenerateRouteController {
             lblLocationStatus.setText("Localisation : OK");
             lblLocationStatus.setStyle("-fx-background-color: #dcfce7; -fx-text-fill: #166534; -fx-padding: 8 14; -fx-background-radius: 18;");
 
+            ModernNotification.showSuccess(getCurrentStage(), "Localisation", "Position récupérée avec succès.");
+
         } catch (Exception e) {
             e.printStackTrace();
             lblLocationStatus.setText("Localisation : indisponible");
             lblLocationStatus.setStyle("-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; -fx-padding: 8 14; -fx-background-radius: 18;");
-            showAlert(Alert.AlertType.WARNING, "Localisation", "Impossible de récupérer votre position automatiquement.");
+            ModernNotification.showWarning(getCurrentStage(), "Localisation", "Impossible de récupérer votre position automatiquement.");
         }
     }
 
@@ -275,7 +278,7 @@ public class GenerateRouteController {
     private void goToAddress() {
         String query = tfSearchAddress.getText() == null ? "" : tfSearchAddress.getText().trim();
         if (query.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Recherche", "Saisis une adresse ou une ville.");
+            ModernNotification.showWarning(getCurrentStage(), "Recherche", "Saisis une adresse ou une ville.");
             return;
         }
 
@@ -293,7 +296,7 @@ public class GenerateRouteController {
 
                 javafx.application.Platform.runLater(() -> {
                     if (lat == null || lon == null) {
-                        showAlert(Alert.AlertType.WARNING, "Recherche", "Adresse introuvable.");
+                        ModernNotification.showWarning(getCurrentStage(), "Recherche", "Adresse introuvable.");
                         return;
                     }
 
@@ -313,11 +316,13 @@ public class GenerateRouteController {
                         );
                     } catch (Exception ignored) {
                     }
+
+                    ModernNotification.showSuccess(getCurrentStage(), "Recherche", "Adresse chargée avec succès.");
                 });
 
             } catch (Exception e) {
                 javafx.application.Platform.runLater(() ->
-                        showAlert(Alert.AlertType.ERROR, "Recherche", "Impossible de rechercher cette adresse.")
+                        ModernNotification.showError(getCurrentStage(), "Recherche", "Impossible de rechercher cette adresse.")
                 );
             }
         });
@@ -335,7 +340,7 @@ public class GenerateRouteController {
             lat = Double.parseDouble(tfStartLat.getText().trim().replace(",", "."));
             lng = Double.parseDouble(tfStartLng.getText().trim().replace(",", "."));
         } catch (Exception e) {
-            showAlert(Alert.AlertType.WARNING, "Adresse", "Choisis d'abord une position sur la carte.");
+            ModernNotification.showWarning(getCurrentStage(), "Adresse", "Choisis d'abord une position sur la carte.");
             return;
         }
 
@@ -360,15 +365,18 @@ public class GenerateRouteController {
                 javafx.application.Platform.runLater(() -> {
                     if (address == null || address.isBlank()) {
                         tfStartAddress.setText("Adresse non disponible");
+                        ModernNotification.showWarning(getCurrentStage(), "Adresse", "Adresse non disponible.");
                     } else {
                         tfStartAddress.setText(address);
+                        ModernNotification.showSuccess(getCurrentStage(), "Adresse", "Adresse récupérée avec succès.");
                     }
                 });
 
             } catch (Exception e) {
-                javafx.application.Platform.runLater(() ->
-                        tfStartAddress.setText("Adresse non disponible")
-                );
+                javafx.application.Platform.runLater(() -> {
+                    tfStartAddress.setText("Adresse non disponible");
+                    ModernNotification.showError(getCurrentStage(), "Adresse", "Impossible de récupérer l’adresse.");
+                });
             }
         });
 
@@ -385,11 +393,11 @@ public class GenerateRouteController {
         try {
             capacity = Double.parseDouble(tfCapacity.getText().trim().replace(",", "."));
             if (capacity <= 0) {
-                showAlert(Alert.AlertType.WARNING, "Validation", "Capacité invalide. (ex: 50)");
+                ModernNotification.showWarning(getCurrentStage(), "Validation", "Capacité invalide. (ex: 50)");
                 return;
             }
         } catch (Exception e) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Capacité invalide. (ex: 50)");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "Capacité invalide. (ex: 50)");
             return;
         }
 
@@ -397,7 +405,7 @@ public class GenerateRouteController {
             startLat = Double.parseDouble(tfStartLat.getText().trim().replace(",", "."));
             startLng = Double.parseDouble(tfStartLng.getText().trim().replace(",", "."));
         } catch (Exception e) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Position non disponible. Prends ta position d’abord.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "Position non disponible. Prends ta position d’abord.");
             return;
         }
 
@@ -407,7 +415,7 @@ public class GenerateRouteController {
                 .toList();
 
         if (pointsInProgress.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Aucune tournée", "Aucun point IN_PROGRESS disponible.");
+            ModernNotification.showWarning(getCurrentStage(), "Aucune tournée", "Aucun point IN_PROGRESS disponible.");
             resetSummary();
             stepsContainer.getChildren().clear();
             currentRoute = null;
@@ -417,7 +425,7 @@ public class GenerateRouteController {
         RouteResult route = optimizer.compute(pointsInProgress, capacity, startLat, startLng);
 
         if (route.getSelectedCount() == 0) {
-            showAlert(Alert.AlertType.WARNING, "Aucune tournée", "Aucun point ne rentre dans la capacité " + capacity + " kg.");
+            ModernNotification.showWarning(getCurrentStage(), "Aucune tournée", "Aucun point ne rentre dans la capacité " + capacity + " kg.");
             resetSummary();
             stepsContainer.getChildren().clear();
             currentRoute = null;
@@ -439,6 +447,8 @@ public class GenerateRouteController {
         setupSection.setManaged(false);
         routeSection.setVisible(true);
         routeSection.setManaged(true);
+
+        ModernNotification.showSuccess(getCurrentStage(), "Tournée", "La tournée a été générée avec succès.");
     }
 
     @FXML
@@ -451,13 +461,15 @@ public class GenerateRouteController {
         stepsContainer.getChildren().clear();
         resetSummary();
         lblRouteStart.setText("Départ : -");
+
+        ModernNotification.showInfo(getCurrentStage(), "Tournée", "La vue de génération a été réinitialisée.");
     }
 
     @FXML
     private void openFullRouteInGoogleMaps() {
         try {
             if (currentRoute == null || currentRoute.getOrdered() == null || currentRoute.getOrdered().isEmpty()) {
-                showAlert(Alert.AlertType.WARNING, "Trajet", "Aucune tournée générée.");
+                ModernNotification.showWarning(getCurrentStage(), "Trajet", "Aucune tournée générée.");
                 return;
             }
 
@@ -467,7 +479,7 @@ public class GenerateRouteController {
             List<RouteStep> orderedSteps = currentRoute.getOrdered();
 
             if (orderedSteps.size() > MAX_ROUTE_POINTS) {
-                showAlert(Alert.AlertType.WARNING, "Trajet", "Le trajet complet est limité à " + MAX_ROUTE_POINTS + " points maximum.");
+                ModernNotification.showWarning(getCurrentStage(), "Trajet", "Le trajet complet est limité à " + MAX_ROUTE_POINTS + " points maximum.");
                 return;
             }
 
@@ -499,9 +511,11 @@ public class GenerateRouteController {
 
             Desktop.getDesktop().browse(new URI(url.toString()));
 
+            ModernNotification.showInfo(getCurrentStage(), "Google Maps", "Ouverture du trajet complet dans Google Maps.");
+
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le trajet complet dans Google Maps.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir le trajet complet dans Google Maps.");
         }
     }
 
@@ -577,9 +591,10 @@ public class GenerateRouteController {
             Desktop.getDesktop().browse(new URI(
                     "https://www.google.com/maps?q=" + point.getLatitude() + "," + point.getLongitude()
             ));
+            ModernNotification.showInfo(getCurrentStage(), "Google Maps", "Ouverture du point dans Google Maps.");
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir Google Maps.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir Google Maps.");
         }
     }
 
@@ -591,7 +606,7 @@ public class GenerateRouteController {
             TerrainPointDetailsController controller = loader.getController();
             controller.setData(loggedUser, point);
 
-            Stage stage = (Stage) tfCapacity.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Point details");
             stage.setFullScreen(true);
@@ -600,7 +615,7 @@ public class GenerateRouteController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le point.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir le point.");
         }
     }
 
@@ -613,7 +628,7 @@ public class GenerateRouteController {
             TerrainPointsController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) tfCapacity.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Mes points affectés");
             stage.setFullScreen(true);
@@ -622,7 +637,14 @@ public class GenerateRouteController {
 
         } catch (IOException e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de revenir à la liste.");
         }
+    }
+
+    private Stage getCurrentStage() {
+        return tfCapacity != null && tfCapacity.getScene() != null
+                ? (Stage) tfCapacity.getScene().getWindow()
+                : null;
     }
 
     private void setPositionFields(double lat, double lng) {
@@ -814,13 +836,5 @@ public class GenerateRouteController {
 
     private String safe(String value) {
         return value == null ? "" : value;
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
     }
 }
