@@ -19,10 +19,12 @@ import org.example.Services.RecyclageRouteOptimizer;
 import org.example.Services.RouteResult;
 import org.example.Services.RouteStep;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -45,7 +47,10 @@ public class GenerateRouteController {
     @FXML private Label lblTotalKg;
     @FXML private Label lblSelectedCount;
     @FXML private Label lblTotalKm;
+    @FXML private Label lblRouteStart;
 
+    @FXML private VBox setupSection;
+    @FXML private VBox routeSection;
     @FXML private VBox stepsContainer;
     @FXML private WebView mapView;
 
@@ -72,6 +77,11 @@ public class GenerateRouteController {
 
         setPositionFields(36.8065, 10.1815);
         tfStartAddress.setText("Adresse non encore récupérée");
+
+        setupSection.setVisible(true);
+        setupSection.setManaged(true);
+        routeSection.setVisible(false);
+        routeSection.setManaged(false);
     }
 
     private void loadAssignedPoints() {
@@ -405,7 +415,26 @@ public class GenerateRouteController {
         lblSelectedCount.setText(route.getSelectedCount() + " points sélectionnés");
         lblTotalKm.setText(route.getTotalKm() + " km");
 
+        String startAddress = safe(tfStartAddress.getText()).isBlank() ? "Adresse non disponible" : safe(tfStartAddress.getText());
+        lblRouteStart.setText("Départ : " + startAddress);
+
         renderSteps(route);
+
+        setupSection.setVisible(false);
+        setupSection.setManaged(false);
+        routeSection.setVisible(true);
+        routeSection.setManaged(true);
+    }
+
+    @FXML
+    private void resetRouteView() {
+        routeSection.setVisible(false);
+        routeSection.setManaged(false);
+        setupSection.setVisible(true);
+        setupSection.setManaged(true);
+        stepsContainer.getChildren().clear();
+        resetSummary();
+        lblRouteStart.setText("Départ : -");
     }
 
     private void renderSteps(RouteResult route) {
@@ -422,6 +451,7 @@ public class GenerateRouteController {
             HBox top = new HBox(10);
             Label order = new Label(String.valueOf(index));
             order.setStyle("-fx-background-color: white; -fx-border-color: #d1d5db; -fx-padding: 6 12; -fx-background-radius: 999; -fx-border-radius: 999; -fx-font-weight: bold;");
+
             Label pointId = new Label("Point #" + p.getId());
             pointId.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;");
 
@@ -455,16 +485,32 @@ public class GenerateRouteController {
             explanation.setStyle("-fx-text-fill: #6b7280; -fx-font-size: 13px;");
 
             HBox actions = new HBox(10);
+
             Button openBtn = new Button("Ouvrir");
             openBtn.setStyle("-fx-background-color: #eef7ee; -fx-text-fill: #2e7d32; -fx-font-weight: bold; -fx-background-radius: 8;");
             openBtn.setOnAction(e -> openPointDetails(p));
 
-            actions.getChildren().add(openBtn);
+            Button mapsBtn = new Button("Open in Google Maps");
+            mapsBtn.setStyle("-fx-background-color: white; -fx-border-color: #2563eb; -fx-text-fill: #2563eb; -fx-font-weight: bold; -fx-background-radius: 8; -fx-border-radius: 8;");
+            mapsBtn.setOnAction(e -> openPointInGoogleMaps(p));
+
+            actions.getChildren().addAll(openBtn, mapsBtn);
 
             card.getChildren().addAll(top, distance, address, explanation, actions);
             stepsContainer.getChildren().add(card);
 
             index++;
+        }
+    }
+
+    private void openPointInGoogleMaps(PointRecyclage point) {
+        try {
+            Desktop.getDesktop().browse(new URI(
+                    "https://www.google.com/maps?q=" + point.getLatitude() + "," + point.getLongitude()
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir Google Maps.");
         }
     }
 
