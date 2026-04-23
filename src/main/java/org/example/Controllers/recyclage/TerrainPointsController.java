@@ -20,6 +20,7 @@ import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.PointRecyclage;
 import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
+import org.example.Utils.ModernNotification;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -173,7 +174,7 @@ public class TerrainPointsController {
             updateStats();
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les points.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de charger les points.");
         }
     }
 
@@ -236,7 +237,7 @@ public class TerrainPointsController {
             TerrainPointDetailsController controller = loader.getController();
             controller.setData(loggedUser, point);
 
-            Stage stage = (Stage) tablePoints.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Point details");
             stage.setFullScreen(true);
@@ -245,7 +246,7 @@ public class TerrainPointsController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir les détails du point.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir les détails du point.");
         }
     }
 
@@ -258,7 +259,7 @@ public class TerrainPointsController {
             GenerateRouteController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) tablePoints.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Ma tournée du jour");
             stage.setFullScreen(true);
@@ -267,19 +268,20 @@ public class TerrainPointsController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page de tournée.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir la page de tournée.");
         }
     }
 
     @FXML
     private void refreshTable() {
         loadPoints();
+        ModernNotification.showInfo(getCurrentStage(), "Actualisation", "La liste a été mise à jour.");
     }
 
     @FXML
     private void exportPdf() {
         if (filteredList.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Aucune donnée", "Il n'y a aucun point à exporter.");
+            ModernNotification.showWarning(getCurrentStage(), "Aucune donnée", "Il n'y a aucun point à exporter.");
             return;
         }
 
@@ -296,7 +298,7 @@ public class TerrainPointsController {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm"));
         fileChooser.setInitialFileName("terrain_points_" + agentName + "_" + timestamp + ".pdf");
 
-        File file = fileChooser.showSaveDialog(tablePoints.getScene().getWindow());
+        File file = fileChooser.showSaveDialog(getCurrentStage());
         if (file == null) {
             return;
         }
@@ -367,14 +369,14 @@ public class TerrainPointsController {
             document.add(table);
             document.close();
 
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "PDF exporté avec succès.");
+            ModernNotification.showSuccess(getCurrentStage(), "Succès", "PDF exporté avec succès.");
 
         } catch (Exception e) {
             e.printStackTrace();
             if (document.isOpen()) {
                 document.close();
             }
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'exporter le PDF.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'exporter le PDF.");
         }
     }
 
@@ -416,11 +418,7 @@ public class TerrainPointsController {
         return value == null ? "" : value;
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    private Stage getCurrentStage() {
+        return (Stage) tablePoints.getScene().getWindow();
     }
 }

@@ -15,8 +15,8 @@ import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Entities.PointRecyclage;
 import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
+import org.example.Utils.ModernNotification;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -178,7 +178,7 @@ public class PointsConnectedController {
             updateStats();
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les points.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de charger les points.");
         }
     }
 
@@ -222,12 +222,13 @@ public class PointsConnectedController {
         tfSearch.clear();
         cbStatus.setValue("Tous");
         applyFilters();
+        ModernNotification.showInfo(getCurrentStage(), "Filtres", "Les filtres ont été réinitialisés.");
     }
 
     @FXML
     void goToAddPoint() {
         if (loggedUser == null) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun utilisateur connecté.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Aucun utilisateur connecté.");
             return;
         }
 
@@ -238,16 +239,15 @@ public class PointsConnectedController {
             AddPointRecyclageController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) tablePoints.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Créer un point");
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
-
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page d'ajout.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir la page d'ajout.");
         }
     }
 
@@ -260,16 +260,15 @@ public class PointsConnectedController {
             controller.setLoggedUser(loggedUser);
             controller.setPoint(point);
 
-            Stage stage = (Stage) tablePoints.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Détails du point");
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
-
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page détail.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir la page détail.");
         }
     }
 
@@ -282,7 +281,7 @@ public class PointsConnectedController {
             controller.setLoggedUser(loggedUser);
             controller.setPoint(point);
 
-            Stage stage = (Stage) tablePoints.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Modifier point");
             stage.setFullScreen(true);
@@ -290,7 +289,7 @@ public class PointsConnectedController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page modification.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir la page modification.");
         }
     }
 
@@ -302,16 +301,14 @@ public class PointsConnectedController {
         return new FXMLLoader(location);
     }
 
-    private String safe(String s) {
-        return s == null ? "" : s;
+    private Stage getCurrentStage() {
+        return tablePoints != null && tablePoints.getScene() != null
+                ? (Stage) tablePoints.getScene().getWindow()
+                : null;
     }
 
-    private void showAlert(Alert.AlertType type, String title, String msg) {
-        Alert a = new Alert(type);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.setContentText(msg);
-        a.showAndWait();
+    private String safe(String s) {
+        return s == null ? "" : s;
     }
 
     private String getStatusBadgeStyle(String statut) {
@@ -331,5 +328,4 @@ public class PointsConnectedController {
             default -> base + "-fx-background-color: #9ca3af; -fx-text-fill: white;";
         };
     }
-
 }

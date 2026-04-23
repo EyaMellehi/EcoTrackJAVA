@@ -182,7 +182,8 @@ public class ProfileController {
 
             Stage stage = (Stage) lblFullName.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Edit Profile");
             stage.show();
         } catch (Exception e) {
@@ -201,7 +202,8 @@ public class ProfileController {
 
             Stage stage = (Stage) lblFullName.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Change Password");
             stage.show();
         } catch (Exception e) {

@@ -61,7 +61,8 @@ public class LoginController {
 
             Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Admin Dashboard");
             stage.show();
 
@@ -77,7 +78,8 @@ public class LoginController {
 
             Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("EcoTrack - Home");
             stage.show();
 
@@ -117,7 +119,8 @@ public class LoginController {
 
                 Stage stage = (Stage) tfEmail.getScene().getWindow();
                 stage.setScene(new Scene(root));
-                stage.setMaximized(true);
+                stage.setFullScreen(true);
+                stage.setFullScreenExitHint("");
                 stage.setTitle("Verify 2FA");
                 stage.show();
             } else {
@@ -136,7 +139,8 @@ public class LoginController {
             Parent root = FXMLLoader.load(getClass().getResource("/User/Register.fxml"));
             Stage stage = (Stage) linkRegister.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Register");
             stage.show();
         } catch (IOException e) {
@@ -157,7 +161,8 @@ public class LoginController {
             Parent root = FXMLLoader.load(getClass().getResource("/User/forgot_password.fxml"));
             Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Forgot Password");
             stage.show();
         } catch (Exception e) {
@@ -186,7 +191,8 @@ public class LoginController {
 
             Stage stage = (Stage) tfEmail.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
 
             stage.setTitle("Complete Registration");
             stage.show();

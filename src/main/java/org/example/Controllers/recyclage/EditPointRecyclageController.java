@@ -17,6 +17,7 @@ import org.example.Entities.PointRecyclage;
 import org.example.Entities.User;
 import org.example.Services.CategorieService;
 import org.example.Services.PointRecyclageService;
+import org.example.Utils.ModernNotification;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -105,8 +106,8 @@ public class EditPointRecyclageController {
             List<Categorie> categories = categorieService.getAllCategories();
             cbCategorie.getItems().setAll(categories);
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les catégories.");
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de charger les catégories.");
         }
     }
 
@@ -401,14 +402,14 @@ public class EditPointRecyclageController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d’ouvrir l’assistant IA.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d’ouvrir l’assistant IA.");
         }
     }
 
     @FXML
     void updatePoint() {
         if (loggedUser == null || currentPoint == null) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun utilisateur connecté ou point introuvable.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Aucun utilisateur connecté ou point introuvable.");
             return;
         }
 
@@ -418,7 +419,7 @@ public class EditPointRecyclageController {
             }
 
             if (currentPoint == null || currentPoint.getCitoyen() == null) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de retrouver le citoyen du point.");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de retrouver le citoyen du point.");
                 return;
             }
 
@@ -431,12 +432,12 @@ public class EditPointRecyclageController {
 
             pointService.updatePoint(currentPoint);
 
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Point mis à jour avec succès.");
+            ModernNotification.showSuccess(getCurrentStage(), "Succès", "Point mis à jour avec succès.");
             backToList();
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de mettre à jour le point.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de mettre à jour le point.");
         }
     }
 
@@ -457,14 +458,13 @@ public class EditPointRecyclageController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de revenir à la liste.");
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert a = new Alert(type);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.setContentText(content);
-        a.showAndWait();
+    private Stage getCurrentStage() {
+        return cbCategorie != null && cbCategorie.getScene() != null
+                ? (Stage) cbCategorie.getScene().getWindow()
+                : null;
     }
 }
