@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import netscape.javascript.JSObject;
 import org.example.Controllers.components.NavbarCitoyenController;
@@ -355,6 +356,35 @@ public class AddPointRecyclageController {
         }
 
         return result.toString().trim();
+    }
+
+    @FXML
+    private void openChatbotDialog() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/chatbot_dialog.fxml"));
+            Parent root = loader.load();
+
+            ChatbotDialogController controller = loader.getController();
+            controller.setTargetDescriptionArea(taDescription);
+
+            java.util.Map<String, String> ctx = new java.util.HashMap<>();
+            ctx.put("categorie", cbCategorie.getValue() != null ? cbCategorie.getValue().getNom() : "");
+            ctx.put("quantite", tfQuantite.getText() != null ? tfQuantite.getText().trim() : "");
+
+            controller.setMode("POINT_DESC");
+            controller.setContext(ctx);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Assistant rédaction");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d’ouvrir l’assistant IA.");
+        }
     }
 
     @FXML

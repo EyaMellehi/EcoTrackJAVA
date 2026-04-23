@@ -3,8 +3,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.Controllers.recyclage.EditPointRecyclageController"
@@ -14,7 +12,6 @@
     <top>
         <fx:include fx:id="navbar" source="/components/navbar_citoyen.fxml"/>
     </top>
-
 
     <center>
         <ScrollPane fitToWidth="true"
@@ -68,9 +65,22 @@
                                     </children>
                                 </HBox>
 
-                                <Label text="Description (optionnel)" style="-fx-text-fill: #123524; -fx-font-weight: bold;"/>
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <children>
+                                        <Label text="Description (optionnel)"
+                                               style="-fx-text-fill: #123524; -fx-font-weight: bold;"/>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                        <Button text="Aide IA (chat)"
+                                                onAction="#openChatbotDialog"
+                                                style="-fx-background-color: white; -fx-border-color: #2563eb; -fx-text-fill: #2563eb; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+                                    </children>
+                                </HBox>
+
                                 <TextArea fx:id="taDescription" prefHeight="120" wrapText="true"
                                           style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+
+                                <Label text="L’assistant IA t’aide uniquement à améliorer la description du point de recyclage."
+                                       style="-fx-text-fill: #6b7280; -fx-font-size: 12px;"/>
 
                                 <HBox spacing="12" alignment="CENTER">
                                     <children>
