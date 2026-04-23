@@ -4,11 +4,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
 import org.example.Services.UserService;
+import org.example.Utils.ModernNotification;
 
 public class ResetPasswordController {
 
@@ -37,34 +37,35 @@ public class ResetPasswordController {
             String confirmPassword = pfConfirmPassword.getText().trim();
 
             if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Please fill all fields.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Please fill all fields.");
                 return;
             }
 
             if (newPassword.length() < 6) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Password must contain at least 6 characters.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Password must contain at least 6 characters.");
                 return;
             }
 
             if (!newPassword.equals(confirmPassword)) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Passwords do not match.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Passwords do not match.");
                 return;
             }
 
             userService.updatePassword(email, newPassword);
 
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Password updated successfully.");
-
             Parent root = FXMLLoader.load(getClass().getResource("/user/login.fxml"));
-            Stage stage = (Stage) pfNewPassword.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Login");
             stage.show();
 
+            ModernNotification.showSuccess(stage, "Success", "Password updated successfully.");
+
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Error", e.getMessage());
         }
     }
 
@@ -72,21 +73,21 @@ public class ResetPasswordController {
     void goToLogin() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/user/login.fxml"));
-            Stage stage = (Stage) pfNewPassword.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Login");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Error", "Unable to open login page.");
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String msg) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
+    private Stage getCurrentStage() {
+        return pfNewPassword != null && pfNewPassword.getScene() != null
+                ? (Stage) pfNewPassword.getScene().getWindow()
+                : null;
     }
 }

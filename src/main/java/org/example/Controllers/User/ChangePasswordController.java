@@ -4,13 +4,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.PasswordField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Controllers.components.NavbarMunicipalController;
 import org.example.Entities.User;
 import org.example.Services.UserService;
+import org.example.Utils.ModernNotification;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class ChangePasswordController {
@@ -80,19 +81,19 @@ public class ChangePasswordController {
             String confirmPassword = pfConfirmPassword.getText().trim();
 
             if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Please fill all fields.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Please fill all fields.");
                 return;
             }
 
             if (user == null) {
-                showAlert(Alert.AlertType.ERROR, "Error", "No connected user found.");
+                ModernNotification.showError(getCurrentStage(), "Error", "No connected user found.");
                 return;
             }
 
             String storedPassword = user.getPassword();
 
             if (storedPassword == null || storedPassword.isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Stored password is empty.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Stored password is empty.");
                 return;
             }
 
@@ -110,36 +111,35 @@ public class ChangePasswordController {
             }
 
             if (!currentPasswordOk) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Current password is incorrect.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Current password is incorrect.");
                 return;
             }
 
             if (newPassword.length() < 6) {
-                showAlert(Alert.AlertType.ERROR, "Error", "New password must contain at least 6 characters.");
+                ModernNotification.showError(getCurrentStage(), "Error", "New password must contain at least 6 characters.");
                 return;
             }
 
             if (!newPassword.equals(confirmPassword)) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Passwords do not match.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Passwords do not match.");
                 return;
             }
 
             if (newPassword.equals(currentPassword)) {
-                showAlert(Alert.AlertType.ERROR, "Error", "New password must be different from current password.");
+                ModernNotification.showError(getCurrentStage(), "Error", "New password must be different from current password.");
                 return;
             }
 
             userService.updatePassword(user.getEmail(), newPassword);
 
-            // Mettre à jour l'objet local aussi
             user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
 
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Password updated successfully.");
+            ModernNotification.showSuccess(getCurrentStage(), "Success", "Password updated successfully.");
             backToProfile();
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            ModernNotification.showError(getCurrentStage(), "Error", e.getMessage());
         }
     }
 
@@ -158,6 +158,7 @@ public class ChangePasswordController {
 
         return hash;
     }
+
     @FXML
     void backToProfile() {
         try {
@@ -169,19 +170,19 @@ public class ChangePasswordController {
 
             Stage stage = (Stage) pfCurrentPassword.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("My Profile");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Error", "Unable to return to profile.");
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String msg) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
+    private Stage getCurrentStage() {
+        return pfCurrentPassword != null && pfCurrentPassword.getScene() != null
+                ? (Stage) pfCurrentPassword.getScene().getWindow()
+                : null;
     }
 }

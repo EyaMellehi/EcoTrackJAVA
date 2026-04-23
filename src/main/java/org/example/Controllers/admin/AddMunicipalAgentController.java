@@ -8,12 +8,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.Entities.User;
+import org.example.Services.EmailService;
 import org.example.Services.UserService;
+import org.example.Utils.ModernNotification;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.example.Services.EmailService;
+
 public class AddMunicipalAgentController {
 
     @FXML private MenuButton menuAdmin;
@@ -25,6 +27,7 @@ public class AddMunicipalAgentController {
     @FXML private ComboBox<String> cbRegion;
     @FXML private ComboBox<String> cbDelegation;
     @FXML private CheckBox chkActive;
+
     private final EmailService emailService = new EmailService();
     private final UserService userService = new UserService();
     private User loggedUser;
@@ -118,32 +121,32 @@ public class AddMunicipalAgentController {
             boolean active = chkActive.isSelected();
 
             if (name.isEmpty() || email.isEmpty() || password.isEmpty() || region == null || delegation == null) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Please fill all required fields.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Please fill all required fields.");
                 return;
             }
 
             if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Invalid email format.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Invalid email format.");
                 return;
             }
 
             if (password.length() < 6) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Password must contain at least 6 characters.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Password must contain at least 6 characters.");
                 return;
             }
 
             if (!phone.isEmpty() && !phone.matches("\\d{8}")) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Phone must contain exactly 8 digits.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Phone must contain exactly 8 digits.");
                 return;
             }
 
             if (userService.emailExists(email)) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Email already exists.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Email already exists.");
                 return;
             }
 
             if (userService.municipalDelegationExists(region, delegation)) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Cette délégation a déjà un agent municipal.");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Cette délégation a déjà un agent municipal.");
                 return;
             }
 
@@ -158,20 +161,20 @@ public class AddMunicipalAgentController {
             user.setImage(null);
 
             userService.addMunicipalAgent(user);
+
             try {
                 emailService.sendMunicipalAgentCredentials(email, name, password);
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Municipal agent added and email sent successfully.");
+                ModernNotification.showSuccess(getCurrentStage(), "Success", "Municipal agent added and email sent successfully.");
             } catch (Exception mailEx) {
                 mailEx.printStackTrace();
-                showAlert(Alert.AlertType.WARNING, "Warning", "Municipal agent added, but email was not sent.");
+                ModernNotification.showWarning(getCurrentStage(), "Warning", "Municipal agent added, but email was not sent.");
             }
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Municipal agent added successfully.");
 
             backToMunicipalAgents();
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            ModernNotification.showError(getCurrentStage(), "Error", e.getMessage());
         }
     }
 
@@ -184,7 +187,7 @@ public class AddMunicipalAgentController {
             MunicipalAgentsController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -192,6 +195,7 @@ public class AddMunicipalAgentController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open municipal agents page.");
         }
     }
 
@@ -204,7 +208,7 @@ public class AddMunicipalAgentController {
             AdminDashboardController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -212,6 +216,7 @@ public class AddMunicipalAgentController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open admin dashboard.");
         }
     }
 
@@ -224,7 +229,7 @@ public class AddMunicipalAgentController {
             SubscribersController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -232,6 +237,7 @@ public class AddMunicipalAgentController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open subscribers page.");
         }
     }
 
@@ -239,7 +245,7 @@ public class AddMunicipalAgentController {
     void logout() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/user/home.fxml"));
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -247,16 +253,10 @@ public class AddMunicipalAgentController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to logout.");
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String msg) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
-    }
     @FXML
     void goToMunicipalAgents() {
         try {
@@ -266,7 +266,7 @@ public class AddMunicipalAgentController {
             MunicipalAgentsController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -274,8 +274,10 @@ public class AddMunicipalAgentController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open municipal agents page.");
         }
     }
+
     @FXML
     void goToFieldAgents() {
         try {
@@ -285,7 +287,7 @@ public class AddMunicipalAgentController {
             FieldAgentsController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -293,8 +295,10 @@ public class AddMunicipalAgentController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open field agents page.");
         }
     }
+
     @FXML
     void goToCategories() {
         try {
@@ -304,7 +308,7 @@ public class AddMunicipalAgentController {
             CategoriesController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -312,12 +316,14 @@ public class AddMunicipalAgentController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open categories page.");
         }
     }
+
     public void goToAssociation() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/admin_association/association.fxml"));
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -325,13 +331,14 @@ public class AddMunicipalAgentController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open associations page.");
         }
     }
 
     public void goToDonation() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/donation/donationIndex.fxml"));
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -339,6 +346,13 @@ public class AddMunicipalAgentController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open donations page.");
         }
+    }
+
+    private Stage getCurrentStage() {
+        return menuAdmin != null && menuAdmin.getScene() != null
+                ? (Stage) menuAdmin.getScene().getWindow()
+                : null;
     }
 }

@@ -11,6 +11,7 @@ import org.example.Controllers.HomeConnectedController;
 import org.example.Entities.GoogleUserInfo;
 import org.example.Entities.User;
 import org.example.Services.UserService;
+import org.example.Utils.ModernNotification;
 
 public class CompleteGoogleRegisterController {
 
@@ -55,7 +56,7 @@ public class CompleteGoogleRegisterController {
     void completeRegistration() {
         try {
             if (googleUserInfo == null) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Google user data is missing.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Google user data is missing.");
                 return;
             }
 
@@ -64,17 +65,17 @@ public class CompleteGoogleRegisterController {
             String phone = tfPhone.getText().trim();
 
             if (name.isEmpty() || region == null) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Please fill all required fields.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Please fill all required fields.");
                 return;
             }
 
             if (!phone.isEmpty() && !phone.matches("\\d{8}")) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Phone must contain exactly 8 digits.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Phone must contain exactly 8 digits.");
                 return;
             }
 
             if (userService.findByEmail(googleUserInfo.getEmail()) != null) {
-                showAlert(Alert.AlertType.ERROR, "Error", "An account with this email already exists.");
+                ModernNotification.showError(getCurrentStage(), "Error", "An account with this email already exists.");
                 return;
             }
 
@@ -103,13 +104,16 @@ public class CompleteGoogleRegisterController {
 
             Stage stage = (Stage) btnComplete.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("EcoTrack - Home");
             stage.show();
 
+            ModernNotification.showSuccess(stage, "Success", "Registration completed successfully.");
+
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            ModernNotification.showError(getCurrentStage(), "Error", e.getMessage());
         }
     }
 
@@ -119,19 +123,19 @@ public class CompleteGoogleRegisterController {
             Parent root = FXMLLoader.load(getClass().getResource("/User/login.fxml"));
             Stage stage = (Stage) btnComplete.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Login");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Error", "Unable to open login page.");
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String msg) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
+    private Stage getCurrentStage() {
+        return btnComplete != null && btnComplete.getScene() != null
+                ? (Stage) btnComplete.getScene().getWindow()
+                : null;
     }
 }

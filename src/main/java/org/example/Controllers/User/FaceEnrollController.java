@@ -11,10 +11,11 @@ import nu.pattern.OpenCV;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import org.example.Entities.User;
-import org.opencv.core.Core;
+import org.example.Utils.ModernNotification;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
+
 import java.io.File;
 
 public class FaceEnrollController {
@@ -44,6 +45,7 @@ public class FaceEnrollController {
             capture = new VideoCapture(0);
             if (!capture.isOpened()) {
                 lblStatus.setText("Unable to open camera.");
+                ModernNotification.showError(getCurrentStage(), "Camera", "Unable to open camera.");
                 return;
             }
 
@@ -71,10 +73,12 @@ public class FaceEnrollController {
             cameraThread.start();
 
             lblStatus.setText("Camera opened.");
+            ModernNotification.showSuccess(getCurrentStage(), "Camera", "Camera opened successfully.");
 
         } catch (Exception e) {
             e.printStackTrace();
             lblStatus.setText("Error opening camera.");
+            ModernNotification.showError(getCurrentStage(), "Camera", "Error opening camera.");
         }
     }
 
@@ -82,10 +86,12 @@ public class FaceEnrollController {
     private void capturePhoto() {
         if (currentFrame == null || currentFrame.empty()) {
             lblStatus.setText("No frame captured.");
+            ModernNotification.showWarning(getCurrentStage(), "Capture", "No frame captured.");
             return;
         }
 
         lblStatus.setText("Photo captured. Click Save.");
+        ModernNotification.showInfo(getCurrentStage(), "Capture", "Photo captured. Click Save.");
     }
 
     @FXML
@@ -93,11 +99,13 @@ public class FaceEnrollController {
         try {
             if (user == null) {
                 lblStatus.setText("User not found.");
+                ModernNotification.showError(getCurrentStage(), "Face ID", "User not found.");
                 return;
             }
 
             if (currentFrame == null || currentFrame.empty()) {
                 lblStatus.setText("No photo to save.");
+                ModernNotification.showWarning(getCurrentStage(), "Face ID", "No photo to save.");
                 return;
             }
 
@@ -110,10 +118,12 @@ public class FaceEnrollController {
             Imgcodecs.imwrite(path, currentFrame);
 
             lblStatus.setText("Face login activated successfully.");
+            ModernNotification.showSuccess(getCurrentStage(), "Face ID", "Face login activated successfully.");
 
         } catch (Exception e) {
             e.printStackTrace();
             lblStatus.setText("Failed to save photo.");
+            ModernNotification.showError(getCurrentStage(), "Face ID", "Failed to save photo.");
         }
     }
 
@@ -130,12 +140,14 @@ public class FaceEnrollController {
 
             Stage stage = (Stage) cameraView.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Profile");
             stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to return to profile.");
         }
     }
 
@@ -148,10 +160,16 @@ public class FaceEnrollController {
 
     private Image mat2Image(Mat frame) {
         try {
-            org.opencv.imgcodecs.Imgcodecs.imwrite("temp_frame.jpg", frame);
+            Imgcodecs.imwrite("temp_frame.jpg", frame);
             return new Image(new File("temp_frame.jpg").toURI().toString());
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private Stage getCurrentStage() {
+        return cameraView != null && cameraView.getScene() != null
+                ? (Stage) cameraView.getScene().getWindow()
+                : null;
     }
 }

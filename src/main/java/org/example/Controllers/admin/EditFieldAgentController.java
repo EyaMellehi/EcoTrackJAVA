@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.Entities.User;
 import org.example.Services.UserService;
+import org.example.Utils.ModernNotification;
 
 import java.util.HashMap;
 import java.util.List;
@@ -181,27 +182,27 @@ public class EditFieldAgentController {
             boolean active = chkActive.isSelected();
 
             if (name.isEmpty() || email.isEmpty() || region == null || delegation == null) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Please fill all required fields.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Please fill all required fields.");
                 return;
             }
 
             if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Invalid email format.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Invalid email format.");
                 return;
             }
 
             if (!phone.isEmpty() && !phone.matches("\\d{8}")) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Phone must contain exactly 8 digits.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Phone must contain exactly 8 digits.");
                 return;
             }
 
             if (!newPassword.isEmpty() && newPassword.length() < 6) {
-                showAlert(Alert.AlertType.ERROR, "Error", "New password must contain at least 6 characters.");
+                ModernNotification.showError(getCurrentStage(), "Error", "New password must contain at least 6 characters.");
                 return;
             }
 
             if (userService.emailExistsForAnotherUser(email, user.getId())) {
-                showAlert(Alert.AlertType.ERROR, "Error", "This email is already used by another account.");
+                ModernNotification.showError(getCurrentStage(), "Error", "This email is already used by another account.");
                 return;
             }
 
@@ -218,12 +219,12 @@ public class EditFieldAgentController {
                 userService.updatePassword(user.getEmail(), newPassword);
             }
 
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Field agent updated successfully.");
+            ModernNotification.showSuccess(getCurrentStage(), "Success", "Field agent updated successfully.");
             backToFieldAgents();
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            ModernNotification.showError(getCurrentStage(), "Error", e.getMessage());
         }
     }
 
@@ -236,13 +237,15 @@ public class EditFieldAgentController {
             FieldAgentsController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Field Agents");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open field agents page.");
         }
     }
 
@@ -255,13 +258,15 @@ public class EditFieldAgentController {
             AdminDashboardController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Admin Dashboard");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open admin dashboard.");
         }
     }
 
@@ -274,13 +279,15 @@ public class EditFieldAgentController {
             SubscribersController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Subscribers");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open subscribers page.");
         }
     }
 
@@ -293,13 +300,15 @@ public class EditFieldAgentController {
             MunicipalAgentsController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Municipal Agents");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open municipal agents page.");
         }
     }
 
@@ -307,22 +316,16 @@ public class EditFieldAgentController {
     void logout() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/user/home.fxml"));
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("EcoTrack - Home");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to logout.");
         }
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String msg) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
     }
 
     @FXML
@@ -334,15 +337,18 @@ public class EditFieldAgentController {
             FieldAgentsController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Field Agents");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open field agents page.");
         }
     }
+
     @FXML
     void goToCategories() {
         try {
@@ -352,38 +358,51 @@ public class EditFieldAgentController {
             CategoriesController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Catégories");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open categories page.");
         }
     }
+
     public void goToAssociation() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/admin_association/association.fxml"));
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("associaitons");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open associations page.");
         }
     }
 
     public void goToDonation() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/donation/donationIndex.fxml"));
-            Stage stage = (Stage) menuAdmin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("donations");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to open donations page.");
         }
+    }
+
+    private Stage getCurrentStage() {
+        return menuAdmin != null && menuAdmin.getScene() != null
+                ? (Stage) menuAdmin.getScene().getWindow()
+                : null;
     }
 }

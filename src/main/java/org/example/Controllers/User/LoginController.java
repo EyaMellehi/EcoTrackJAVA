@@ -8,23 +8,25 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.example.Services.UserService;
-
-import java.io.IOException;
-import java.sql.SQLException;
 import org.example.Entities.GoogleUserInfo;
 import org.example.Services.GoogleAuthService;
-
-import javafx.stage.FileChooser;
 import org.example.Services.FaceAuthService;
+import org.example.Utils.ModernNotification;
 
 import java.io.File;
+import java.io.IOException;
+
 import nu.pattern.OpenCV;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
+
 public class LoginController {
 
     @FXML
@@ -43,12 +45,12 @@ public class LoginController {
 
     private void openHomeAccordingToRole(User user) throws IOException {
         if (user == null) {
-            showAlert(Alert.AlertType.ERROR, "Error", "User not found.");
+            ModernNotification.showError(getCurrentStage(), "Error", "User not found.");
             return;
         }
 
         if (!user.isActive()) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Your account is disabled.");
+            ModernNotification.showError(getCurrentStage(), "Error", "Your account is disabled.");
             return;
         }
 
@@ -59,7 +61,7 @@ public class LoginController {
             AdminDashboardController controller = loader.getController();
             controller.setLoggedUser(user);
 
-            Stage stage = (Stage) btnLogin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -76,7 +78,7 @@ public class LoginController {
             HomeConnectedController controller = loader.getController();
             controller.setLoggedUser(user);
 
-            Stage stage = (Stage) btnLogin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -84,16 +86,17 @@ public class LoginController {
             stage.show();
 
         } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "Unknown role.");
+            ModernNotification.showError(getCurrentStage(), "Error", "Unknown role.");
         }
     }
+
     @FXML
     void login(ActionEvent event) {
         String email = tfEmail.getText().trim();
         String password = pfPassword.getText();
 
         if (email.isEmpty() || password.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Please fill all fields.");
+            ModernNotification.showError(getCurrentStage(), "Error", "Please fill all fields.");
             return;
         }
 
@@ -101,12 +104,12 @@ public class LoginController {
             User user = userService.login(email, password);
 
             if (user == null) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Invalid email or password.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Invalid email or password.");
                 return;
             }
 
             if (!user.isActive()) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Your account is disabled.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Your account is disabled.");
                 return;
             }
 
@@ -117,7 +120,7 @@ public class LoginController {
                 Verify2FAController controller = loader.getController();
                 controller.setUser(user);
 
-                Stage stage = (Stage) tfEmail.getScene().getWindow();
+                Stage stage = getCurrentStage();
                 stage.setScene(new Scene(root));
                 stage.setFullScreen(true);
                 stage.setFullScreenExitHint("");
@@ -128,8 +131,8 @@ public class LoginController {
             }
 
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Error", e.getMessage());
         }
     }
 
@@ -145,31 +148,26 @@ public class LoginController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Error", "Unable to open register page.");
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
     @FXML
     void goToForgotPassword() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/User/forgot_password.fxml"));
-            Stage stage = (Stage) btnLogin.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
             stage.setTitle("Forgot Password");
             stage.show();
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Error", e.getMessage());
         }
     }
+
     @FXML
     void loginWithGoogle() {
         try {
@@ -189,19 +187,19 @@ public class LoginController {
             CompleteGoogleRegisterController controller = loader.getController();
             controller.setGoogleUserInfo(googleUser);
 
-            Stage stage = (Stage) tfEmail.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
-
             stage.setTitle("Complete Registration");
             stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Google Login Error", e.getMessage());
+            ModernNotification.showError(getCurrentStage(), "Google Login Error", e.getMessage());
         }
     }
+
     @FXML
     void loginWithFace(ActionEvent event) {
         try {
@@ -210,13 +208,12 @@ public class LoginController {
             VideoCapture capture = new VideoCapture(0);
 
             if (!capture.isOpened()) {
-                showAlert(Alert.AlertType.ERROR, "Face Login", "Unable to open camera.");
+                ModernNotification.showError(getCurrentStage(), "Face Login", "Unable to open camera.");
                 return;
             }
 
             Mat frame = new Mat();
 
-            // on lit quelques frames pour laisser la caméra se stabiliser
             for (int i = 0; i < 10; i++) {
                 capture.read(frame);
                 Thread.sleep(100);
@@ -225,7 +222,7 @@ public class LoginController {
             capture.release();
 
             if (frame.empty()) {
-                showAlert(Alert.AlertType.ERROR, "Face Login", "No image captured from camera.");
+                ModernNotification.showError(getCurrentStage(), "Face Login", "No image captured from camera.");
                 return;
             }
 
@@ -238,19 +235,19 @@ public class LoginController {
             tempFile.delete();
 
             if (userId == null) {
-                showAlert(Alert.AlertType.ERROR, "Face Login", "Face not recognized.");
+                ModernNotification.showError(getCurrentStage(), "Face Login", "Face not recognized.");
                 return;
             }
 
             User user = userService.getUserById(userId);
 
             if (user == null) {
-                showAlert(Alert.AlertType.ERROR, "Face Login", "User not found.");
+                ModernNotification.showError(getCurrentStage(), "Face Login", "User not found.");
                 return;
             }
 
             if (!user.isActive()) {
-                showAlert(Alert.AlertType.ERROR, "Face Login", "Your account is disabled.");
+                ModernNotification.showError(getCurrentStage(), "Face Login", "Your account is disabled.");
                 return;
             }
 
@@ -258,7 +255,17 @@ public class LoginController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Face Login", "Error during face login.");
+            ModernNotification.showError(getCurrentStage(), "Face Login", "Error during face login.");
         }
+    }
+
+    private Stage getCurrentStage() {
+        if (btnLogin != null && btnLogin.getScene() != null) {
+            return (Stage) btnLogin.getScene().getWindow();
+        }
+        if (tfEmail != null && tfEmail.getScene() != null) {
+            return (Stage) tfEmail.getScene().getWindow();
+        }
+        return null;
     }
 }

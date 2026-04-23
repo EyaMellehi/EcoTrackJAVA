@@ -13,6 +13,7 @@ import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Controllers.components.NavbarMunicipalController;
 import org.example.Entities.User;
 import org.example.Services.UserService;
+import org.example.Utils.ModernNotification;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -168,6 +169,7 @@ public class EditProfileController {
 
         if (selectedImage != null) {
             lblImageName.setText(selectedImage.getName());
+            ModernNotification.showInfo(getCurrentStage(), "Image", "Image selected: " + selectedImage.getName());
         }
     }
 
@@ -180,27 +182,27 @@ public class EditProfileController {
             String region = cbRegion.getValue();
 
             if (name.isEmpty() || email.isEmpty() || region == null) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Please fill required fields.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Please fill required fields.");
                 return;
             }
 
             if (!name.matches("[A-Za-zÀ-ÿ\\s]+")) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Name must contain only letters and spaces.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Name must contain only letters and spaces.");
                 return;
             }
 
             if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Invalid email format.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Invalid email format.");
                 return;
             }
 
             if (!phone.isEmpty() && !phone.matches("\\d{8}")) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Phone must contain exactly 8 digits.");
+                ModernNotification.showError(getCurrentStage(), "Error", "Phone must contain exactly 8 digits.");
                 return;
             }
 
             if (userService.emailExistsForAnotherUser(email, user.getId())) {
-                showAlert(Alert.AlertType.ERROR, "Error", "This email is already used by another account.");
+                ModernNotification.showError(getCurrentStage(), "Error", "This email is already used by another account.");
                 return;
             }
 
@@ -228,12 +230,12 @@ public class EditProfileController {
             user.setImage(imagePath);
             userService.updateProfile(user);
 
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Profile updated successfully.");
+            ModernNotification.showSuccess(getCurrentStage(), "Success", "Profile updated successfully.");
             goBackToProfilePage();
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            ModernNotification.showError(getCurrentStage(), "Error", e.getMessage());
         }
     }
 
@@ -252,21 +254,19 @@ public class EditProfileController {
 
             Stage stage = (Stage) tfName.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("My Profile");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Error", "Unable to return to profile page.");
         }
     }
 
-
-
-    private void showAlert(Alert.AlertType type, String title, String msg) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
+    private Stage getCurrentStage() {
+        return tfName != null && tfName.getScene() != null
+                ? (Stage) tfName.getScene().getWindow()
+                : null;
     }
 }

@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -12,6 +11,7 @@ import org.example.Controllers.HomeConnectedController;
 import org.example.Controllers.admin.AdminDashboardController;
 import org.example.Entities.User;
 import org.example.Services.TwoFactorService;
+import org.example.Utils.ModernNotification;
 
 public class Verify2FAController {
 
@@ -34,6 +34,13 @@ public class Verify2FAController {
 
             if (code.isEmpty()) {
                 lblError.setText("Please enter the 6-digit code.");
+                ModernNotification.showWarning(getCurrentStage(), "2FA", "Please enter the 6-digit code.");
+                return;
+            }
+
+            if (!code.matches("\\d{6}")) {
+                lblError.setText("Code must contain exactly 6 digits.");
+                ModernNotification.showWarning(getCurrentStage(), "2FA", "Code must contain exactly 6 digits.");
                 return;
             }
 
@@ -42,25 +49,29 @@ public class Verify2FAController {
 
             if (!valid) {
                 lblError.setText("Invalid code.");
+                ModernNotification.showError(getCurrentStage(), "2FA", "Invalid code.");
                 return;
             }
 
+            lblError.setText("");
+            ModernNotification.showSuccess(getCurrentStage(), "2FA", "Verification successful.");
             openHomeAccordingToRole(user);
 
         } catch (Exception e) {
             e.printStackTrace();
             lblError.setText("Verification failed.");
+            ModernNotification.showError(getCurrentStage(), "2FA", "Verification failed.");
         }
     }
 
     private void openHomeAccordingToRole(User user) throws Exception {
         if (user == null) {
-            showAlert(Alert.AlertType.ERROR, "Error", "User not found.");
+            ModernNotification.showError(getCurrentStage(), "Error", "User not found.");
             return;
         }
 
         if (!user.isActive()) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Your account is disabled.");
+            ModernNotification.showError(getCurrentStage(), "Error", "Your account is disabled.");
             return;
         }
 
@@ -71,9 +82,10 @@ public class Verify2FAController {
             AdminDashboardController controller = loader.getController();
             controller.setLoggedUser(user);
 
-            Stage stage = (Stage) tfOtpCode.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Admin Dashboard");
             stage.show();
 
@@ -87,14 +99,15 @@ public class Verify2FAController {
             HomeConnectedController controller = loader.getController();
             controller.setLoggedUser(user);
 
-            Stage stage = (Stage) tfOtpCode.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("EcoTrack - Home");
             stage.show();
 
         } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "Unknown role.");
+            ModernNotification.showError(getCurrentStage(), "Error", "Unknown role.");
         }
     }
 
@@ -102,22 +115,22 @@ public class Verify2FAController {
     private void goBack() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/User/login.fxml"));
-            Stage stage = (Stage) tfOtpCode.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Login");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
             lblError.setText("Unable to go back.");
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to go back.");
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    private Stage getCurrentStage() {
+        return tfOtpCode != null && tfOtpCode.getScene() != null
+                ? (Stage) tfOtpCode.getScene().getWindow()
+                : null;
     }
 }

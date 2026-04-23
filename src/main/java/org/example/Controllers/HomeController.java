@@ -21,32 +21,32 @@ public class HomeController {
 
     @FXML
     void goToRegister() {
-        navigateTo("/User/Register.fxml", "Register");
+        navigateTo("/User/Login.fxml", "Login");
     }
 
     @FXML
     void goToRecycling() {
-        navigateTo("/recyclage/points_connected.fxml", "Recycling Points");
+        navigateTo("/User/Login.fxml", "Login");
     }
 
     @FXML
     void goToEvents() {
-        navigateTo("/events.fxml", "Events");
+        navigateTo("/User/Login.fxml", "Login");
     }
 
     @FXML
     void goToBlogs() {
-        navigateTo("/annonces/list_annonces_user.fxml", "Blogs");
+        navigateTo("/User/Login.fxml", "Login");
     }
 
     @FXML
     void goToAssociation() {
-        navigateTo("/client_association/index.fxml", "Associations");
+        navigateTo("/User/Login.fxml", "Login");
     }
 
     @FXML
     void goToReport() {
-        navigateTo("/signalement/list_signalement.fxml", "Reports");
+        navigateTo("/User/Login.fxml", "Login");
     }
 
     @FXML
@@ -59,7 +59,7 @@ public class HomeController {
             Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
             Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+
             stage.setTitle(title);
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
