@@ -255,8 +255,7 @@ public class TerrainPointDetailsController {
             Stage stage = (Stage) lblPointTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Mes points affectés");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -288,8 +287,7 @@ public class TerrainPointDetailsController {
             Stage stage = (Stage) lblPointTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Créer rapport");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -310,8 +308,7 @@ public class TerrainPointDetailsController {
             Stage stage = (Stage) lblPointTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Voir rapport");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {

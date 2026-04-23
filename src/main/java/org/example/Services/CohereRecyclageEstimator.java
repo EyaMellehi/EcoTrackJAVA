@@ -87,8 +87,8 @@ public class CohereRecyclageEstimator {
         HttpURLConnection con = (HttpURLConnection) new URL(API_URL).openConnection();
         con.setRequestMethod("POST");
         con.setDoOutput(true);
-        con.setConnectTimeout(10000);
-        con.setReadTimeout(20000);
+        con.setConnectTimeout(15000);
+        con.setReadTimeout(60000);
         con.setRequestProperty("Authorization", "Bearer " + API_KEY.trim());
         con.setRequestProperty("Content-Type", "application/json");
         con.setRequestProperty("Accept", "application/json");

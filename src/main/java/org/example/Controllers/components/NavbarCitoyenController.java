@@ -102,6 +102,7 @@ public class NavbarCitoyenController {
             Stage stage = (Stage) btnHome.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle(title);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {

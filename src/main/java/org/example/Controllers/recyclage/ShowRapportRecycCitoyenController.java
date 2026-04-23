@@ -106,8 +106,7 @@ public class ShowRapportRecycCitoyenController {
             Stage stage = (Stage) lblTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Détails du point");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
