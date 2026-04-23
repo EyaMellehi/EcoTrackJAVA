@@ -53,17 +53,21 @@
             <content>
                 <VBox spacing="24" style="-fx-padding: 30; -fx-background-color: #f6f7f6;">
 
-                    <VBox spacing="14"
+                    <!-- SECTION PARAMÈTRES -->
+                    <VBox fx:id="setupSection"
+                          spacing="14"
                           style="-fx-background-color: white; -fx-padding: 24; -fx-background-radius: 14;">
                         <children>
 
                             <HBox alignment="CENTER_LEFT">
                                 <children>
                                     <VBox spacing="4">
-                                        <Label text="Paramètres de la tournée"
-                                               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
-                                        <Label text="1) Position auto ou recherche d’adresse  2) Ajuster le marqueur  3) Générer"
-                                               style="-fx-text-fill: #777; -fx-font-size: 14px;"/>
+                                        <children>
+                                            <Label text="Paramètres de la tournée"
+                                                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                                            <Label text="1) Position auto ou recherche d’adresse  2) Ajuster le marqueur  3) Générer"
+                                                   style="-fx-text-fill: #777; -fx-font-size: 14px;"/>
+                                        </children>
                                     </VBox>
 
                                     <Pane HBox.hgrow="ALWAYS"/>
@@ -146,48 +150,86 @@
                         </children>
                     </VBox>
 
-                    <HBox spacing="18" alignment="CENTER_LEFT">
+                    <!-- SECTION RÉSULTAT -->
+                    <VBox fx:id="routeSection"
+                          spacing="24"
+                          visible="false"
+                          managed="false">
                         <children>
-                            <VBox prefWidth="240" spacing="8"
-                                  style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14;">
-                                <Label text="Chargé" style="-fx-font-size: 15px; -fx-text-fill: #6b7280;"/>
-                                <Label fx:id="lblTotalKg" text="0 kg"
-                                       style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
-                                <Label fx:id="lblSelectedCount" text="0 points sélectionnés"
-                                       style="-fx-text-fill: #6b7280;"/>
+
+                            <HBox alignment="CENTER_LEFT">
+                                <children>
+                                    <VBox spacing="4">
+                                        <children>
+                                            <Label text="Tournée générée"
+                                                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                                            <Label fx:id="lblRouteStart"
+                                                   text="Départ : -"
+                                                   style="-fx-text-fill: #777; -fx-font-size: 14px;"/>
+                                        </children>
+                                    </VBox>
+
+                                    <Pane HBox.hgrow="ALWAYS"/>
+
+                                    <Button text="Nouvelle génération"
+                                            onAction="#resetRouteView"
+                                            style="-fx-background-color: white; -fx-border-color: #1f5130; -fx-text-fill: #1f5130; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 10; -fx-border-radius: 10;"/>
+                                </children>
+                            </HBox>
+
+                            <HBox spacing="18" alignment="CENTER_LEFT">
+                                <children>
+                                    <VBox prefWidth="240" spacing="8"
+                                          style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14;">
+                                        <children>
+                                            <Label text="Chargé" style="-fx-font-size: 15px; -fx-text-fill: #6b7280;"/>
+                                            <Label fx:id="lblTotalKg" text="0 kg"
+                                                   style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                                            <Label fx:id="lblSelectedCount" text="0 points sélectionnés"
+                                                   style="-fx-text-fill: #6b7280;"/>
+                                        </children>
+                                    </VBox>
+
+                                    <VBox prefWidth="240" spacing="8"
+                                          style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14;">
+                                        <children>
+                                            <Label text="Distance approx." style="-fx-font-size: 15px; -fx-text-fill: #6b7280;"/>
+                                            <Label fx:id="lblTotalKm" text="0 km"
+                                                   style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                                            <Label text="Distance à vol d’oiseau"
+                                                   style="-fx-text-fill: #6b7280;"/>
+                                        </children>
+                                    </VBox>
+
+                                    <VBox prefWidth="320" spacing="8"
+                                          style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14;">
+                                        <children>
+                                            <Label text="Logique" style="-fx-font-size: 15px; -fx-text-fill: #6b7280;"/>
+                                            <Label text="Priorité IA → plus proche voisin"
+                                                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                                            <Label text="Heuristique rapide"
+                                                   style="-fx-text-fill: #6b7280;"/>
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <VBox spacing="16"
+                                  style="-fx-background-color: white; -fx-padding: 24; -fx-background-radius: 14;">
+                                <children>
+                                    <VBox spacing="4">
+                                        <children>
+                                            <Label text="Étapes de la tournée"
+                                                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                                            <Label text="Chaque carte correspond à un arrêt."
+                                                   style="-fx-text-fill: #777; -fx-font-size: 14px;"/>
+                                        </children>
+                                    </VBox>
+
+                                    <VBox fx:id="stepsContainer" spacing="14"/>
+                                </children>
                             </VBox>
 
-                            <VBox prefWidth="240" spacing="8"
-                                  style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14;">
-                                <Label text="Distance approx." style="-fx-font-size: 15px; -fx-text-fill: #6b7280;"/>
-                                <Label fx:id="lblTotalKm" text="0 km"
-                                       style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
-                                <Label text="Distance à vol d’oiseau"
-                                       style="-fx-text-fill: #6b7280;"/>
-                            </VBox>
-
-                            <VBox prefWidth="320" spacing="8"
-                                  style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14;">
-                                <Label text="Logique" style="-fx-font-size: 15px; -fx-text-fill: #6b7280;"/>
-                                <Label text="Priorité IA → plus proche voisin"
-                                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
-                                <Label text="Heuristique rapide"
-                                       style="-fx-text-fill: #6b7280;"/>
-                            </VBox>
-                        </children>
-                    </HBox>
-
-                    <VBox spacing="16"
-                          style="-fx-background-color: white; -fx-padding: 24; -fx-background-radius: 14;">
-                        <children>
-                            <VBox spacing="4">
-                                <Label text="Étapes de la tournée"
-                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
-                                <Label text="Chaque carte correspond à un arrêt."
-                                       style="-fx-text-fill: #777; -fx-font-size: 14px;"/>
-                            </VBox>
-
-                            <VBox fx:id="stepsContainer" spacing="14"/>
                         </children>
                     </VBox>
 

@@ -34,7 +34,10 @@ public class TerrainPointDetailsController {
     @FXML private Label lblDate;
     @FXML private Label lblDescription;
     @FXML private Label lblAiPriority;
+    @FXML private Label lblAiScore;
+    @FXML private Label lblAiExplanation;
     @FXML private Label lblCoordinates;
+    @FXML private Label lblFieldAgent;
 
     @FXML private Button btnCreateReport;
     @FXML private Button btnViewReport;
@@ -66,23 +69,53 @@ public class TerrainPointDetailsController {
 
             lblPointIdTop.setText("Point: #" + currentPoint.getId());
             lblPointTitle.setText("Point #" + currentPoint.getId());
-            lblAddress.setText(safe(currentPoint.getAddress()));
+            lblAddress.setText(safe(currentPoint.getAddress()).isEmpty() ? "-" : safe(currentPoint.getAddress()));
 
-            lblStatus.setText(safe(currentPoint.getStatut()));
+            lblStatus.setText(safe(currentPoint.getStatut()).isEmpty() ? "-" : safe(currentPoint.getStatut()));
             applyStatusStyle();
 
             lblCategory.setText(currentPoint.getCategorie() != null ? safe(currentPoint.getCategorie().getNom()) : "-");
             lblQuantity.setText(currentPoint.getQuantite() + " kg");
             lblDate.setText(currentPoint.getDateDec() != null ? currentPoint.getDateDec().toString() : "-");
             lblDescription.setText(safe(currentPoint.getDescription()).isEmpty() ? "-" : safe(currentPoint.getDescription()));
-            lblAiPriority.setText(currentPoint.getAiPriority() != null ? currentPoint.getAiPriority() : "None");
-            lblCoordinates.setText("Coordonnées: " + currentPoint.getLatitude() + ", " + currentPoint.getLongitude());
 
-            btnCreateReport.setVisible(currentRapport == null && "IN_PROGRESS".equalsIgnoreCase(safe(currentPoint.getStatut())));
-            btnCreateReport.setManaged(currentRapport == null && "IN_PROGRESS".equalsIgnoreCase(safe(currentPoint.getStatut())));
+            String aiPriority = currentPoint.getAiPriority() != null ? currentPoint.getAiPriority() : "None";
+            lblAiPriority.setText(aiPriority);
+            applyAiPriorityStyle(aiPriority);
 
-            btnViewReport.setVisible(currentRapport != null);
-            btnViewReport.setManaged(currentRapport != null);
+            lblAiScore.setText(currentPoint.getAiScore() != null ? String.valueOf(currentPoint.getAiScore()) + "/100" : "-");
+            lblAiExplanation.setText(
+                    safe(currentPoint.getAiExplanation()).isEmpty()
+                            ? "Aucune explication IA disponible."
+                            : safe(currentPoint.getAiExplanation())
+            );
+
+            lblCoordinates.setText(currentPoint.getLatitude() + ", " + currentPoint.getLongitude());
+
+            if (currentPoint.getAgentTerrain() != null) {
+                String agentName = safe(currentPoint.getAgentTerrain().getName());
+                String agentEmail = safe(currentPoint.getAgentTerrain().getEmail());
+
+                if (!agentName.isEmpty() && !agentEmail.isEmpty()) {
+                    lblFieldAgent.setText(agentName + " (" + agentEmail + ")");
+                } else if (!agentName.isEmpty()) {
+                    lblFieldAgent.setText(agentName);
+                } else if (!agentEmail.isEmpty()) {
+                    lblFieldAgent.setText(agentEmail);
+                } else {
+                    lblFieldAgent.setText("Affecté");
+                }
+            } else {
+                lblFieldAgent.setText("Non affecté");
+            }
+
+            boolean canCreateReport = currentRapport == null && "IN_PROGRESS".equalsIgnoreCase(safe(currentPoint.getStatut()));
+            btnCreateReport.setVisible(canCreateReport);
+            btnCreateReport.setManaged(canCreateReport);
+
+            boolean canViewReport = currentRapport != null;
+            btnViewReport.setVisible(canViewReport);
+            btnViewReport.setManaged(canViewReport);
 
             loadMap();
 
@@ -107,6 +140,19 @@ public class TerrainPointDetailsController {
         }
 
         lblStatus.setStyle(style);
+    }
+
+    private void applyAiPriorityStyle(String priority) {
+        String p = safe(priority).toUpperCase();
+        String base = "-fx-padding: 6 14; -fx-background-radius: 18; -fx-font-weight: bold;";
+
+        switch (p) {
+            case "LOW" -> lblAiPriority.setStyle(base + "-fx-background-color: #dcfce7; -fx-text-fill: #166534;");
+            case "MEDIUM" -> lblAiPriority.setStyle(base + "-fx-background-color: #fef9c3; -fx-text-fill: #854d0e;");
+            case "HIGH" -> lblAiPriority.setStyle(base + "-fx-background-color: #fed7aa; -fx-text-fill: #9a3412;");
+            case "URGENT" -> lblAiPriority.setStyle(base + "-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c;");
+            default -> lblAiPriority.setStyle(base + "-fx-background-color: #eef2f7; -fx-text-fill: #475467;");
+        }
     }
 
     private void loadMap() {
@@ -196,6 +242,7 @@ public class TerrainPointDetailsController {
         WebEngine engine = webMap.getEngine();
         engine.loadContent(html);
     }
+
     @FXML
     private void goBack() {
         try {
