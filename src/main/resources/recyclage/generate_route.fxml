@@ -171,6 +171,10 @@
 
                                     <Pane HBox.hgrow="ALWAYS"/>
 
+                                    <Button text="Ouvrir trajet complet dans Google Maps"
+                                            onAction="#openFullRouteInGoogleMaps"
+                                            style="-fx-background-color: white; -fx-border-color: #2563eb; -fx-text-fill: #2563eb; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 10; -fx-border-radius: 10;"/>
+
                                     <Button text="Nouvelle génération"
                                             onAction="#resetRouteView"
                                             style="-fx-background-color: white; -fx-border-color: #1f5130; -fx-text-fill: #1f5130; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 10; -fx-border-radius: 10;"/>
@@ -221,7 +225,7 @@
                                         <children>
                                             <Label text="Étapes de la tournée"
                                                    style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
-                                            <Label text="Chaque carte correspond à un arrêt."
+                                            <Label text="Maximum 6 points pour garantir l’ouverture correcte dans Google Maps."
                                                    style="-fx-text-fill: #777; -fx-font-size: 14px;"/>
                                         </children>
                                     </VBox>
