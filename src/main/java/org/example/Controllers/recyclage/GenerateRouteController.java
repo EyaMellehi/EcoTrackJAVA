@@ -35,6 +35,8 @@ import java.util.Locale;
 
 public class GenerateRouteController {
 
+    private static final int MAX_ROUTE_POINTS = 6;
+
     @FXML private NavbarCitoyenController navbarCitoyenController;
 
     @FXML private TextField tfCapacity;
@@ -59,6 +61,7 @@ public class GenerateRouteController {
 
     private User loggedUser;
     private List<PointRecyclage> assignedPoints = new ArrayList<>();
+    private RouteResult currentRoute;
 
     public void setLoggedUser(User user) {
         this.loggedUser = user;
@@ -400,7 +403,16 @@ public class GenerateRouteController {
 
         List<PointRecyclage> pointsInProgress = assignedPoints.stream()
                 .filter(p -> "IN_PROGRESS".equalsIgnoreCase(safe(p.getStatut())))
+                .limit(MAX_ROUTE_POINTS)
                 .toList();
+
+        if (pointsInProgress.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Aucune tournée", "Aucun point IN_PROGRESS disponible.");
+            resetSummary();
+            stepsContainer.getChildren().clear();
+            currentRoute = null;
+            return;
+        }
 
         RouteResult route = optimizer.compute(pointsInProgress, capacity, startLat, startLng);
 
@@ -408,8 +420,11 @@ public class GenerateRouteController {
             showAlert(Alert.AlertType.WARNING, "Aucune tournée", "Aucun point ne rentre dans la capacité " + capacity + " kg.");
             resetSummary();
             stepsContainer.getChildren().clear();
+            currentRoute = null;
             return;
         }
+
+        currentRoute = route;
 
         lblTotalKg.setText(route.getTotalKg() + " kg");
         lblSelectedCount.setText(route.getSelectedCount() + " points sélectionnés");
@@ -428,6 +443,7 @@ public class GenerateRouteController {
 
     @FXML
     private void resetRouteView() {
+        currentRoute = null;
         routeSection.setVisible(false);
         routeSection.setManaged(false);
         setupSection.setVisible(true);
@@ -435,6 +451,58 @@ public class GenerateRouteController {
         stepsContainer.getChildren().clear();
         resetSummary();
         lblRouteStart.setText("Départ : -");
+    }
+
+    @FXML
+    private void openFullRouteInGoogleMaps() {
+        try {
+            if (currentRoute == null || currentRoute.getOrdered() == null || currentRoute.getOrdered().isEmpty()) {
+                showAlert(Alert.AlertType.WARNING, "Trajet", "Aucune tournée générée.");
+                return;
+            }
+
+            double startLat = Double.parseDouble(tfStartLat.getText().trim().replace(",", "."));
+            double startLng = Double.parseDouble(tfStartLng.getText().trim().replace(",", "."));
+
+            List<RouteStep> orderedSteps = currentRoute.getOrdered();
+
+            if (orderedSteps.size() > MAX_ROUTE_POINTS) {
+                showAlert(Alert.AlertType.WARNING, "Trajet", "Le trajet complet est limité à " + MAX_ROUTE_POINTS + " points maximum.");
+                return;
+            }
+
+            PointRecyclage destinationPoint = orderedSteps.get(orderedSteps.size() - 1).getPoint();
+
+            String origin = startLat + "," + startLng;
+            String destination = destinationPoint.getLatitude() + "," + destinationPoint.getLongitude();
+
+            StringBuilder url = new StringBuilder("https://www.google.com/maps/dir/?api=1");
+            url.append("&origin=").append(URLEncoder.encode(origin, StandardCharsets.UTF_8));
+            url.append("&destination=").append(URLEncoder.encode(destination, StandardCharsets.UTF_8));
+            url.append("&travelmode=driving");
+
+            if (orderedSteps.size() > 1) {
+                StringBuilder waypoints = new StringBuilder();
+
+                for (int i = 0; i < orderedSteps.size() - 1; i++) {
+                    PointRecyclage p = orderedSteps.get(i).getPoint();
+
+                    if (!waypoints.isEmpty()) {
+                        waypoints.append("|");
+                    }
+
+                    waypoints.append(p.getLatitude()).append(",").append(p.getLongitude());
+                }
+
+                url.append("&waypoints=").append(URLEncoder.encode(waypoints.toString(), StandardCharsets.UTF_8));
+            }
+
+            Desktop.getDesktop().browse(new URI(url.toString()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le trajet complet dans Google Maps.");
+        }
     }
 
     private void renderSteps(RouteResult route) {
@@ -449,6 +517,7 @@ public class GenerateRouteController {
             card.setStyle("-fx-background-color: #f8faf8; -fx-background-radius: 14; -fx-border-color: #e5e7eb; -fx-border-radius: 14;");
 
             HBox top = new HBox(10);
+
             Label order = new Label(String.valueOf(index));
             order.setStyle("-fx-background-color: white; -fx-border-color: #d1d5db; -fx-padding: 6 12; -fx-background-radius: 999; -fx-border-radius: 999; -fx-font-weight: bold;");
 
