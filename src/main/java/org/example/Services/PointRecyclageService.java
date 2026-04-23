@@ -442,4 +442,109 @@ public class PointRecyclageService {
         ps.setInt(1, pointId);
         ps.executeUpdate();
     }
+
+    public void refreshDailyPriorityScores() throws SQLException {
+        List<PointRecyclage> points = getUntreatedPointsForPriorityRefresh();
+
+        for (PointRecyclage p : points) {
+            LocalDateTime referenceDateTime;
+
+            if (p.getAiEstimatedAt() != null) {
+                referenceDateTime = p.getAiEstimatedAt();
+            } else if (p.getDateDec() != null) {
+                referenceDateTime = p.getDateDec().atStartOfDay();
+            } else {
+                referenceDateTime = LocalDateTime.now();
+            }
+
+            long daysPassed = java.time.temporal.ChronoUnit.DAYS.between(
+                    referenceDateTime.toLocalDate(),
+                    java.time.LocalDate.now()
+            );
+
+            if (daysPassed <= 0) {
+                continue;
+            }
+
+            int currentScore = p.getAiScore() != null ? p.getAiScore() : 50;
+
+            // +5 points par jour
+            int newScore = Math.min(100, currentScore + ((int) daysPassed * 5));
+            String newPriority = priorityFromScore(newScore);
+
+            String oldExplanation = p.getAiExplanation();
+            String newExplanation;
+
+            if (oldExplanation == null || oldExplanation.isBlank()) {
+                newExplanation = "Priorité augmentée automatiquement avec l'ancienneté.";
+            } else {
+                newExplanation = oldExplanation + " Priorité augmentée automatiquement avec l'ancienneté.";
+            }
+
+            updateAiFields(
+                    p.getId(),
+                    newScore,
+                    newPriority,
+                    newExplanation,
+                    LocalDateTime.now()
+            );
+        }
+    }
+
+    private List<PointRecyclage> getUntreatedPointsForPriorityRefresh() throws SQLException {
+        List<PointRecyclage> points = new ArrayList<>();
+
+        String sql = "SELECT p.*, " +
+                "c.id AS c_id, c.nom AS c_nom, c.description AS c_description, c.coef_points AS c_coef, " +
+                "u.id AS u_id, u.name AS u_name, u.email AS u_email, " +
+                "a.id AS a_id, a.name AS a_name, a.email AS a_email " +
+                "FROM point_recyclage p " +
+                "JOIN categorie c ON p.categorie_id = c.id " +
+                "JOIN user u ON p.citoyen_id = u.id " +
+                "LEFT JOIN user a ON p.agent_terrain_id = a.id " +
+                "WHERE p.statut NOT IN ('COLLECTE', 'VALIDE', 'REFUSE') " +
+                "ORDER BY p.id DESC";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            points.add(mapResultSetToPoint(rs));
+        }
+
+        return points;
+    }
+
+    private void updateAiFields(int pointId, Integer score, String priority, String explanation, LocalDateTime estimatedAt) throws SQLException {
+        String sql = "UPDATE point_recyclage " +
+                "SET ai_score = ?, ai_priority = ?, ai_explanation = ?, ai_estimated_at = ? " +
+                "WHERE id = ?";
+
+        PreparedStatement ps = cnx.prepareStatement(sql);
+
+        if (score != null) {
+            ps.setInt(1, score);
+        } else {
+            ps.setNull(1, Types.INTEGER);
+        }
+
+        ps.setString(2, priority);
+        ps.setString(3, explanation);
+
+        if (estimatedAt != null) {
+            ps.setTimestamp(4, Timestamp.valueOf(estimatedAt));
+        } else {
+            ps.setNull(4, Types.TIMESTAMP);
+        }
+
+        ps.setInt(5, pointId);
+        ps.executeUpdate();
+    }
+
+    private String priorityFromScore(int score) {
+        if (score >= 80) return "URGENT";
+        if (score >= 60) return "HIGH";
+        if (score >= 35) return "MEDIUM";
+        return "LOW";
+    }
 }
