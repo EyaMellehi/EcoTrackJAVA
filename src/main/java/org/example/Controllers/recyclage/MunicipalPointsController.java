@@ -21,6 +21,7 @@ import org.example.Controllers.components.NavbarMunicipalController;
 import org.example.Entities.PointRecyclage;
 import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
+import org.example.Utils.ModernNotification;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,7 +30,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class MunicipalPointsController {
 
@@ -115,8 +115,6 @@ public class MunicipalPointsController {
         colQuantity.setCellValueFactory(data -> new SimpleStringProperty(
                 data.getValue().getQuantite() + " kg"
         ));
-
-
 
         colDate.setCellValueFactory(data -> new SimpleStringProperty(
                 data.getValue().getDateDec() != null ? data.getValue().getDateDec().toString() : "-"
@@ -246,7 +244,7 @@ public class MunicipalPointsController {
             updateStats();
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les points.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de charger les points.");
         }
     }
 
@@ -317,7 +315,7 @@ public class MunicipalPointsController {
             MunicipalPointDetailsController controller = loader.getController();
             controller.setData(loggedUser, point);
 
-            Stage stage = (Stage) tablePoints.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Détails du point");
             stage.setFullScreen(true);
@@ -326,26 +324,24 @@ public class MunicipalPointsController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir les détails du point.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir les détails du point.");
         }
     }
 
     private void handleRefuse(PointRecyclage point) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmation");
-        confirm.setHeaderText("Refuser le point");
-        confirm.setContentText("Voulez-vous vraiment refuser ce point ?");
+        boolean confirmed = ModernNotification.showConfirmation(
+                "Confirmation",
+                "Voulez-vous vraiment refuser ce point ?"
+        );
 
-        Optional<ButtonType> result = confirm.showAndWait();
-
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+        if (confirmed) {
             try {
                 pointService.refusePointByMunicipal(point.getId());
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "Point refusé avec succès.");
+                ModernNotification.showSuccess(getCurrentStage(), "Succès", "Point refusé avec succès.");
                 loadPoints();
             } catch (SQLException e) {
                 e.printStackTrace();
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de refuser ce point.");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de refuser ce point.");
             }
         }
     }
@@ -353,12 +349,13 @@ public class MunicipalPointsController {
     @FXML
     private void refreshTable() {
         loadPoints();
+        ModernNotification.showInfo(getCurrentStage(), "Actualisation", "La liste a été mise à jour.");
     }
 
     @FXML
     private void exportPdf() {
         if (filteredList.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Aucune donnée", "Il n'y a aucun point à exporter.");
+            ModernNotification.showWarning(getCurrentStage(), "Aucune donnée", "Il n'y a aucun point à exporter.");
             return;
         }
 
@@ -375,7 +372,7 @@ public class MunicipalPointsController {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm"));
         fileChooser.setInitialFileName("municipal_points_" + delegation + "_" + timestamp + ".pdf");
 
-        File file = fileChooser.showSaveDialog(tablePoints.getScene().getWindow());
+        File file = fileChooser.showSaveDialog(getCurrentStage());
         if (file == null) return;
 
         Document document = new Document(PageSize.A4.rotate(), 24, 24, 24, 24);
@@ -449,14 +446,14 @@ public class MunicipalPointsController {
             document.add(table);
             document.close();
 
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "PDF exporté avec succès.");
+            ModernNotification.showSuccess(getCurrentStage(), "Succès", "PDF exporté avec succès.");
 
         } catch (Exception e) {
             e.printStackTrace();
             if (document.isOpen()) {
                 document.close();
             }
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'exporter le PDF.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'exporter le PDF.");
         }
     }
 
@@ -478,16 +475,14 @@ public class MunicipalPointsController {
         table.addCell(cell);
     }
 
-    private String safe(String s) {
-        return s == null ? "" : s;
+    private Stage getCurrentStage() {
+        return tablePoints != null && tablePoints.getScene() != null
+                ? (Stage) tablePoints.getScene().getWindow()
+                : null;
     }
 
-    private void showAlert(Alert.AlertType type, String title, String msg) {
-        Alert a = new Alert(type);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.setContentText(msg);
-        a.showAndWait();
+    private String safe(String s) {
+        return s == null ? "" : s;
     }
 
     private String getStatusBadgeStyle(String statut) {

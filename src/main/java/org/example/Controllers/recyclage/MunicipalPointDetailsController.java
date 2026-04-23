@@ -16,6 +16,7 @@ import org.example.Entities.PointRecyclage;
 import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
 import org.example.Services.UserService;
+import org.example.Utils.ModernNotification;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -23,7 +24,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 public class MunicipalPointDetailsController {
 
@@ -113,7 +113,7 @@ public class MunicipalPointDetailsController {
             updateAssignmentVisibility();
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les détails du point.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de charger les détails du point.");
         }
     }
 
@@ -268,7 +268,7 @@ public class MunicipalPointDetailsController {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les agents terrain.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de charger les agents terrain.");
         }
     }
 
@@ -426,7 +426,7 @@ public class MunicipalPointDetailsController {
 
             if (rbAuto.isSelected()) {
                 if (allAgents.isEmpty()) {
-                    showAlert(Alert.AlertType.WARNING, "Aucun agent", "Aucun agent terrain disponible.");
+                    ModernNotification.showWarning(getCurrentStage(), "Aucun agent", "Aucun agent terrain disponible.");
                     return;
                 }
 
@@ -445,26 +445,25 @@ public class MunicipalPointDetailsController {
             }
 
             if (agentToAssign == null) {
-                showAlert(Alert.AlertType.WARNING, "Agent requis", "Choisissez un agent terrain.");
+                ModernNotification.showWarning(getCurrentStage(), "Agent requis", "Choisissez un agent terrain.");
                 return;
             }
 
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Confirmation");
-            confirm.setHeaderText("Assign point");
-            confirm.setContentText("Confirmer l'affectation à " + agentToAssign.getName() + " ?");
+            boolean confirmed = ModernNotification.showConfirmation(
+                    "Confirmation",
+                    "Confirmer l'affectation à " + agentToAssign.getName() + " ?"
+            );
 
-            Optional<ButtonType> result = confirm.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
+            if (confirmed) {
                 pointService.assignPointToFieldAgent(currentPoint.getId(), agentToAssign.getId());
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "Point affecté avec succès.");
+                ModernNotification.showSuccess(getCurrentStage(), "Succès", "Point affecté avec succès.");
                 loadPointFresh();
                 loadAgents();
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'affecter ce point.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'affecter ce point.");
         }
     }
 
@@ -473,26 +472,25 @@ public class MunicipalPointDetailsController {
         if (currentPoint == null) return;
 
         if (!canCancelAssignment()) {
-            showAlert(Alert.AlertType.WARNING, "Temps écoulé", "Le délai de 60 secondes est dépassé.");
+            ModernNotification.showWarning(getCurrentStage(), "Temps écoulé", "Le délai de 60 secondes est dépassé.");
             loadPointFresh();
             return;
         }
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmation");
-        confirm.setHeaderText("Cancel assignment");
-        confirm.setContentText("Voulez-vous annuler cette affectation ?");
+        boolean confirmed = ModernNotification.showConfirmation(
+                "Confirmation",
+                "Voulez-vous annuler cette affectation ?"
+        );
 
-        Optional<ButtonType> result = confirm.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+        if (confirmed) {
             try {
                 pointService.cancelAssignment(currentPoint.getId());
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "L'affectation a été annulée.");
+                ModernNotification.showSuccess(getCurrentStage(), "Succès", "L'affectation a été annulée.");
                 loadPointFresh();
                 loadAgents();
             } catch (SQLException e) {
                 e.printStackTrace();
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'annuler l'affectation.");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'annuler l'affectation.");
             }
         }
     }
@@ -578,7 +576,7 @@ public class MunicipalPointDetailsController {
             MunicipalPointsController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) lblPointTitle.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Recycling Points");
             stage.setFullScreen(true);
@@ -587,19 +585,18 @@ public class MunicipalPointDetailsController {
 
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de revenir à la liste.");
         }
+    }
+
+    private Stage getCurrentStage() {
+        return lblPointTitle != null && lblPointTitle.getScene() != null
+                ? (Stage) lblPointTitle.getScene().getWindow()
+                : null;
     }
 
     private String safe(String value) {
         return value == null ? "" : value;
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
     }
 
     private void styleModeButtons() {

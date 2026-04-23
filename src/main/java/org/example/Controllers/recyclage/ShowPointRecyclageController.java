@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.web.WebEngine;
@@ -16,6 +15,7 @@ import org.example.Entities.RapportRecyc;
 import org.example.Entities.User;
 import org.example.Services.PointRecyclageService;
 import org.example.Services.RapportRecycService;
+import org.example.Utils.ModernNotification;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -65,7 +65,7 @@ public class ShowPointRecyclageController {
             currentRapport = rapportService.getRapportByPointId(currentPoint.getId());
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger le point.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de charger le point.");
             return;
         }
 
@@ -223,7 +223,7 @@ public class ShowPointRecyclageController {
             PointsConnectedController controller = loader.getController();
             controller.setLoggedUser(loggedUser);
 
-            Stage stage = (Stage) lblTitle.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Points de recyclage");
             stage.setFullScreen(true);
@@ -231,6 +231,7 @@ public class ShowPointRecyclageController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de revenir à la liste.");
         }
     }
 
@@ -244,7 +245,7 @@ public class ShowPointRecyclageController {
             controller.setLoggedUser(loggedUser);
             controller.setPoint(currentPoint);
 
-            Stage stage = (Stage) lblTitle.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Modifier point");
             stage.setFullScreen(true);
@@ -252,6 +253,7 @@ public class ShowPointRecyclageController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir la page de modification.");
         }
     }
 
@@ -264,7 +266,7 @@ public class ShowPointRecyclageController {
             ShowRapportRecycCitoyenController controller = loader.getController();
             controller.setData(loggedUser, currentPoint);
 
-            Stage stage = (Stage) lblTitle.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setTitle("Rapport de recyclage");
             stage.setFullScreen(true);
@@ -272,15 +274,13 @@ public class ShowPointRecyclageController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le rapport.");
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir le rapport.");
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String msg) {
-        Alert a = new Alert(type);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.setContentText(msg);
-        a.showAndWait();
+    private Stage getCurrentStage() {
+        return lblTitle != null && lblTitle.getScene() != null
+                ? (Stage) lblTitle.getScene().getWindow()
+                : null;
     }
 }
