@@ -89,6 +89,7 @@ public class AddCategoryController {
             Stage stage = (Stage) tfNom.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle(title);
             stage.show();
         } catch (IOException e) {

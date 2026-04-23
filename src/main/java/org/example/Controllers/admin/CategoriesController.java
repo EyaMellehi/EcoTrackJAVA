@@ -194,6 +194,7 @@ public class CategoriesController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Admin Dashboard");
             stage.show();
         } catch (Exception e) {
@@ -211,6 +212,7 @@ public class CategoriesController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Subscribers");
             stage.show();
         } catch (Exception e) {
@@ -228,6 +230,7 @@ public class CategoriesController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Municipal Agents");
             stage.show();
         } catch (Exception e) {
@@ -245,6 +248,7 @@ public class CategoriesController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Field Agents");
             stage.show();
         } catch (Exception e) {
@@ -264,6 +268,7 @@ public class CategoriesController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("EcoTrack - Home");
             stage.show();
         } catch (Exception e) {
@@ -277,6 +282,7 @@ public class CategoriesController {
             Stage stage = (Stage) tableCategories.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle(title);
             stage.show();
         } catch (IOException e) {
@@ -297,6 +303,7 @@ public class CategoriesController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("associaitons");
             stage.show();
         } catch (Exception e) {
@@ -310,6 +317,7 @@ public class CategoriesController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("donations");
             stage.show();
         } catch (Exception e) {

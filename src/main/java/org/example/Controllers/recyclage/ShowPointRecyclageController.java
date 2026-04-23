@@ -227,6 +227,7 @@ public class ShowPointRecyclageController {
             stage.setScene(new Scene(root));
             stage.setTitle("Points de recyclage");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -247,6 +248,7 @@ public class ShowPointRecyclageController {
             stage.setScene(new Scene(root));
             stage.setTitle("Modifier point");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -266,6 +268,7 @@ public class ShowPointRecyclageController {
             stage.setScene(new Scene(root));
             stage.setTitle("Rapport de recyclage");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

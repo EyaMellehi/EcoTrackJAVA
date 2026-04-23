@@ -453,6 +453,7 @@ public class EditPointRecyclageController {
             stage.setScene(new Scene(root));
             stage.setTitle("Points de recyclage");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

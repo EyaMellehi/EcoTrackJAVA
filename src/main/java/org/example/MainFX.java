@@ -23,6 +23,7 @@ public class MainFX extends Application {
         stage.setTitle("EcoTrack - Home");
         stage.setScene(scene);
         stage.setFullScreen(true);
+        stage.setFullScreenExitHint("");
         stage.show();
 
         // lance la mise à jour quotidienne des priorités
