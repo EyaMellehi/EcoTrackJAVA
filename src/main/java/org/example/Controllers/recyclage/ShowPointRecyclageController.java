@@ -226,8 +226,7 @@ public class ShowPointRecyclageController {
             Stage stage = (Stage) lblTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Points de recyclage");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -247,8 +246,7 @@ public class ShowPointRecyclageController {
             Stage stage = (Stage) lblTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Modifier point");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -267,8 +265,7 @@ public class ShowPointRecyclageController {
             Stage stage = (Stage) lblTitle.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Rapport de recyclage");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

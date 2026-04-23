@@ -185,8 +185,7 @@ public class CreateRapportRecycController {
             Stage stage = (Stage) lblPointId.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Rapport");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -207,8 +206,7 @@ public class CreateRapportRecycController {
             Stage stage = (Stage) lblPointId.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Point details");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
