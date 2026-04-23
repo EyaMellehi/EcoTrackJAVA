@@ -75,7 +75,22 @@ public class AddCategoryController {
 
     @FXML
     void goToDashboard() {
-        navigate("/admin/dashboard.fxml", "Dashboard");
+        navigate("/admin/admin_dashboard.fxml", "Dashboard");
+    }
+
+    @FXML
+    void goToSubscribers() {
+        navigate("/admin/subscribers.fxml", "Subscribers");
+    }
+
+    @FXML
+    void goToMunicipalAgents() {
+        navigate("/admin/municipal_agents.fxml", "Municipal Agents");
+    }
+
+    @FXML
+    void goToFieldAgents() {
+        navigate("/admin/field_agents.fxml", "Field Agents");
     }
 
     @FXML
@@ -89,6 +104,11 @@ public class AddCategoryController {
 
     public void goToDonation() {
         navigate("/donation/donationIndex.fxml", "Donation");
+    }
+
+    @FXML
+    void logout() {
+        navigate("/home.fxml", "EcoTrack - Home");
     }
 
     private void navigate(String fxmlPath, String title) {

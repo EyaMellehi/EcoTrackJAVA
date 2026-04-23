@@ -33,11 +33,11 @@ public class EditCategoryController {
     public void setCategorieData(Categorie categorie) {
         this.categorie = categorie;
 
-        tfNom.setText(categorie.getNom());
+        tfNom.setText(categorie.getNom() != null ? categorie.getNom() : "");
         tfCoefPoints.setText(String.valueOf(categorie.getCoefPoints()));
-        taDescription.setText(categorie.getDescription());
+        taDescription.setText(categorie.getDescription() != null ? categorie.getDescription() : "");
 
-        lblTitle.setText("Modifier : " + categorie.getNom());
+        lblTitle.setText("Modifier : " + (categorie.getNom() != null ? categorie.getNom() : ""));
         lblSubTitle.setText("Mets à jour le nom / coef / description.");
         lblId.setText("#" + categorie.getId());
         lblCoef.setText(String.valueOf(categorie.getCoefPoints()));
@@ -48,9 +48,9 @@ public class EditCategoryController {
     void updateCategory() {
         if (categorie == null) return;
 
-        String nom = tfNom.getText().trim();
-        String coefText = tfCoefPoints.getText().trim();
-        String description = taDescription.getText().trim();
+        String nom = tfNom.getText() != null ? tfNom.getText().trim() : "";
+        String coefText = tfCoefPoints.getText() != null ? tfCoefPoints.getText().trim() : "";
+        String description = taDescription.getText() != null ? taDescription.getText().trim() : "";
 
         if (nom.isEmpty()) {
             ModernNotification.showWarning(getCurrentStage(), "Validation", "Le nom est obligatoire.");
@@ -123,7 +123,27 @@ public class EditCategoryController {
 
     @FXML
     void goToDashboard() {
-        navigate("/admin/dashboard.fxml", "Dashboard");
+        navigate("/admin/admin_dashboard.fxml", "Dashboard");
+    }
+
+    @FXML
+    void goToSubscribers() {
+        navigate("/admin/subscribers.fxml", "Subscribers");
+    }
+
+    @FXML
+    void goToMunicipalAgents() {
+        navigate("/admin/municipal_agents.fxml", "Municipal Agents");
+    }
+
+    @FXML
+    void goToFieldAgents() {
+        navigate("/admin/field_agents.fxml", "Field Agents");
+    }
+
+    @FXML
+    void goToCategories() {
+        navigate("/admin/categories.fxml", "Catégories");
     }
 
     public void goToAssociation() {
@@ -132,6 +152,11 @@ public class EditCategoryController {
 
     public void goToDonation() {
         navigate("/donation/donationIndex.fxml", "Donation");
+    }
+
+    @FXML
+    void logout() {
+        navigate("/home.fxml", "EcoTrack - Home");
     }
 
     private void navigate(String fxmlPath, String title) {
