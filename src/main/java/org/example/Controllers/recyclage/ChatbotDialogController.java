@@ -3,13 +3,9 @@ package org.example.Controllers.recyclage;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.example.Services.ChatMessage;
 import org.example.Services.ChatbotResult;
@@ -32,11 +28,11 @@ public class ChatbotDialogController {
     private final List<ChatMessage> history = new ArrayList<>();
     private final Map<String, String> context = new HashMap<>();
 
-    private TextArea targetDescriptionArea;
+    private TextInputControl targetInput;
     private String mode = "POINT_DESC";
 
-    public void setTargetDescriptionArea(TextArea targetDescriptionArea) {
-        this.targetDescriptionArea = targetDescriptionArea;
+    public void setTargetInput(TextInputControl targetInput) {
+        this.targetInput = targetInput;
     }
 
     public void setMode(String mode) {
@@ -106,12 +102,15 @@ public class ChatbotDialogController {
             return;
         }
 
-        if (targetDescriptionArea == null) {
+        if (targetInput == null) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Champ cible introuvable.");
             return;
         }
 
-        targetDescriptionArea.setText(draft);
+        targetInput.setText(draft);
+        targetInput.requestFocus();
+        targetInput.positionCaret(targetInput.getText().length());
+
         closeDialog();
     }
 

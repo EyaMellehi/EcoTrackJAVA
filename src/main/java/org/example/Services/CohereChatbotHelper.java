@@ -111,7 +111,6 @@ public class CohereChatbotHelper {
                 - catégorie
                 - quantité
                 - état
-                - emballage (sacs, vrac, cartons, etc.)
                 - repère de lieu
                 - niveau de danger éventuel
                 - détails utiles pour la collecte
@@ -166,7 +165,6 @@ public class CohereChatbotHelper {
                 - quantité collectée
                 - état du point
                 - état des déchets
-                - sacs, vrac, cartons, tri
                 - accès au lieu
                 - difficulté rencontrée
                 - observations utiles pour la suite

@@ -54,12 +54,6 @@ public class CreateRapportRecycController {
                 txtQuantiteCollecte.setText(oldVal);
             }
         });
-
-        txtCommentaire.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && newVal.length() > 255) {
-                txtCommentaire.setText(oldVal);
-            }
-        });
     }
 
     @FXML
@@ -69,7 +63,7 @@ public class CreateRapportRecycController {
             Parent root = loader.load();
 
             ChatbotDialogController controller = loader.getController();
-            controller.setTargetDescriptionArea(txtCommentaire);
+            controller.setTargetInput(txtCommentaire);
             controller.setMode("RAPPORT_COMMENT");
 
             Map<String, String> ctx = new HashMap<>();
@@ -92,6 +86,9 @@ public class CreateRapportRecycController {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.showAndWait();
+
+            txtCommentaire.requestFocus();
+            txtCommentaire.positionCaret(txtCommentaire.getText().length());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,21 +141,10 @@ public class CreateRapportRecycController {
                 return;
             }
 
-            if (qte > currentPoint.getQuantite()) {
-                showAlert(Alert.AlertType.WARNING, "Attention",
-                        "La quantité collectée ne doit pas dépasser la quantité déclarée.");
-                return;
-            }
-
             String commentaire = txtCommentaire.getText() != null ? txtCommentaire.getText().trim() : "";
 
             if (commentaire.isEmpty()) {
                 showAlert(Alert.AlertType.WARNING, "Attention", "La description est obligatoire.");
-                return;
-            }
-
-            if (commentaire.length() > 255) {
-                showAlert(Alert.AlertType.WARNING, "Attention", "La description ne doit pas dépasser 255 caractères.");
                 return;
             }
 

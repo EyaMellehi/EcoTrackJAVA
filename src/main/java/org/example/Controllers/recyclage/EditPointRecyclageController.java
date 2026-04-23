@@ -383,7 +383,7 @@ public class EditPointRecyclageController {
             Parent root = loader.load();
 
             ChatbotDialogController controller = loader.getController();
-            controller.setTargetDescriptionArea(taDescription);
+            controller.setTargetInput(taDescription);
 
             java.util.Map<String, String> ctx = new java.util.HashMap<>();
             ctx.put("categorie", cbCategorie.getValue() != null ? cbCategorie.getValue().getNom() : "");

@@ -64,7 +64,7 @@
                             <TextField fx:id="txtQuantiteCollecte"
                                        promptText="Ex: 5.5"
                                        style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
-                            <Label text="La quantité doit être positive et ne pas dépasser la quantité déclarée."
+                            <Label text="La quantité doit être positive."
                                    style="-fx-text-fill: #667085; -fx-font-size: 12px;"/>
                         </VBox>
 
@@ -85,7 +85,7 @@
                                       wrapText="true"
                                       promptText="Décris le résultat de la collecte..."
                                       style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
-                            <Label text="Maximum 255 caractères. L’assistant IA aide uniquement à rédiger le commentaire du rapport."
+                            <Label text="L’assistant IA aide uniquement à rédiger le commentaire du rapport."
                                    style="-fx-text-fill: #667085; -fx-font-size: 12px;"/>
                         </VBox>
 
