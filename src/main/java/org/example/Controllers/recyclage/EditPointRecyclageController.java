@@ -452,8 +452,7 @@ public class EditPointRecyclageController {
             Stage stage = (Stage) cbCategorie.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Points de recyclage");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

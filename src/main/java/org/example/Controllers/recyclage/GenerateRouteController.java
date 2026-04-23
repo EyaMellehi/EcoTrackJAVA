@@ -594,8 +594,7 @@ public class GenerateRouteController {
             Stage stage = (Stage) tfCapacity.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Point details");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -616,8 +615,7 @@ public class GenerateRouteController {
             Stage stage = (Stage) tfCapacity.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Mes points affectés");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (IOException e) {

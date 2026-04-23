@@ -239,8 +239,7 @@ public class TerrainPointsController {
             Stage stage = (Stage) tablePoints.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Point details");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -261,8 +260,7 @@ public class TerrainPointsController {
             Stage stage = (Stage) tablePoints.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Ma tournée du jour");
-            stage.setFullScreen(false);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {

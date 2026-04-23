@@ -61,6 +61,7 @@ public class HomeController {
             stage.setScene(new Scene(root));
             stage.setMaximized(true);
             stage.setTitle(title);
+            stage.setFullScreen(true);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

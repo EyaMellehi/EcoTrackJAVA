@@ -47,8 +47,8 @@ public class NavbarMunicipalController {
 
             Stage stage = getStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
             stage.setTitle("Home");
+            stage.setFullScreen(true);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,7 +66,7 @@ public class NavbarMunicipalController {
 
             Stage stage = getStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.setTitle("Municipal Reports");
             stage.show();
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class NavbarMunicipalController {
 
             Stage stage = getStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.setTitle("Dashboard annonces");
             stage.show();
         } catch (Exception e) {
@@ -107,7 +107,7 @@ public class NavbarMunicipalController {
 
             Stage stage = (Stage) btnRecycling.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.setTitle("Points de recyclage");
             stage.show();
 
@@ -128,7 +128,7 @@ public class NavbarMunicipalController {
 
             Stage stage = getStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.setTitle("Points de recyclage");
             stage.show();
         } catch (Exception e) {
@@ -147,7 +147,7 @@ public class NavbarMunicipalController {
 
             Stage stage = getStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.setTitle("Events Management");
             stage.show();
         } catch (Exception e) {
@@ -166,7 +166,7 @@ public class NavbarMunicipalController {
 
             Stage stage = getStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.setTitle("My Profile");
             stage.show();
         } catch (Exception e) {
@@ -180,7 +180,7 @@ public class NavbarMunicipalController {
             Parent root = FXMLLoader.load(getClass().getResource("/home.fxml"));
             Stage stage = getStage();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.setTitle("EcoTrack - Home");
             stage.show();
         } catch (Exception e) {
