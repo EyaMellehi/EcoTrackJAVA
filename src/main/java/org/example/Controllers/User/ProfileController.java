@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import org.example.Controllers.components.NavbarCitoyenController;
 import org.example.Controllers.components.NavbarMunicipalController;
 import org.example.Entities.User;
+import org.example.Utils.ModernNotification;
 
 import java.io.File;
 
@@ -49,7 +50,6 @@ public class ProfileController {
         configureNavbar();
 
         if (user != null) {
-            // Correction ici
             update2FAUI(user.isTwoFactorEnabled());
 
             lblNameCard.setText(user.getName() != null ? user.getName() : "");
@@ -180,7 +180,7 @@ public class ProfileController {
             EditProfileController controller = loader.getController();
             controller.setUser(user);
 
-            Stage stage = (Stage) lblFullName.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -188,6 +188,7 @@ public class ProfileController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Impossible d'ouvrir la page de modification du profil.");
         }
     }
 
@@ -200,7 +201,7 @@ public class ProfileController {
             ChangePasswordController controller = loader.getController();
             controller.setUser(user);
 
-            Stage stage = (Stage) lblFullName.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -208,6 +209,7 @@ public class ProfileController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Impossible d'ouvrir la page de changement de mot de passe.");
         }
     }
 
@@ -220,20 +222,35 @@ public class ProfileController {
             Setup2FAController controller = loader.getController();
             controller.setUser(user);
 
-            Stage stage = (Stage) lblFullName.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Set up 2FA");
             stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "2FA", "Impossible d'ouvrir la page d’activation 2FA.");
         }
     }
 
     @FXML
     private void disable2FA() {
         try {
-            if (user == null) return;
+            if (user == null) {
+                ModernNotification.showError(getCurrentStage(), "2FA", "Utilisateur introuvable.");
+                return;
+            }
+
+            boolean confirmed = ModernNotification.showConfirmation(
+                    "Confirmation",
+                    "Voulez-vous vraiment désactiver la double authentification ?"
+            );
+
+            if (!confirmed) {
+                return;
+            }
 
             org.example.Services.UserService userService = new org.example.Services.UserService();
 
@@ -244,12 +261,14 @@ public class ProfileController {
 
             update2FAUI(false);
 
-            System.out.println("2FA désactivé avec succès.");
+            ModernNotification.showSuccess(getCurrentStage(), "2FA", "2FA désactivé avec succès.");
 
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "2FA", "Erreur lors de la désactivation du 2FA.");
         }
     }
+
     @FXML
     private void face_id() {
         try {
@@ -259,14 +278,22 @@ public class ProfileController {
             FaceEnrollController controller = loader.getController();
             controller.setUser(user);
 
-            Stage stage = (Stage) lblFullName.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
-
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Face Enrollment");
             stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Face ID", "Impossible d'ouvrir la page Face ID.");
         }
+    }
+
+    private Stage getCurrentStage() {
+        return lblFullName != null && lblFullName.getScene() != null
+                ? (Stage) lblFullName.getScene().getWindow()
+                : null;
     }
 }

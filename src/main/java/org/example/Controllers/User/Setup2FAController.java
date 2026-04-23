@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import org.example.Entities.User;
 import org.example.Services.TwoFactorService;
 import org.example.Services.UserService;
+import org.example.Utils.ModernNotification;
 
 public class Setup2FAController {
 
@@ -43,10 +44,14 @@ public class Setup2FAController {
             imgQrCode.setImage(qrImage);
 
             lblSecret.setText(secret);
+            lblError.setText("");
+
+            ModernNotification.showInfo(getCurrentStage(), "2FA", "QR code generated successfully.");
 
         } catch (Exception e) {
             e.printStackTrace();
             lblError.setText("Unable to generate QR code.");
+            ModernNotification.showError(getCurrentStage(), "2FA", "Unable to generate QR code.");
         }
     }
 
@@ -57,6 +62,7 @@ public class Setup2FAController {
 
             if (!code.matches("\\d{6}")) {
                 lblError.setText("Enter a valid 6-digit code.");
+                ModernNotification.showWarning(getCurrentStage(), "2FA", "Enter a valid 6-digit code.");
                 return;
             }
 
@@ -65,6 +71,7 @@ public class Setup2FAController {
 
             if (!valid) {
                 lblError.setText("Invalid code.");
+                ModernNotification.showError(getCurrentStage(), "2FA", "Invalid verification code.");
                 return;
             }
 
@@ -82,13 +89,17 @@ public class Setup2FAController {
 
             Stage stage = (Stage) tfOtpCode.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Profile");
             stage.show();
+
+            ModernNotification.showSuccess(stage, "2FA", "Two-factor authentication activated successfully.");
 
         } catch (Exception e) {
             e.printStackTrace();
             lblError.setText("Activation failed.");
+            ModernNotification.showError(getCurrentStage(), "2FA", "Activation failed.");
         }
     }
 
@@ -103,12 +114,21 @@ public class Setup2FAController {
 
             Stage stage = (Stage) tfOtpCode.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Profile");
             stage.show();
+
         } catch (Exception e) {
             e.printStackTrace();
             lblError.setText("Unable to go back.");
+            ModernNotification.showError(getCurrentStage(), "Navigation", "Unable to go back.");
         }
+    }
+
+    private Stage getCurrentStage() {
+        return tfOtpCode != null && tfOtpCode.getScene() != null
+                ? (Stage) tfOtpCode.getScene().getWindow()
+                : null;
     }
 }

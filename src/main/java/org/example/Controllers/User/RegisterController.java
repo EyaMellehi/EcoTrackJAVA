@@ -1,36 +1,32 @@
 package org.example.Controllers.User;
 
-import javafx.scene.web.WebView;
 import org.example.Entities.User;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.example.Services.UserService;
+import org.example.Utils.ModernNotification;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
+import com.sun.net.httpserver.HttpServer;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import com.sun.net.httpserver.HttpServer;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import com.sun.net.httpserver.HttpServer;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 
 public class RegisterController {
 
     @FXML
     private TextField tfName;
+
     @FXML
     private WebView captchaWebView;
 
@@ -39,6 +35,7 @@ public class RegisterController {
 
     @FXML
     private TextField tfEmail;
+
     private HttpServer localCaptchaServer;
     private static final int CAPTCHA_PORT = 9091;
 
@@ -49,7 +46,6 @@ public class RegisterController {
     private PasswordField pfPassword;
 
     private final UserService userService = new UserService();
-
 
     private String recaptchaToken;
     private static final String RECAPTCHA_SITE_KEY = "6Lci0cIsAAAAABi8cuxVVOyIk_H1_2OJHXkYVDxC";
@@ -83,6 +79,7 @@ public class RegisterController {
                 "Tunis",
                 "Zaghouan"
         ));
+
         tfPhone.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 tfPhone.setText(newValue.replaceAll("[^\\d]", ""));
@@ -98,8 +95,10 @@ public class RegisterController {
                 tfName.setText(newValue.replaceAll("[^A-Za-zÀ-ÿ\\s]", ""));
             }
         });
+
         loadRecaptcha();
     }
+
     private void startLocalCaptchaServer() {
         try {
             if (localCaptchaServer != null) {
@@ -146,8 +145,10 @@ public class RegisterController {
             localCaptchaServer.start();
         } catch (Exception e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible de démarrer le serveur local du captcha.");
         }
     }
+
     private void loadRecaptcha() {
         if (captchaWebView == null) {
             return;
@@ -168,64 +169,58 @@ public class RegisterController {
             String region = cbRegion.getValue();
             String password = pfPassword.getText().trim();
 
-            // Name
             if (name.isEmpty()) {
-                showAlert("Erreur", "Le nom est obligatoire");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Le nom est obligatoire.");
                 return;
             }
 
             if (name.length() < 3) {
-                showAlert("Erreur", "Le nom doit contenir au moins 3 caractères");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Le nom doit contenir au moins 3 caractères.");
                 return;
             }
 
             if (!name.matches("[A-Za-zÀ-ÿ\\s]+")) {
-                showAlert("Erreur", "Le nom doit contenir uniquement des lettres et des espaces");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Le nom doit contenir uniquement des lettres et des espaces.");
                 return;
             }
 
-            // Phone
             if (phone.isEmpty()) {
-                showAlert("Erreur", "Le téléphone est obligatoire");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Le téléphone est obligatoire.");
                 return;
             }
 
             if (!phone.matches("\\d{8}")) {
-                showAlert("Erreur", "Le téléphone doit contenir exactement 8 chiffres");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Le téléphone doit contenir exactement 8 chiffres.");
                 return;
             }
 
-            // Email
             if (email.isEmpty()) {
-                showAlert("Erreur", "L'email est obligatoire");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "L'email est obligatoire.");
                 return;
             }
 
             if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-                showAlert("Erreur", "Format d'email invalide");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Format d'email invalide.");
                 return;
             }
 
-            // Region
             if (region == null || region.isEmpty()) {
-                showAlert("Erreur", "Veuillez sélectionner une région");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Veuillez sélectionner une région.");
                 return;
             }
 
-            // Password
             if (password.isEmpty()) {
-                showAlert("Erreur", "Le mot de passe est obligatoire");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Le mot de passe est obligatoire.");
                 return;
             }
 
             if (password.length() < 6) {
-                showAlert("Erreur", "Le mot de passe doit contenir au moins 6 caractères");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Le mot de passe doit contenir au moins 6 caractères.");
                 return;
             }
 
-            // Email exists
             if (userService.emailExists(email)) {
-                showAlert("Erreur", "Email déjà existant");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Email déjà existant.");
                 return;
             }
 
@@ -237,55 +232,57 @@ public class RegisterController {
             user.setRegion(region);
 
             if (recaptchaToken == null || recaptchaToken.isBlank()) {
-                showAlert("Erreur", "Veuillez valider le reCAPTCHA.");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Veuillez valider le reCAPTCHA.");
                 return;
             }
 
             boolean captchaValid = userService.verifyRecaptcha(recaptchaToken, RECAPTCHA_SECRET_KEY);
 
             if (!captchaValid) {
-                showAlert("Erreur", "Échec de vérification reCAPTCHA.");
+                ModernNotification.showError(getCurrentStage(), "Erreur", "Échec de vérification reCAPTCHA.");
                 return;
             }
+
             userService.registerCitoyen(user);
 
-            showAlert("Succès", "Compte créé avec succès");
-
-            Stage stage = (Stage) tfName.getScene().getWindow();
+            Stage stage = getCurrentStage();
             Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/user/login.fxml")));
             stage.setScene(scene);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Login");
             stage.show();
 
+            ModernNotification.showSuccess(stage, "Succès", "Compte créé avec succès.");
+
         } catch (Exception e) {
-            showAlert("Erreur", e.getMessage());
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", e.getMessage());
         }
     }
 
     @FXML
     void goToLogin() {
         try {
-            Stage stage = (Stage) tfName.getScene().getWindow();
+            Stage stage = getCurrentStage();
             Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/user/login.fxml")));
             stage.setScene(scene);
-            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Login");
             stage.show();
         } catch (Exception e) {
-            showAlert("Erreur", e.getMessage());
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", e.getMessage());
         }
     }
 
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    private Stage getCurrentStage() {
+        return tfName != null && tfName.getScene() != null
+                ? (Stage) tfName.getScene().getWindow()
+                : null;
     }
+
     public class CaptchaBridge {
         public void setToken(String token) {
             recaptchaToken = token;

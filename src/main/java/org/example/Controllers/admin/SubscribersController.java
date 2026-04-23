@@ -187,6 +187,7 @@ public class SubscribersController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Admin Dashboard");
             stage.show();
         } catch (Exception e) {
@@ -201,6 +202,7 @@ public class SubscribersController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("EcoTrack - Home");
             stage.show();
         } catch (Exception e) {
@@ -219,6 +221,7 @@ public class SubscribersController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Edit Subscriber");
             stage.show();
         } catch (Exception e) {
@@ -258,6 +261,7 @@ public class SubscribersController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Subscribers");
             stage.show();
         } catch (Exception e) {
@@ -276,6 +280,7 @@ public class SubscribersController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Municipal Agents");
             stage.show();
         } catch (Exception e) {
@@ -294,6 +299,7 @@ public class SubscribersController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Field Agents");
             stage.show();
         } catch (Exception e) {
@@ -312,6 +318,7 @@ public class SubscribersController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Catégories");
             stage.show();
         } catch (Exception e) {
@@ -324,6 +331,7 @@ public class SubscribersController {
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("associaitons");
             stage.show();
         } catch (Exception e) {
@@ -336,7 +344,8 @@ public class SubscribersController {
             Parent root = FXMLLoader.load(getClass().getResource("/donation/donationIndex.fxml"));
             Stage stage = (Stage) menuAdmin.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setFullScreen(true);
+            stage.setFullScreen(true);stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("donations");
             stage.show();
         } catch (Exception e) {
