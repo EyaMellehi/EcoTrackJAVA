@@ -4,12 +4,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.example.Entities.Categorie;
 import org.example.Services.CategorieService;
+import org.example.Utils.ModernNotification;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -29,17 +29,17 @@ public class AddCategoryController {
         String description = taDescription.getText().trim();
 
         if (nom.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Le nom est obligatoire.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "Le nom est obligatoire.");
             return;
         }
 
         if (nom.length() < 2) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Le nom doit contenir au moins 2 caractères.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "Le nom doit contenir au moins 2 caractères.");
             return;
         }
 
         if (description.length() > 255) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "La description ne doit pas dépasser 255 caractères.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "La description ne doit pas dépasser 255 caractères.");
             return;
         }
 
@@ -47,11 +47,11 @@ public class AddCategoryController {
         try {
             coefPoints = Double.parseDouble(coefText);
             if (coefPoints <= 0) {
-                showAlert(Alert.AlertType.WARNING, "Validation", "Le coefficient doit être supérieur à 0.");
+                ModernNotification.showWarning(getCurrentStage(), "Validation", "Le coefficient doit être supérieur à 0.");
                 return;
             }
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Coefficient invalide.");
+            ModernNotification.showWarning(getCurrentStage(), "Validation", "Coefficient invalide.");
             return;
         }
 
@@ -59,12 +59,12 @@ public class AddCategoryController {
             Categorie categorie = new Categorie(nom, description.isEmpty() ? null : description, coefPoints);
             categorieService.addCategorie(categorie);
 
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Catégorie ajoutée avec succès.");
+            ModernNotification.showSuccess(getCurrentStage(), "Succès", "Catégorie ajoutée avec succès.");
             navigate("/admin/categories.fxml", "Catégories");
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ajouter la catégorie.");
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ajouter la catégorie.");
         }
     }
 
@@ -83,10 +83,18 @@ public class AddCategoryController {
         navigate("/admin/categories.fxml", "Catégories");
     }
 
+    public void goToAssociation() {
+        navigate("/admin_association/association.fxml", "Association");
+    }
+
+    public void goToDonation() {
+        navigate("/donation/donationIndex.fxml", "Donation");
+    }
+
     private void navigate(String fxmlPath, String title) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
-            Stage stage = (Stage) tfNom.getScene().getWindow();
+            Stage stage = getCurrentStage();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
             stage.setFullScreenExitHint("");
@@ -94,24 +102,13 @@ public class AddCategoryController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            ModernNotification.showError(getCurrentStage(), "Erreur", "Impossible d'ouvrir la page " + title + ".");
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    private Stage getCurrentStage() {
+        return tfNom != null && tfNom.getScene() != null
+                ? (Stage) tfNom.getScene().getWindow()
+                : null;
     }
-    public void goToAssociation() {
-
-            navigate("/admin_association/association.fxml ","Associtaion");
-    }
-
-    public void goToDonation() {
-
-            navigate("/donation/donationIndex.fxml ","donation");
-
-        }
 }
