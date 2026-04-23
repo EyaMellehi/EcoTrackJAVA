@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.Entities.PointRecyclage;
 import org.example.Entities.RapportRecyc;
@@ -15,6 +16,8 @@ import org.example.Services.RapportRecycService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateRapportRecycController {
 
@@ -57,6 +60,43 @@ public class CreateRapportRecycController {
                 txtCommentaire.setText(oldVal);
             }
         });
+    }
+
+    @FXML
+    private void openChatbotDialog() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/recyclage/chatbot_dialog.fxml"));
+            Parent root = loader.load();
+
+            ChatbotDialogController controller = loader.getController();
+            controller.setTargetDescriptionArea(txtCommentaire);
+            controller.setMode("RAPPORT_COMMENT");
+
+            Map<String, String> ctx = new HashMap<>();
+            ctx.put("categorie",
+                    currentPoint != null && currentPoint.getCategorie() != null && currentPoint.getCategorie().getNom() != null
+                            ? currentPoint.getCategorie().getNom()
+                            : "");
+            ctx.put("quantiteDeclaree",
+                    currentPoint != null ? String.valueOf(currentPoint.getQuantite()) : "");
+            ctx.put("quantiteCollectee",
+                    txtQuantiteCollecte.getText() != null ? txtQuantiteCollecte.getText().trim() : "");
+            ctx.put("adresse",
+                    currentPoint != null && currentPoint.getAddress() != null ? currentPoint.getAddress() : "");
+
+            controller.setContext(ctx);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Assistant rédaction");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d’ouvrir l’assistant IA.");
+        }
     }
 
     @FXML
@@ -198,9 +238,3 @@ public class CreateRapportRecycController {
         alert.showAndWait();
     }
 }
-
-
-
-
-
-

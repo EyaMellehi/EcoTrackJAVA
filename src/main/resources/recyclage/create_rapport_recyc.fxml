@@ -68,15 +68,24 @@
                                    style="-fx-text-fill: #667085; -fx-font-size: 12px;"/>
                         </VBox>
 
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <children>
+                                <Label text="Commentaire"
+                                       style="-fx-text-fill: #123524; -fx-font-weight: bold;"/>
+                                <Pane HBox.hgrow="ALWAYS"/>
+                                <Button text="Aide IA (chat)"
+                                        onAction="#openChatbotDialog"
+                                        style="-fx-background-color: white; -fx-border-color: #2563eb; -fx-text-fill: #2563eb; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+                            </children>
+                        </HBox>
+
                         <VBox spacing="6">
-                            <Label text="Commentaire"
-                                   style="-fx-text-fill: #123524; -fx-font-weight: bold;"/>
                             <TextArea fx:id="txtCommentaire"
                                       prefHeight="170"
                                       wrapText="true"
-                                      promptText="Commentaire optionnel..."
+                                      promptText="Décris le résultat de la collecte..."
                                       style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
-                            <Label text="Maximum 255 caractères."
+                            <Label text="Maximum 255 caractères. L’assistant IA aide uniquement à rédiger le commentaire du rapport."
                                    style="-fx-text-fill: #667085; -fx-font-size: 12px;"/>
                         </VBox>
 
