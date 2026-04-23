@@ -186,6 +186,8 @@ public class CreateRapportRecycController {
             stage.setScene(new Scene(root));
             stage.setTitle("Rapport");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
+
             stage.show();
 
         } catch (Exception e) {
@@ -207,6 +209,7 @@ public class CreateRapportRecycController {
             stage.setScene(new Scene(root));
             stage.setTitle("Point details");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (Exception e) {

@@ -242,6 +242,7 @@ public class PointsConnectedController {
             stage.setScene(new Scene(root));
             stage.setTitle("Créer un point");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
 
             stage.show();
         } catch (Exception e) {
@@ -263,6 +264,7 @@ public class PointsConnectedController {
             stage.setScene(new Scene(root));
             stage.setTitle("Détails du point");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
 
             stage.show();
         } catch (Exception e) {
@@ -284,7 +286,7 @@ public class PointsConnectedController {
             stage.setScene(new Scene(root));
             stage.setTitle("Modifier point");
             stage.setFullScreen(true);
-
+            stage.setFullScreenExitHint("");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

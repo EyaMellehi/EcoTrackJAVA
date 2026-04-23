@@ -103,6 +103,7 @@ public class NavbarCitoyenController {
             stage.setScene(new Scene(root));
             stage.setTitle(title);
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (Exception e) {

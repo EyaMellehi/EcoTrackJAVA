@@ -582,6 +582,7 @@ public class MunicipalPointDetailsController {
             stage.setScene(new Scene(root));
             stage.setTitle("Recycling Points");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (Exception e) {

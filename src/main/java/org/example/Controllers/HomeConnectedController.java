@@ -124,6 +124,7 @@ public class HomeConnectedController {
             Stage stage = (Stage) lblWelcomeUser.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("EcoTrack - Home");
             stage.show();
         } catch (Exception e) {
@@ -143,6 +144,7 @@ public class HomeConnectedController {
             Stage stage = (Stage) lblWelcomeUser.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("My Profile");
             stage.show();
 
@@ -189,6 +191,7 @@ public class HomeConnectedController {
             Stage stage = (Stage) btnRecycling.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.setTitle("Points de recyclage");
             stage.show();
 
@@ -209,6 +212,7 @@ public class HomeConnectedController {
             stage.setScene(new Scene(root));
             stage.setTitle("EcoTrack - Home");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -245,6 +249,7 @@ public class HomeConnectedController {
             stage.setScene(new Scene(root));
             stage.setTitle("Annonces");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -268,6 +273,7 @@ public class HomeConnectedController {
             stage.setScene(new Scene(root));
             stage.setTitle("Points de recyclage");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (IOException e) {
@@ -302,6 +308,7 @@ public class HomeConnectedController {
             stage.setScene(new Scene(root));
             stage.setTitle("Events");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -340,6 +347,7 @@ public class HomeConnectedController {
             stage.setScene(new Scene(root));
             stage.setTitle("Reports");
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
 
         } catch (IOException e) {
