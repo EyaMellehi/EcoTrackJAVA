@@ -4,21 +4,20 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.Controllers.signalement.ListMunicipalSignalementController"
-            prefWidth="1500" prefHeight="900"
+            prefWidth="1500" prefHeight="950"
             style="-fx-background-color: #f6f7f6;">
 
     <top>
         <VBox spacing="0">
             <children>
-
                 <fx:include fx:id="navbarInclude" source="/components/navbar_municipal.fxml"/>
 
                 <StackPane prefHeight="240">
                     <children>
-
                         <ImageView fitHeight="240" preserveRatio="false" StackPane.alignment="CENTER">
                             <image>
                                 <Image url="@/images/carousel-1.jpg"/>
@@ -38,10 +37,8 @@
                                        style="-fx-text-fill: #dcefdc; -fx-font-size: 18px;"/>
                             </children>
                         </VBox>
-
                     </children>
                 </StackPane>
-
             </children>
         </VBox>
     </top>
@@ -54,6 +51,28 @@
             <content>
                 <VBox spacing="24" style="-fx-padding: 28; -fx-background-color: #f6f7f6;">
 
+                    <!-- MAP -->
+                    <VBox spacing="16"
+                          style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 16; -fx-border-color: #e5e7eb; -fx-border-radius: 16;">
+                        <children>
+                            <HBox alignment="CENTER_LEFT">
+                                <children>
+                                    <VBox spacing="5">
+                                        <Label text="Map overview"
+                                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                                        <Label text="All signalements of your delegation displayed on the map."
+                                               style="-fx-text-fill: #6b7280; -fx-font-size: 14px;"/>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <WebView fx:id="mapView"
+                                     prefHeight="420"
+                                     minHeight="420"/>
+                        </children>
+                    </VBox>
+
+                    <!-- STATS -->
                     <HBox spacing="18" alignment="CENTER">
                         <children>
                             <VBox prefWidth="250" spacing="8"
@@ -86,10 +105,10 @@
                         </children>
                     </HBox>
 
+                    <!-- FILTERS -->
                     <VBox spacing="16"
                           style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 16; -fx-border-color: #e5e7eb; -fx-border-radius: 16;">
                         <children>
-
                             <HBox alignment="CENTER_LEFT">
                                 <children>
                                     <VBox spacing="5">
@@ -128,10 +147,10 @@
                         </children>
                     </VBox>
 
+                    <!-- LIST -->
                     <VBox spacing="16"
                           style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 16; -fx-border-color: #e5e7eb; -fx-border-radius: 16;">
                         <children>
-
                             <HBox alignment="CENTER_LEFT">
                                 <children>
                                     <VBox spacing="5">

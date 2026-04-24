@@ -3,6 +3,7 @@ package org.example.Controllers.signalement;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -10,19 +11,21 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import netscape.javascript.JSObject;
 import org.example.Controllers.components.NavbarMunicipalController;
-import org.example.Entities.RapportSignalement;
 import org.example.Entities.Signalement;
 import org.example.Entities.User;
 import org.example.Services.RapportSignalementService;
 import org.example.Services.SignalementService;
 import org.example.Services.UserService;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class ListMunicipalSignalementController {
@@ -50,6 +53,8 @@ public class ListMunicipalSignalementController {
     @FXML private TableColumn<Signalement, String> colAssignment;
     @FXML private TableColumn<Signalement, Void> colActions;
 
+    @FXML private WebView mapView;
+
     private User loggedUser;
 
     private final SignalementService signalementService = new SignalementService();
@@ -58,6 +63,9 @@ public class ListMunicipalSignalementController {
 
     private final ObservableList<Signalement> masterList = FXCollections.observableArrayList();
     private final ObservableList<Signalement> filteredList = FXCollections.observableArrayList();
+
+    private final List<Signalement> currentSignalements = new ArrayList<>();
+    private boolean mapReady = false;
 
     @FXML
     public void initialize() {
@@ -73,6 +81,8 @@ public class ListMunicipalSignalementController {
 
         txtSearch.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
         cbStatus.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+
+        initMap();
     }
 
     public void setLoggedUser(User user) {
@@ -224,9 +234,16 @@ public class ListMunicipalSignalementController {
 
         try {
             List<Signalement> signalements = signalementService.getByDelegation(loggedUser.getDelegation());
+
             masterList.setAll(signalements);
+
+            currentSignalements.clear();
+            currentSignalements.addAll(signalements);
+
             applyFilters();
             updateStats();
+            refreshMapMarkers();
+
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error", "Unable to load signalements.");
@@ -294,6 +311,7 @@ public class ListMunicipalSignalementController {
     }
 
     private void handleOpen(Signalement signalement) {
+        System.out.println("handleOpen called for id = " + signalement.getId());
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/signalement/municipal_signalement_details.fxml"));
             Parent root = loader.load();
@@ -336,6 +354,171 @@ public class ListMunicipalSignalementController {
     @FXML
     private void refreshTable() {
         loadSignalements();
+    }
+
+    private void initMap() {
+        if (mapView == null) return;
+
+        WebEngine engine = mapView.getEngine();
+
+        String html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script>var L_DISABLE_3D = true;</script>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <style>
+        html, body, #map {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
+        .popup-btn {
+          background: #2e7d32;
+          color: white;
+          border: none;
+          padding: 8px 12px;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: bold;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="map"></div>
+
+      <script>
+        var map = L.map('map').setView([36.8065, 10.1815], 11);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var markersLayer = L.layerGroup().addTo(map);
+
+        function clearMarkers() {
+          markersLayer.clearLayers();
+        }
+
+        function callJavaOpenDetails(id) {
+          try {
+            if (window.javaMapConnector) {
+              window.javaMapConnector.openSignalementDetails(id);
+            } else {
+              alert("javaMapConnector not found");
+            }
+          } catch (e) {
+            alert("Bridge error: " + e);
+          }
+        }
+
+        function addMarker(lat, lng, title, type, status, address, id) {
+          var popup =
+              "<b>" + title + "</b><br/>"
+            + "Type: " + type + "<br/>"
+            + "Status: " + status + "<br/>"
+            + "Address: " + address + "<br/><br/>"
+            + "<button class='popup-btn' onclick='callJavaOpenDetails(" + id + ")'>Details</button>";
+
+          L.marker([lat, lng]).addTo(markersLayer).bindPopup(popup);
+        }
+      </script>
+    </body>
+    </html>
+    """;
+
+        engine.loadContent(html);
+
+        engine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                try {
+                    JSObject window = (JSObject) engine.executeScript("window");
+                    window.setMember("javaMapConnector", new JavaMapConnector());
+                    mapReady = true;
+                    refreshMapMarkers();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void refreshMapMarkers() {
+        if (!mapReady || mapView == null || currentSignalements.isEmpty()) return;
+
+        try {
+            WebEngine engine = mapView.getEngine();
+            engine.executeScript("clearMarkers()");
+
+            for (Signalement s : currentSignalements) {
+                if (s == null) continue;
+
+                double lat = s.getLatitude();
+                double lng = s.getLongitude();
+
+                if (lat == 0.0 && lng == 0.0) continue;
+
+                String title = jsSafe(safe(s.getTitre()).isEmpty() ? ("Signalement #" + s.getId()) : s.getTitre());
+                String type = jsSafe(safe(s.getType()));
+                String status = jsSafe(safe(s.getStatut()));
+                String address = jsSafe(safe(s.getAddresse()));
+
+                String script = String.format(
+                        Locale.US,
+                        "addMarker(%f, %f, \"%s\", \"%s\", \"%s\", \"%s\", %d)",
+                        lat, lng, title, type, status, address, s.getId()
+                );
+
+                engine.executeScript(script);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public class JavaMapConnector {
+        public void openSignalementDetails(Object rawId) {
+            javafx.application.Platform.runLater(() -> {
+                try {
+                    int id;
+
+                    if (rawId instanceof Number number) {
+                        id = number.intValue();
+                    } else {
+                        id = Integer.parseInt(String.valueOf(rawId));
+                    }
+
+                    System.out.println("Details button clicked for id = " + id);
+
+                    for (Signalement s : currentSignalements) {
+                        if (s.getId() == id) {
+                            handleOpen(s); // same as Open button
+                            return;
+                        }
+                    }
+
+                    showAlert(Alert.AlertType.WARNING, "Warning", "Signalement not found.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showAlert(Alert.AlertType.ERROR, "Error", "Unable to open signalement details.");
+                }
+            });
+        }
+    }
+
+    private String jsSafe(String value) {
+        if (value == null) return "";
+        return value
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", " ")
+                .replace("\r", " ");
     }
 
     private String safe(String s) {
