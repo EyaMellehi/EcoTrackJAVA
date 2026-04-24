@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import org.example.Entities.SignalementReviewResult;
+import org.example.Services.SignalementReviewService;
 
 public class AddSignalementController {
 
@@ -46,8 +48,11 @@ public class AddSignalementController {
     @FXML private Label lblSelectedPhotos;
     @FXML private Label lblPickInfo;
 
+
     private final SignalementService signalementService = new SignalementService();
     private final MediaService mediaService = new MediaService();
+    private final SignalementReviewService reviewService = new SignalementReviewService();
+
 
     private User loggedUser;
     private final List<File> selectedPhotos = new ArrayList<>();
@@ -500,6 +505,22 @@ public class AddSignalementController {
             s.setDelegation(delegation.isEmpty() ? null : delegation);
             s.setAssignedAt(null);
 
+            SignalementReviewResult review = reviewService.review(
+                    titre,
+                    description,
+                    type,
+                    selectedPhotos
+            );
+
+            if (!review.isAccepted()) {
+                showAlert(
+                        Alert.AlertType.WARNING,
+                        "Signalement rejected",
+                        formatReviewReasons(review.getReasons())
+                );
+                return;
+            }
+
             int signalementId = signalementService.addAndReturnId(s);
             saveSelectedPhotos(signalementId);
 
@@ -592,4 +613,29 @@ public class AddSignalementController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    private String formatReviewReasons(List<String> reasons) {
+        if (reasons == null || reasons.isEmpty()) {
+            return "The report was rejected by the review service.";
+        }
+
+        List<String> messages = new ArrayList<>();
+
+        for (String reason : reasons) {
+            switch (reason) {
+                case "insultes_ou_toxicite" ->
+                        messages.add("- The description contains toxic or inappropriate language.");
+                case "texte_trop_vague" ->
+                        messages.add("- The description is too vague. Please add more details.");
+                case "photo_hors_sujet" ->
+                        messages.add("- One or more photos seem unrelated to the reported incident.");
+                default ->
+                        messages.add("- " + reason);
+            }
+        }
+
+        return String.join("\n", messages);
+    }
+
+
 }
