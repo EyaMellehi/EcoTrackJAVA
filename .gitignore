@@ -56,3 +56,6 @@ temp_login_face.jpg
 # IDE / build
 .idea/
 target/
+
+.venv/
+ai-signalement-review/.venv/
