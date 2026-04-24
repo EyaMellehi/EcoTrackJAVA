@@ -1,6 +1,6 @@
 package org.example.Controllers.signalement;
 
-import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,12 +11,18 @@ import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import netscape.javascript.JSObject;
+import org.example.Entities.AudioTranscriptionResult;
 import org.example.Entities.Media;
 import org.example.Entities.Signalement;
+import org.example.Entities.SignalementReviewResult;
 import org.example.Entities.User;
+import org.example.Services.AudioTranscriptionService;
 import org.example.Services.MediaService;
+import org.example.Services.MicrophoneRecordingService;
+import org.example.Services.SignalementReviewService;
 import org.example.Services.SignalementService;
 
+import javax.sound.sampled.LineUnavailableException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -32,8 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import org.example.Entities.SignalementReviewResult;
-import org.example.Services.SignalementReviewService;
 
 public class AddSignalementController {
 
@@ -48,14 +52,19 @@ public class AddSignalementController {
     @FXML private Label lblSelectedPhotos;
     @FXML private Label lblPickInfo;
 
+    @FXML private Label lblDictationStatus;
+    @FXML private Button btnStartRecording;
+    @FXML private Button btnStopRecording;
 
     private final SignalementService signalementService = new SignalementService();
     private final MediaService mediaService = new MediaService();
     private final SignalementReviewService reviewService = new SignalementReviewService();
-
+    private final MicrophoneRecordingService microphoneRecordingService = new MicrophoneRecordingService();
+    private final AudioTranscriptionService audioTranscriptionService = new AudioTranscriptionService();
 
     private User loggedUser;
     private final List<File> selectedPhotos = new ArrayList<>();
+    private File recordedAudioFile;
 
     private volatile long geocodeRequestId = 0;
     private volatile String lastResolvedAddress = "";
@@ -86,11 +95,17 @@ public class AddSignalementController {
                 + String.format(Locale.US, "%.6f", 10.1815));
 
         loadAddressFromCoordinates(36.8065, 10.1815);
+
+        if (lblDictationStatus != null) {
+            lblDictationStatus.setText("Recording is stopped");
+        }
+        if (btnStopRecording != null) {
+            btnStopRecording.setDisable(true);
+        }
     }
 
     private void initMap() {
         mapView.setContextMenuEnabled(false);
-
         WebEngine engine = mapView.getEngine();
 
         String html = """
@@ -99,14 +114,9 @@ public class AddSignalementController {
             <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-              <script>
-                var L_DISABLE_3D = true;
-              </script>
-
+              <script>var L_DISABLE_3D = true;</script>
               <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
               <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
               <style>
                 html, body {
                   width: 100%;
@@ -116,7 +126,6 @@ public class AddSignalementController {
                   overflow: hidden;
                   background: white;
                 }
-
                 #map {
                   width: 100%;
                   height: 100%;
@@ -124,13 +133,11 @@ public class AddSignalementController {
                   padding: 0;
                   background: #e5e7eb;
                 }
-
                 .leaflet-container {
                   width: 100% !important;
                   height: 100% !important;
                   background: #e5e7eb;
                 }
-
                 .leaflet-tile,
                 .leaflet-pane,
                 .leaflet-map-pane,
@@ -143,7 +150,6 @@ public class AddSignalementController {
             </head>
             <body>
               <div id="map"></div>
-
               <script>
                 var map = L.map('map', {
                   preferCanvas: true,
@@ -161,9 +167,7 @@ public class AddSignalementController {
                   keepBuffer: 1
                 }).addTo(map);
 
-                var marker = L.marker([36.8065, 10.1815], {
-                  draggable: true
-                }).addTo(map);
+                var marker = L.marker([36.8065, 10.1815], { draggable: true }).addTo(map);
 
                 function notify(lat, lng) {
                   if (window.javaConnector) {
@@ -184,7 +188,7 @@ public class AddSignalementController {
                 window.setMarkerAndCenter = function(lat, lng) {
                   marker.setLatLng([lat, lng]);
                   map.setView([lat, lng], 15);
-                }
+                };
 
                 setTimeout(function () {
                   map.invalidateSize();
@@ -210,7 +214,7 @@ public class AddSignalementController {
 
     public class JavaConnector {
         public void setLocationFromMap(double lat, double lng) {
-            Platform.runLater(() -> {
+            javafx.application.Platform.runLater(() -> {
                 tfLatitude.setText(String.format(Locale.US, "%.6f", lat));
                 tfLongitude.setText(String.format(Locale.US, "%.6f", lng));
                 lblPickInfo.setText("Point: "
@@ -226,7 +230,7 @@ public class AddSignalementController {
     private void loadAddressFromCoordinates(double lat, double lng) {
         final long requestId = ++geocodeRequestId;
 
-        Platform.runLater(() -> tfAddresse.setText("Loading address..."));
+        javafx.application.Platform.runLater(() -> tfAddresse.setText("Loading address..."));
 
         Thread thread = new Thread(() -> {
             HttpURLConnection con = null;
@@ -250,7 +254,7 @@ public class AddSignalementController {
                 int responseCode = con.getResponseCode();
                 if (responseCode != 200) {
                     if (requestId == geocodeRequestId) {
-                        Platform.runLater(() -> {
+                        javafx.application.Platform.runLater(() -> {
                             tfAddresse.setText(lastResolvedAddress);
                             String delegation = extractDelegationFromAddress(lastResolvedAddress);
                             if (!delegation.isBlank()) {
@@ -274,7 +278,7 @@ public class AddSignalementController {
 
                 if (address == null || address.isBlank()) {
                     if (requestId == geocodeRequestId) {
-                        Platform.runLater(() -> {
+                        javafx.application.Platform.runLater(() -> {
                             tfAddresse.setText(lastResolvedAddress);
                             String delegation = extractDelegationFromAddress(lastResolvedAddress);
                             if (!delegation.isBlank()) {
@@ -287,9 +291,8 @@ public class AddSignalementController {
 
                 if (requestId == geocodeRequestId) {
                     lastResolvedAddress = address;
-                    Platform.runLater(() -> {
+                    javafx.application.Platform.runLater(() -> {
                         tfAddresse.setText(address);
-
                         String delegation = extractDelegationFromAddress(address);
                         if (!delegation.isBlank()) {
                             tfDelegation.setText(delegation);
@@ -299,7 +302,7 @@ public class AddSignalementController {
 
             } catch (Exception e) {
                 if (requestId == geocodeRequestId) {
-                    Platform.runLater(() -> {
+                    javafx.application.Platform.runLater(() -> {
                         tfAddresse.setText(lastResolvedAddress);
                         String delegation = extractDelegationFromAddress(lastResolvedAddress);
                         if (!delegation.isBlank()) {
@@ -320,48 +323,6 @@ public class AddSignalementController {
 
         thread.setDaemon(true);
         thread.start();
-    }
-
-    private String extractDelegationFromAddress(String address) {
-        if (address == null || address.isBlank()) {
-            return "";
-        }
-
-        String normalized = address.trim();
-        String lower = normalized.toLowerCase();
-
-        String marker1 = "délégation ";
-        String marker2 = "delegation ";
-
-        int idx = lower.indexOf(marker1);
-        if (idx != -1) {
-            String value = normalized.substring(idx + marker1.length()).trim();
-            int comma = value.indexOf(",");
-            return (comma != -1 ? value.substring(0, comma) : value).trim();
-        }
-
-        idx = lower.indexOf(marker2);
-        if (idx != -1) {
-            String value = normalized.substring(idx + marker2.length()).trim();
-            int comma = value.indexOf(",");
-            return (comma != -1 ? value.substring(0, comma) : value).trim();
-        }
-
-        String[] parts = normalized.split(",");
-        for (String part : parts) {
-            String p = part.trim();
-            String pl = p.toLowerCase();
-
-            if (!p.isEmpty()
-                    && !pl.contains("tunisie")
-                    && !pl.contains("tunisie")
-                    && !pl.contains("governorate")
-                    && !pl.matches(".*\\d.*")) {
-                return p;
-            }
-        }
-
-        return "";
     }
 
     private String extractDisplayName(String json) {
@@ -423,6 +384,47 @@ public class AddSignalementController {
         return result.toString().trim();
     }
 
+    private String extractDelegationFromAddress(String address) {
+        if (address == null || address.isBlank()) {
+            return "";
+        }
+
+        String normalized = address.trim();
+        String lower = normalized.toLowerCase();
+
+        String marker1 = "délégation ";
+        String marker2 = "delegation ";
+
+        int idx = lower.indexOf(marker1);
+        if (idx != -1) {
+            String value = normalized.substring(idx + marker1.length()).trim();
+            int comma = value.indexOf(",");
+            return (comma != -1 ? value.substring(0, comma) : value).trim();
+        }
+
+        idx = lower.indexOf(marker2);
+        if (idx != -1) {
+            String value = normalized.substring(idx + marker2.length()).trim();
+            int comma = value.indexOf(",");
+            return (comma != -1 ? value.substring(0, comma) : value).trim();
+        }
+
+        String[] parts = normalized.split(",");
+        for (String part : parts) {
+            String p = part.trim();
+            String pl = p.toLowerCase();
+
+            if (!p.isEmpty()
+                    && !pl.contains("tunisie")
+                    && !pl.contains("governorate")
+                    && !pl.matches(".*\\d.*")) {
+                return p;
+            }
+        }
+
+        return "";
+    }
+
     @FXML
     public void choosePhotos() {
         FileChooser fileChooser = new FileChooser();
@@ -439,6 +441,92 @@ public class AddSignalementController {
             lblSelectedPhotos.setText(selectedPhotos.size() + " photo(s) selected");
         } else {
             lblSelectedPhotos.setText("No photos selected");
+        }
+    }
+
+    @FXML
+    public void startRecording() {
+        try {
+            recordedAudioFile = microphoneRecordingService.startRecording();
+            lblDictationStatus.setText("Recording... Speak now");
+            btnStartRecording.setDisable(true);
+            btnStopRecording.setDisable(false);
+        } catch (LineUnavailableException e) {
+            showAlert(Alert.AlertType.ERROR, "Microphone Error", "Microphone is not available.");
+            e.printStackTrace();
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void stopRecording() {
+        try {
+            recordedAudioFile = microphoneRecordingService.stopRecording();
+            lblDictationStatus.setText("Recording stopped. Transcribing...");
+            btnStartRecording.setDisable(false);
+            btnStopRecording.setDisable(true);
+
+            if (recordedAudioFile == null || !recordedAudioFile.exists()) {
+                showAlert(Alert.AlertType.WARNING, "Warning", "No recorded audio found.");
+                lblDictationStatus.setText("Recording is stopped");
+                return;
+            }
+
+            Task<AudioTranscriptionResult> task = new Task<>() {
+                @Override
+                protected AudioTranscriptionResult call() throws Exception {
+                    return audioTranscriptionService.transcribe(recordedAudioFile);
+                }
+            };
+
+            task.setOnSucceeded(event -> {
+                AudioTranscriptionResult result = task.getValue();
+
+                if (result != null && result.isSuccess()) {
+                    String current = taDescription.getText() == null ? "" : taDescription.getText().trim();
+                    String transcribed = result.getText() == null ? "" : result.getText().trim();
+
+                    if (transcribed.isEmpty()) {
+                        lblDictationStatus.setText("No text extracted from recording");
+                        return;
+                    }
+
+                    if (current.isEmpty()) {
+                        taDescription.setText(transcribed);
+                    } else {
+                        taDescription.setText(current + " " + transcribed);
+                    }
+
+                    lblDictationStatus.setText("Transcription completed");
+                } else {
+                    lblDictationStatus.setText("Transcription failed");
+                    showAlert(
+                            Alert.AlertType.ERROR,
+                            "Transcription Error",
+                            result != null && result.getError() != null
+                                    ? result.getError()
+                                    : "Unable to transcribe audio."
+                    );
+                }
+            });
+
+            task.setOnFailed(event -> {
+                lblDictationStatus.setText("Transcription failed");
+                Throwable ex = task.getException();
+                showAlert(Alert.AlertType.ERROR, "Error", ex != null ? ex.getMessage() : "Unknown error");
+                if (ex != null) ex.printStackTrace();
+            });
+
+            new Thread(task).start();
+
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            lblDictationStatus.setText("Recording is stopped");
+            btnStartRecording.setDisable(false);
+            btnStopRecording.setDisable(true);
+            e.printStackTrace();
         }
     }
 
@@ -491,20 +579,6 @@ public class AddSignalementController {
                 return;
             }
 
-            Signalement s = new Signalement();
-            s.setTitre(titre);
-            s.setDescription(description);
-            s.setType(type);
-            s.setStatut("EN_ATTENTE");
-            s.setAddresse(addresse);
-            s.setLatitude(latitude);
-            s.setLongitude(longitude);
-            s.setDateCreation(LocalDateTime.now());
-            s.setCitoyenId(loggedUser.getId());
-            s.setAgentAssigneId(null);
-            s.setDelegation(delegation.isEmpty() ? null : delegation);
-            s.setAssignedAt(null);
-
             SignalementReviewResult review = reviewService.review(
                     titre,
                     description,
@@ -521,6 +595,20 @@ public class AddSignalementController {
                 return;
             }
 
+            Signalement s = new Signalement();
+            s.setTitre(titre);
+            s.setDescription(description);
+            s.setType(type);
+            s.setStatut("EN_ATTENTE");
+            s.setAddresse(addresse);
+            s.setLatitude(latitude);
+            s.setLongitude(longitude);
+            s.setDateCreation(LocalDateTime.now());
+            s.setCitoyenId(loggedUser.getId());
+            s.setAgentAssigneId(null);
+            s.setDelegation(delegation.isEmpty() ? null : delegation);
+            s.setAssignedAt(null);
+
             int signalementId = signalementService.addAndReturnId(s);
             saveSelectedPhotos(signalementId);
 
@@ -533,7 +621,7 @@ public class AddSignalementController {
             showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "File Error", e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "File/Review Error", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -575,6 +663,29 @@ public class AddSignalementController {
         }
     }
 
+    private String formatReviewReasons(List<String> reasons) {
+        if (reasons == null || reasons.isEmpty()) {
+            return "The report was rejected by the review service.";
+        }
+
+        List<String> messages = new ArrayList<>();
+
+        for (String reason : reasons) {
+            switch (reason) {
+                case "insultes_ou_toxicite" ->
+                        messages.add("- The description contains toxic or inappropriate language.");
+                case "texte_trop_vague" ->
+                        messages.add("- The description is too vague. Please add more details.");
+                case "photo_hors_sujet" ->
+                        messages.add("- One or more photos seem unrelated to the reported incident.");
+                default ->
+                        messages.add("- " + reason);
+            }
+        }
+
+        return String.join("\n", messages);
+    }
+
     @FXML
     public void goBack() {
         goToList();
@@ -613,29 +724,4 @@ public class AddSignalementController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-    private String formatReviewReasons(List<String> reasons) {
-        if (reasons == null || reasons.isEmpty()) {
-            return "The report was rejected by the review service.";
-        }
-
-        List<String> messages = new ArrayList<>();
-
-        for (String reason : reasons) {
-            switch (reason) {
-                case "insultes_ou_toxicite" ->
-                        messages.add("- The description contains toxic or inappropriate language.");
-                case "texte_trop_vague" ->
-                        messages.add("- The description is too vague. Please add more details.");
-                case "photo_hors_sujet" ->
-                        messages.add("- One or more photos seem unrelated to the reported incident.");
-                default ->
-                        messages.add("- " + reason);
-            }
-        }
-
-        return String.join("\n", messages);
-    }
-
-
 }

@@ -57,6 +57,36 @@
                                        text="Click on the map to choose the exact location."
                                        style="-fx-text-fill: #7a8087; -fx-font-size: 13px;"/>
 
+                                <!-- DICTATION -->
+                                <VBox spacing="8">
+                                    <children>
+                                        <Label text="Voice dictation (optional)"
+                                               style="-fx-text-fill: #104b2c; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                        <HBox spacing="10" alignment="CENTER_LEFT">
+                                            <children>
+                                                <Button fx:id="btnStartRecording"
+                                                        text="Start Recording"
+                                                        onAction="#startRecording"
+                                                        style="-fx-background-color: white; -fx-border-color: #2563eb; -fx-text-fill: #2563eb; -fx-padding: 10 18;"/>
+
+                                                <Button fx:id="btnStopRecording"
+                                                        text="Stop Recording"
+                                                        onAction="#stopRecording"
+                                                        disable="true"
+                                                        style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-padding: 10 18;"/>
+
+                                                <Label fx:id="lblDictationStatus"
+                                                       text="Recording is stopped"
+                                                       style="-fx-text-fill: #7a8087; -fx-font-size: 14px;"/>
+                                            </children>
+                                        </HBox>
+
+                                        <Label text="Click Start, speak, then Stop. The text will be added to the description."
+                                               style="-fx-text-fill: #8b9197; -fx-font-size: 13px;"/>
+                                    </children>
+                                </VBox>
+
                                 <Label text="Description"
                                        style="-fx-text-fill: #104b2c; -fx-font-size: 16px; -fx-font-weight: bold;"/>
 
@@ -89,7 +119,6 @@
                                 <Label text="Delegation"/>
                                 <TextField fx:id="tfDelegation" promptText="Delegation"/>
 
-                                <!-- Hidden internal fields -->
                                 <TextField fx:id="tfLatitude" visible="false" managed="false"/>
                                 <TextField fx:id="tfLongitude" visible="false" managed="false"/>
 
