@@ -17,9 +17,13 @@ public class AnnonceService {
 
     // CREATE
     public void add(Annonce a) throws SQLException {
+        addAndReturnId(a);
+    }
+
+    public int addAndReturnId(Annonce a) throws SQLException {
         String sql = "INSERT INTO annonce (titre, date_pub, region, contenu, categorie, media_path, auteur_id, active) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement ps = cnx.prepareStatement(sql);
+        PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setString(1, a.getTitre());
         ps.setTimestamp(2, Timestamp.valueOf(a.getDatePub()));
         ps.setString(3, a.getRegion());
@@ -29,6 +33,18 @@ public class AnnonceService {
         ps.setInt(7, a.getAuteurId());
         ps.setBoolean(8, true);
         ps.executeUpdate();
+
+        int generatedId = -1;
+        try (ResultSet keys = ps.getGeneratedKeys()) {
+            if (keys.next()) {
+                generatedId = keys.getInt(1);
+            }
+        }
+
+        if (generatedId > 0) {
+            a.setId(generatedId);
+        }
+        return generatedId;
     }
 
     // READ - All active announcements

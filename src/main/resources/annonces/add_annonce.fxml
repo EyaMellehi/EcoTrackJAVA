@@ -45,6 +45,7 @@
 
     <HBox spacing="10.0" alignment="CENTER_RIGHT">
         <Button fx:id="btnSave" text="Créer l'annonce" style="-fx-background-color: linear-gradient(to right, #2e7d32, #43a047); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 10 25;" />
+        <Button fx:id="btnSaveAndNotify" text="Créer + informer citoyens" style="-fx-background-color: linear-gradient(to right, #0ea5e9, #2563eb); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 10 25;" />
         <Button fx:id="btnCancel" text="Annuler" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 10 25;" />
     </HBox>
 </VBox>

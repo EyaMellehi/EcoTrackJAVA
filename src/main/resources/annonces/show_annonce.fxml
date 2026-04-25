@@ -34,6 +34,24 @@
                         <Label text="Description" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #166534;" />
                         <Label fx:id="lblContenu" text="Contenu de l'annonce" style="-fx-font-size: 14px; -fx-text-fill: #475569; -fx-line-spacing: 4;" wrapText="true" />
                         <HBox spacing="10.0" alignment="CENTER_LEFT">
+                            <Button fx:id="btnSummarize" text="Resumer en 3 phrases" style="-fx-background-color: linear-gradient(to right, #2563eb, #1d4ed8); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 8 14;" />
+                            <Label fx:id="lblResumeStatus" text="" style="-fx-font-size: 12px; -fx-text-fill: #475569;" />
+                        </HBox>
+                        <Label text="Resume simplifie" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #166534;" />
+                        <Label fx:id="lblResumeSimple" text="Cliquez sur le bouton pour generer un resume." wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #334155; -fx-background-color: #f8fafc; -fx-padding: 10; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10;" />
+
+                        <VBox spacing="10.0" style="-fx-padding: 4 0 0 0;">
+                            <Label text="🌐 Traduction" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;" />
+                            <HBox spacing="12.0" alignment="CENTER_LEFT">
+                                <Button fx:id="btnTranslateAr" text="🇹🇳 Traduire en Arabe" style="-fx-background-color: #1d4ed8; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 8 16;" />
+                                <Button fx:id="btnTranslateEn" text="🇬🇧 Traduire en Anglais" style="-fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 8 16;" />
+                            </HBox>
+                            <Label fx:id="lblTranslationStatus" text="" style="-fx-font-size: 12px; -fx-text-fill: #64748b; -fx-font-style: italic;" wrapText="true" />
+                            <Label fx:id="lblTranslationResult" text="Choisissez une langue pour traduire le titre et le contenu de l'annonce." wrapText="true" maxWidth="600" prefWidth="600"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #1a1a1a; -fx-background-color: #f0fdf4; -fx-padding: 10; -fx-background-radius: 10; -fx-border-color: #bbf7d0; -fx-border-radius: 10;" />
+                        </VBox>
+
+                        <HBox spacing="10.0" alignment="CENTER_LEFT">
                             <Button fx:id="btnLike" text="👍 Like" style="-fx-background-color: #e8f5e9; -fx-text-fill: #166534; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 6 12;" />
                             <Button fx:id="btnDislike" text="👎 Dislike" style="-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 6 12;" />
                             <Label fx:id="lblLikeCount" text="0 like(s)" style="-fx-background-color: #f0fdf4; -fx-text-fill: #166534; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 5 10; -fx-background-radius: 999;" />

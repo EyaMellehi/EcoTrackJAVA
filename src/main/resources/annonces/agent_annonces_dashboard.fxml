@@ -20,7 +20,7 @@
                     <HBox alignment="CENTER_LEFT" spacing="14">
                         <VBox spacing="6" HBox.hgrow="ALWAYS">
                             <Label text="Dashboard annonces &amp; commentaires" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
-                            <Label text="Supervisez les annonces publiées et modérez les commentaires en attente depuis un seul écran." style="-fx-font-size: 15px; -fx-text-fill: #6b7280;" wrapText="true"/>
+                            <Label text="Supervisez les annonces publiées, modérez les commentaires et traitez les signalements des citoyens." style="-fx-font-size: 15px; -fx-text-fill: #6b7280;" wrapText="true"/>
                         </VBox>
                         <Button text="Gérer les annonces" onAction="#openAnnouncementsManagement"
                                 style="-fx-background-color: linear-gradient(to right, #2e7d32, #43a047); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 12 20;"/>
@@ -45,22 +45,34 @@
                             <Label text="Visibles pour les utilisateurs" style="-fx-text-fill: #6b7280; -fx-font-size: 12px;"/>
                         </VBox>
                         <VBox prefWidth="280" spacing="8" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 18; -fx-border-radius: 18; -fx-border-color: #e5e7eb;">
-                            <Label text="Actions rapides" style="-fx-text-fill: #6b7280; -fx-font-size: 14px;"/>
-                            <Label text="1 écran" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1d4ed8;"/>
-                            <Label text="pour annonces &amp; commentaires" style="-fx-text-fill: #6b7280; -fx-font-size: 12px;"/>
+                            <Label text="Signalements en attente" style="-fx-text-fill: #6b7280; -fx-font-size: 14px;"/>
+                            <Label fx:id="lblPendingSignalementsCount" text="0" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1d4ed8;"/>
+                            <Label text="Commentaires signalés par les citoyens" style="-fx-text-fill: #6b7280; -fx-font-size: 12px;"/>
                         </VBox>
                     </HBox>
 
-                    <VBox spacing="14" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 18; -fx-border-radius: 18; -fx-border-color: #e5e7eb;">
+                    <VBox spacing="14" style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 18; -fx-border-radius: 18; -fx-border-color: #e5e7eb;">
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
                                 <Label text="Modération des commentaires" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
                                 <Label text="Commentaires récemment soumis pour validation." style="-fx-font-size: 12px; -fx-text-fill: #6b7280;"/>
                             </VBox>
-                            <Label fx:id="lblDashboardMessage" wrapText="true" style="-fx-font-size: 12px;"/>
+                            <Label fx:id="lblDashboardMessage" wrapText="true" maxWidth="420" style="-fx-font-size: 12px;"/>
                         </HBox>
 
                         <VBox fx:id="pendingCommentsContainer" spacing="12" />
+                    </VBox>
+
+                    <VBox spacing="14" style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 18; -fx-border-radius: 18; -fx-border-color: #e5e7eb;">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Signalement des commentaires" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                                <Label text="Avis des citoyens sur un contenu inapproprié : consultez la raison puis supprimez le commentaire ou rejetez le signalement." style="-fx-font-size: 12px; -fx-text-fill: #6b7280;" wrapText="true"/>
+                            </VBox>
+                            <Label fx:id="lblSignalementsMessage" wrapText="true" maxWidth="420" style="-fx-font-size: 12px;"/>
+                        </HBox>
+
+                        <VBox fx:id="signalementsListContainer" spacing="12" />
                     </VBox>
 
                 </VBox>
@@ -68,5 +80,4 @@
         </ScrollPane>
     </center>
 </BorderPane>
-
 

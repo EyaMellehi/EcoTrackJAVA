@@ -2,29 +2,35 @@ package org.example.Controllers.annonces;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.example.Entities.Annonce;
 import org.example.Entities.CommentaireAnnonce;
 import org.example.Entities.User;
+import org.example.Services.AnnonceReactionService;
 import org.example.Services.AnnonceService;
+import org.example.Services.AnnonceSummaryService;
+import org.example.Services.AnnonceTranslationService;
 import org.example.Services.CommentaireAnnonceService;
 import org.example.Utils.InputValidationUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class ShowAnnonceController {
 
@@ -32,10 +38,6 @@ public class ShowAnnonceController {
         LIKE,
         DISLIKE
     }
-
-    // Store session (non persistant) des reactions utilisateur par annonce.
-    private static final Map<Integer, Set<Integer>> LIKE_USERS_BY_ANNONCE = new HashMap<>();
-    private static final Map<Integer, Set<Integer>> DISLIKE_USERS_BY_ANNONCE = new HashMap<>();
 
     private enum CommentActionMode {
         NEW,
@@ -56,12 +58,22 @@ public class ShowAnnonceController {
     @FXML private Label lblLikeCount;
     @FXML private Label lblDislikeCount;
     @FXML private Label lblCommentFeedback;
+    @FXML private Label lblResumeSimple;
+    @FXML private Label lblResumeStatus;
     @FXML private TextArea taCommentaire;
     @FXML private Button btnPostComment;
     @FXML private Button btnLike;
     @FXML private Button btnDislike;
+    @FXML private Button btnSummarize;
+    @FXML private Button btnTranslateAr;
+    @FXML private Button btnTranslateEn;
+    @FXML private Label lblTranslationResult;
+    @FXML private Label lblTranslationStatus;
 
     private final AnnonceService annonceService = new AnnonceService();
+    private final AnnonceReactionService reactionService = new AnnonceReactionService();
+    private final AnnonceSummaryService annonceSummaryService = new AnnonceSummaryService();
+    private final AnnonceTranslationService translationService = new AnnonceTranslationService();
     private final CommentaireAnnonceService commentaireService = new CommentaireAnnonceService();
     private Annonce annonce;
     private User loggedUser;
@@ -71,6 +83,8 @@ public class ShowAnnonceController {
     public void setAnnonce(Annonce a) {
         this.annonce = a;
         displayAnnonceData();
+        clearSummaryState();
+        clearTranslationState();
         refreshReactionUi();
         loadComments();
     }
@@ -92,30 +106,165 @@ public class ShowAnnonceController {
         if (btnDislike != null) {
             btnDislike.setOnAction(e -> handleDislike());
         }
+        if (btnSummarize != null) {
+            btnSummarize.setOnAction(e -> handleSummarize());
+        }
+        if (btnTranslateAr != null) {
+            btnTranslateAr.setOnAction(e -> handleTranslate("ar"));
+        }
+        if (btnTranslateEn != null) {
+            btnTranslateEn.setOnAction(e -> handleTranslate("en"));
+        }
         taCommentaire.setWrapText(true);
         setCommentFeedback("", true);
         resetCommentComposer();
+        clearSummaryState();
+        clearTranslationState();
         refreshReactionUi();
+    }
+
+    private void clearTranslationState() {
+        if (lblTranslationResult != null) {
+            lblTranslationResult.setText("Choisissez une langue pour traduire le titre et le contenu de l'annonce.");
+        }
+        if (lblTranslationStatus != null) {
+            lblTranslationStatus.setText("");
+        }
+    }
+
+    private void clearSummaryState() {
+        if (lblResumeSimple != null) {
+            lblResumeSimple.setText("Cliquez sur le bouton pour generer un resume.");
+        }
+        if (lblResumeStatus != null) {
+            lblResumeStatus.setText("");
+        }
+    }
+
+    @FXML
+    private void handleSummarize() {
+        if (annonce == null) {
+            if (lblResumeStatus != null) {
+                lblResumeStatus.setText("Annonce introuvable.");
+            }
+            return;
+        }
+
+        if (btnSummarize != null) {
+            btnSummarize.setDisable(true);
+        }
+        if (lblResumeStatus != null) {
+            lblResumeStatus.setText("Generation du resume...");
+        }
+
+        Task<String> task = new Task<>() {
+            @Override
+            protected String call() throws Exception {
+                return annonceSummaryService.summarizeInThreeSimpleSentences(annonce);
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            String summary = task.getValue();
+            if (lblResumeSimple != null) {
+                lblResumeSimple.setText(summary == null || summary.isBlank()
+                        ? "Resume indisponible pour le moment."
+                        : summary);
+            }
+            if (lblResumeStatus != null) {
+                lblResumeStatus.setText("Resume genere.");
+            }
+            if (btnSummarize != null) {
+                btnSummarize.setDisable(false);
+            }
+        });
+
+        task.setOnFailed(event -> {
+            if (lblResumeSimple != null) {
+                lblResumeSimple.setText("Resume indisponible pour le moment.");
+            }
+            if (lblResumeStatus != null) {
+                Throwable ex = task.getException();
+                lblResumeStatus.setText(ex != null ? ex.getMessage() : "Erreur de generation du resume.");
+            }
+            if (btnSummarize != null) {
+                btnSummarize.setDisable(false);
+            }
+        });
+
+        Thread thread = new Thread(task, "annonce-summary-task");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void handleTranslate(String targetLang) {
+        if (annonce == null) {
+            if (lblTranslationStatus != null) {
+                lblTranslationStatus.setText("Annonce introuvable.");
+            }
+            return;
+        }
+
+        if (btnTranslateAr != null) {
+            btnTranslateAr.setDisable(true);
+        }
+        if (btnTranslateEn != null) {
+            btnTranslateEn.setDisable(true);
+        }
+        if (lblTranslationStatus != null) {
+            lblTranslationStatus.setText("Traduction en cours...");
+        }
+
+        Task<String> task = new Task<>() {
+            @Override
+            protected String call() throws Exception {
+                return translationService.translate(annonce, targetLang);
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            String result = task.getValue();
+            if (lblTranslationResult != null) {
+                lblTranslationResult.setText(result == null || result.isBlank()
+                        ? "Traduction indisponible."
+                        : result);
+            }
+            if (lblTranslationStatus != null) {
+                lblTranslationStatus.setText("Traduction terminée.");
+            }
+            if (btnTranslateAr != null) {
+                btnTranslateAr.setDisable(false);
+            }
+            if (btnTranslateEn != null) {
+                btnTranslateEn.setDisable(false);
+            }
+        });
+
+        task.setOnFailed(event -> {
+            if (lblTranslationResult != null) {
+                lblTranslationResult.setText("Traduction indisponible.");
+            }
+            if (lblTranslationStatus != null) {
+                Throwable ex = task.getException();
+                lblTranslationStatus.setText(ex != null ? ex.getMessage() : "Erreur lors de la traduction.");
+            }
+            if (btnTranslateAr != null) {
+                btnTranslateAr.setDisable(false);
+            }
+            if (btnTranslateEn != null) {
+                btnTranslateEn.setDisable(false);
+            }
+        });
+
+        Thread thread = new Thread(task, "annonce-translation-task");
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private boolean isCitizenUser() {
         return loggedUser != null
                 && loggedUser.getRoles() != null
                 && loggedUser.getRoles().contains("ROLE_CITOYEN");
-    }
-
-    private Set<Integer> likeUsers() {
-        if (annonce == null) {
-            return java.util.Collections.emptySet();
-        }
-        return LIKE_USERS_BY_ANNONCE.computeIfAbsent(annonce.getId(), key -> new HashSet<>());
-    }
-
-    private Set<Integer> dislikeUsers() {
-        if (annonce == null) {
-            return java.util.Collections.emptySet();
-        }
-        return DISLIKE_USERS_BY_ANNONCE.computeIfAbsent(annonce.getId(), key -> new HashSet<>());
     }
 
     private void handleLike() {
@@ -137,35 +286,52 @@ public class ShowAnnonceController {
         }
 
         int userId = loggedUser.getId();
-        Set<Integer> likes = likeUsers();
-        Set<Integer> dislikes = dislikeUsers();
+        int annonceId = annonce.getId();
 
-        if (reactionType == ReactionType.LIKE) {
-            if (likes.contains(userId)) {
-                likes.remove(userId);
-                setCommentFeedback("Like retiré.", true);
+        try {
+            int currentReaction = reactionService.getUserReaction(userId, annonceId);
+
+            if (reactionType == ReactionType.LIKE) {
+                if (currentReaction == 1) {
+                    reactionService.removeReaction(userId, annonceId);
+                    setCommentFeedback("Like retiré.", true);
+                } else {
+                    reactionService.setReaction(userId, annonceId, true);
+                    setCommentFeedback("Annonce likée.", true);
+                }
             } else {
-                likes.add(userId);
-                dislikes.remove(userId);
-                setCommentFeedback("Annonce likée.", true);
+                if (currentReaction == -1) {
+                    reactionService.removeReaction(userId, annonceId);
+                    setCommentFeedback("Dislike retiré.", true);
+                } else {
+                    reactionService.setReaction(userId, annonceId, false);
+                    setCommentFeedback("Annonce dislikée.", true);
+                }
             }
-        } else {
-            if (dislikes.contains(userId)) {
-                dislikes.remove(userId);
-                setCommentFeedback("Dislike retiré.", true);
-            } else {
-                dislikes.add(userId);
-                likes.remove(userId);
-                setCommentFeedback("Annonce dislikée.", true);
-            }
+            refreshReactionUi();
+        } catch (SQLException e) {
+            setCommentFeedback("Impossible de sauvegarder la reaction: " + e.getMessage(), false);
         }
-
-        refreshReactionUi();
     }
 
     private void refreshReactionUi() {
-        int likeCount = annonce == null ? 0 : likeUsers().size();
-        int dislikeCount = annonce == null ? 0 : dislikeUsers().size();
+        int likeCount = 0;
+        int dislikeCount = 0;
+        int currentReaction = 0;
+
+        if (annonce != null) {
+            try {
+                AnnonceReactionService.ReactionCounts counts = reactionService.getReactionCounts(annonce.getId());
+                likeCount = counts.likes;
+                dislikeCount = counts.dislikes;
+                if (loggedUser != null && loggedUser.getId() > 0) {
+                    currentReaction = reactionService.getUserReaction(loggedUser.getId(), annonce.getId());
+                }
+            } catch (SQLException e) {
+                likeCount = 0;
+                dislikeCount = 0;
+            }
+        }
 
         if (lblLikeCount != null) {
             lblLikeCount.setText(likeCount + " like(s)");
@@ -177,11 +343,13 @@ public class ShowAnnonceController {
         boolean allowed = isCitizenUser() && annonce != null;
         if (btnLike != null) {
             btnLike.setDisable(!allowed);
-            btnLike.setStyle("-fx-background-color: " + (allowed ? "#e8f5e9" : "#f3f4f6") + "; -fx-text-fill: #166534; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 6 12;");
+            String likeBg = !allowed ? "#f3f4f6" : (currentReaction == 1 ? "#bbf7d0" : "#e8f5e9");
+            btnLike.setStyle("-fx-background-color: " + likeBg + "; -fx-text-fill: #166534; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 6 12;");
         }
         if (btnDislike != null) {
             btnDislike.setDisable(!allowed);
-            btnDislike.setStyle("-fx-background-color: " + (allowed ? "#fee2e2" : "#f3f4f6") + "; -fx-text-fill: #b91c1c; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 6 12;");
+            String dislikeBg = !allowed ? "#f3f4f6" : (currentReaction == -1 ? "#fecaca" : "#fee2e2");
+            btnDislike.setStyle("-fx-background-color: " + dislikeBg + "; -fx-text-fill: #b91c1c; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 6 12;");
         }
     }
 
@@ -350,10 +518,50 @@ public class ShowAnnonceController {
             actions.getChildren().addAll(replyBtn, editBtn, deleteBtn);
         } else {
             actions.getChildren().add(replyBtn);
+            addReportButtonIfEligible(actions, comment);
         }
 
         box.getChildren().addAll(header, contentLabel, actions);
         return box;
+    }
+
+    private boolean canReportComment(CommentaireAnnonce c) {
+        if (!isCitizenUser() || loggedUser == null || c == null) {
+            return false;
+        }
+        Integer auteurId = c.getAuteurId();
+        return auteurId == null || auteurId != loggedUser.getId();
+    }
+
+    private void addReportButtonIfEligible(HBox actions, CommentaireAnnonce comment) {
+        if (!canReportComment(comment)) {
+            return;
+        }
+        Button reportBtn = new Button("⚑ Signaler");
+        reportBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #1d4ed8; -fx-font-size: 12px; -fx-padding: 0;");
+        reportBtn.setOnAction(e -> openSignalerPopup(comment));
+        actions.getChildren().add(reportBtn);
+    }
+
+    private void openSignalerPopup(CommentaireAnnonce c) {
+        if (!canReportComment(c)) {
+            return;
+        }
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/annonces/signaler_commentaire.fxml"));
+            Parent root = loader.load();
+            SignalerCommentaireController ctrl = loader.getController();
+            ctrl.setCommentaire(c);
+            ctrl.setCitoyen(loggedUser);
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Signalement");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException ex) {
+            setCommentFeedback("Impossible d'ouvrir la fenêtre de signalement.", false);
+        }
     }
 
     private VBox createReplyItem(CommentaireAnnonce reply) {
@@ -406,6 +614,12 @@ public class ShowAnnonceController {
             box.getChildren().addAll(header, contentLabel, actions);
         } else {
             box.getChildren().addAll(header, contentLabel);
+            HBox replyActions = new HBox(10);
+            replyActions.setAlignment(Pos.CENTER_LEFT);
+            addReportButtonIfEligible(replyActions, reply);
+            if (!replyActions.getChildren().isEmpty()) {
+                box.getChildren().add(replyActions);
+            }
         }
 
         return box;

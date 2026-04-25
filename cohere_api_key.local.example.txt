@@ -1,0 +1,4 @@
+# Copy this file to cohere_api_key.local.txt and put your Cohere API key on the first line.
+# Example:
+# co_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+

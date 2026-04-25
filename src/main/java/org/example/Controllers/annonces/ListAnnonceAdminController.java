@@ -2,6 +2,7 @@ package org.example.Controllers.annonces;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -17,6 +18,8 @@ import org.example.Entities.Annonce;
 import org.example.Entities.User;
 import org.example.Services.AnnonceService;
 import org.example.Services.CommentaireAnnonceService;
+import org.example.Services.SmsNotificationService;
+import org.example.Services.UserService;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -36,6 +39,8 @@ public class ListAnnonceAdminController {
 
     private AnnonceService annonceService = new AnnonceService();
     private CommentaireAnnonceService commentaireService = new CommentaireAnnonceService();
+    private UserService userService = new UserService();
+    private SmsNotificationService smsNotificationService = new SmsNotificationService();
     private User loggedUser;
     private ObservableList<Annonce> annonceList = FXCollections.observableArrayList();
 
@@ -203,7 +208,11 @@ public class ListAnnonceAdminController {
         deleteBtn.setStyle("-fx-background-color: linear-gradient(to right, #dc3545, #ef4444); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 8 15; -fx-font-size: 13px;");
         deleteBtn.setOnAction(e -> deleteAnnonce(a));
 
-        actions.getChildren().addAll(viewBtn, editBtn, deleteBtn);
+        Button notifyBtn = new Button("📲 Informer les citoyens");
+        notifyBtn.setStyle("-fx-background-color: linear-gradient(to right, #0ea5e9, #2563eb); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 8 15; -fx-font-size: 13px;");
+        notifyBtn.setOnAction(e -> notifyCitizensForAnnonce(a, notifyBtn));
+
+        actions.getChildren().addAll(viewBtn, editBtn, deleteBtn, notifyBtn);
 
         item.getChildren().addAll(content, actions);
         HBox.setHgrow(content, Priority.ALWAYS);
@@ -256,6 +265,78 @@ public class ListAnnonceAdminController {
                 showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de supprimer: " + e.getMessage());
             }
         }
+    }
+
+    private void notifyCitizensForAnnonce(Annonce annonce, Button triggerButton) {
+        if (annonce == null) {
+            showAlert(Alert.AlertType.WARNING, "Annonce", "Annonce introuvable.");
+            return;
+        }
+
+        String region = annonce.getRegion();
+        if (region == null || region.isBlank()) {
+            showAlert(Alert.AlertType.WARNING, "Région manquante", "Cette annonce n'a pas de région valide.");
+            return;
+        }
+
+        List<User> recipients;
+        try {
+            recipients = userService.getCitoyensByRegionWithPhone(region);
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les citoyens: " + e.getMessage());
+            return;
+        }
+
+        if (recipients.isEmpty()) {
+            showAlert(Alert.AlertType.INFORMATION, "SMS", "Aucun citoyen actif avec téléphone pour la région " + region + ".");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirmation");
+        confirm.setHeaderText("Informer les citoyens de " + region + " ?");
+        confirm.setContentText("Cette action enverra des SMS à " + recipients.size() + " citoyen(s).");
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return;
+        }
+
+        triggerButton.setDisable(true);
+        triggerButton.setText("Envoi...");
+
+        Task<SmsNotificationService.SmsDispatchReport> task = new Task<>() {
+            @Override
+            protected SmsNotificationService.SmsDispatchReport call() {
+                return smsNotificationService.notifyCitizensForAnnonce(annonce, recipients);
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            SmsNotificationService.SmsDispatchReport report = task.getValue();
+            triggerButton.setDisable(false);
+            triggerButton.setText("📲 Informer les citoyens");
+
+            StringBuilder message = new StringBuilder()
+                    .append("SMS envoyés: ").append(report.sent).append("\n")
+                    .append("Déjà envoyés (ignorés): ").append(report.skipped).append("\n")
+                    .append("Échecs: ").append(report.failed);
+
+            if (!report.errors.isEmpty()) {
+                message.append("\n\nExemple d'erreur: ").append(report.errors.get(0));
+            }
+
+            showAlert(Alert.AlertType.INFORMATION, "Résultat envoi SMS", message.toString());
+        });
+
+        task.setOnFailed(event -> {
+            triggerButton.setDisable(false);
+            triggerButton.setText("📲 Informer les citoyens");
+            Throwable ex = task.getException();
+            showAlert(Alert.AlertType.ERROR, "Erreur SMS", ex != null ? ex.getMessage() : "Erreur d'envoi inconnue.");
+        });
+
+        Thread worker = new Thread(task, "annonce-sms-dispatch-task");
+        worker.setDaemon(true);
+        worker.start();
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {

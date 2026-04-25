@@ -186,6 +186,15 @@ public class CommentaireAnnonceService {
         ps.executeUpdate();
     }
 
+    /** Suppression par un modérateur (ex. agent municipal). Supprime aussi les signalements en cascade. */
+    public void deleteByIdForModeration(int id) throws SQLException {
+        String sql = "DELETE FROM commentaire_annonce WHERE id=?";
+        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
+
     // MODERATION - Approve comment
     public void approve(int id) throws SQLException {
         String sql = "UPDATE commentaire_annonce SET moderation_status='Approuvé', etat='Approuvé' WHERE id=?";

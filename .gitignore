@@ -59,3 +59,14 @@ target/
 
 .venv/
 ai-signalement-review/.venv/
+
+# Local secret key for annonce summarization
+cohere_api_key.local.txt
+
+# Local secret key for SMS provider
+twilio_sms.local.txt
+
+# Local SMS dispatch log (option intermediaire sans DB)
+var/sms/*
+!var/sms/.gitkeep
+

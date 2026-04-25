@@ -221,6 +221,33 @@ public class UserService {
 
         return users;
     }
+
+    public List<User> getCitoyensByRegionWithPhone(String region) throws SQLException {
+        List<User> users = new ArrayList<>();
+        if (region == null || region.isBlank()) {
+            return users;
+        }
+
+        String sql = "SELECT * FROM `user` WHERE roles LIKE '%ROLE_CITOYEN%' " +
+                "AND is_active = true AND region = ? AND phone IS NOT NULL AND TRIM(phone) <> '' ORDER BY id ASC";
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        ps.setString(1, region);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            User user = new User();
+            user.setId(rs.getInt("id"));
+            user.setEmail(rs.getString("email"));
+            user.setRoles(rs.getString("roles"));
+            user.setName(rs.getString("name"));
+            user.setPhone(rs.getString("phone"));
+            user.setRegion(rs.getString("region"));
+            user.setActive(rs.getBoolean("is_active"));
+            users.add(user);
+        }
+
+        return users;
+    }
     public void deleteUser(int id) throws SQLException {
         String sql = "DELETE FROM `user` WHERE id = ?";
         PreparedStatement ps = cnx.prepareStatement(sql);
