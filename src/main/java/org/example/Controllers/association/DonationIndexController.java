@@ -287,8 +287,8 @@ public class DonationIndexController {
                 association,
                 type,
                 amount,
-                date,
-                status
+                date
+
         );
 
         return card;

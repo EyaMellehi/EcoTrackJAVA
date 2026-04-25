@@ -6,7 +6,9 @@ import javafx.stage.Stage;
 import org.example.Entities.Association;
 import org.example.Entities.Donation;
 import org.example.Entities.User;
+import org.example.Services.DonationMailService;
 import org.example.Services.DonationService;
+import org.example.Services.StripePaymentService;
 
 public class DonationController {
 
@@ -28,50 +30,72 @@ public class DonationController {
     @FXML private Label errorPhone;
 
     private Association association;
-    private User loggedUser;
+
+    /* ✅ REAL CONNECTED USER */
+    private User currentUser;
 
     private final DonationService service = new DonationService();
 
+    /* ========================================= */
     public void setAssociation(Association association) {
         this.association = association;
     }
 
+    /* ========================================= */
     public void setLoggedUser(User user) {
-        this.loggedUser = user;
+
+        this.currentUser = user;
 
         if (user != null) {
-            if (nomField != null) {
-                nomField.setText(user.getName() != null ? user.getName() : "");
-            }
 
-            if (emailField != null) {
-                emailField.setText(user.getEmail() != null ? user.getEmail() : "");
-            }
+            nomField.setText(
+                    user.getName() != null
+                            ? user.getName()
+                            : ""
+            );
 
-            if (phoneField != null) {
-                phoneField.setText(user.getPhone() != null ? user.getPhone() : "");
-            }
+            emailField.setText(
+                    user.getEmail() != null
+                            ? user.getEmail()
+                            : ""
+            );
+
+            phoneField.setText(
+                    user.getPhone() != null
+                            ? user.getPhone()
+                            : ""
+            );
         }
     }
 
+    /* ========================================= */
     @FXML
     public void initialize() {
-        typeBox.getItems().addAll("Argent", "Matériel");
+
+        typeBox.getItems().addAll(
+                "Argent",
+                "Matériel"
+        );
 
         toggleFields(null);
-        typeBox.setOnAction(e -> toggleFields(typeBox.getValue()));
+
+        typeBox.setOnAction(
+                e -> toggleFields(typeBox.getValue())
+        );
 
         montantField.setPromptText("Ex: 50");
         descriptionField.setPromptText("Décrire le matériel...");
         messageField.setPromptText("Votre message...");
-        nomField.setPromptText("Votre nom");
-        emailField.setPromptText("Votre email");
-        phoneField.setPromptText("Votre téléphone");
     }
 
+    /* ========================================= */
     private void toggleFields(String type) {
-        boolean isArgent = "Argent".equals(type);
-        boolean isMateriel = "Matériel".equals(type);
+
+        boolean isArgent =
+                "Argent".equals(type);
+
+        boolean isMateriel =
+                "Matériel".equals(type);
 
         montantField.setVisible(isArgent);
         montantField.setManaged(isArgent);
@@ -82,8 +106,10 @@ public class DonationController {
         clearErrors();
     }
 
+    /* ========================================= */
     @FXML
     void saveDonation() {
+
         clearErrors();
 
         if (!validateForm()) {
@@ -91,52 +117,136 @@ public class DonationController {
         }
 
         try {
+
+            /* ============================= */
             if (association == null) {
-                showError("Erreur", "Association introuvable.");
+                showError(
+                        "Erreur",
+                        "Association introuvable."
+                );
                 return;
             }
 
-            if (loggedUser == null) {
-                showError("Erreur", "Aucun utilisateur connecté.");
+            if (currentUser == null) {
+                showError(
+                        "Erreur",
+                        "Utilisateur non connecté."
+                );
                 return;
             }
 
             Donation d = new Donation();
 
             d.setType(typeBox.getValue());
+            d.setAssociation(association);
+            d.setDonateur(currentUser);
+            d.setMessageDon(
+                    messageField.getText().trim()
+            );
 
+            /* ===================================== */
+            /* MONEY DONATION => STRIPE PAYMENT      */
+            /* INSERT ONLY AFTER SUCCESS             */
+            /* ===================================== */
             if ("Argent".equals(typeBox.getValue())) {
-                d.setMontant(Double.parseDouble(montantField.getText().trim()));
+
+                double amount =
+                        Double.parseDouble(
+                                montantField.getText().trim()
+                        );
+
+                d.setMontant(amount);
                 d.setDescriptionMateriel(null);
-            } else {
-                d.setMontant(0.0);
-                d.setDescriptionMateriel(descriptionField.getText().trim());
+                d.setStatut("Pending");
+
+                StripePaymentService stripe =
+                        new StripePaymentService(
+                                service,
+                                d,
+                                currentUser
+                        );
+
+                String url =
+                        stripe.createCheckoutSession(
+                                amount,
+                                currentUser,
+                                association
+                        );
+
+                Alert info =
+                        new Alert(
+                                Alert.AlertType.INFORMATION
+                        );
+
+                info.setTitle("Stripe");
+                info.setHeaderText(null);
+                info.setContentText(
+                        "Redirection vers Stripe..."
+                );
+
+                info.showAndWait();
+
+                java.awt.Desktop
+                        .getDesktop()
+                        .browse(
+                                new java.net.URI(url)
+                        );
+
+                close();
+                return;
             }
 
-            d.setMessageDon(messageField.getText().trim());
-            d.setStatut("En attente");
-            d.setAssociation(association);
+            /* ===================================== */
+            /* MATERIAL DONATION NORMAL              */
+            /* ===================================== */
+            d.setMontant(0.0);
 
-            // correction principale
-            d.setDonateur(loggedUser);
+            d.setDescriptionMateriel(
+                    descriptionField
+                            .getText()
+                            .trim()
+            );
+
+            d.setStatut("En attente");
 
             service.add(d);
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            DonationMailService mail =
+                    new DonationMailService();
+
+            mail.sendDonationPdf(
+                    currentUser,
+                    d
+            );
+
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.INFORMATION
+                    );
+
             alert.setTitle("Succès");
             alert.setHeaderText(null);
-            alert.setContentText("✅ Donation envoyée avec succès !");
+            alert.setContentText(
+                    "Donation envoyée avec succès !"
+            );
+
             alert.showAndWait();
 
             close();
 
         } catch (Exception e) {
+
             e.printStackTrace();
-            showError("Erreur", "❌ Erreur lors de l'envoi.");
+
+            showError(
+                    "Erreur",
+                    "Erreur lors de la donation."
+            );
         }
     }
-
+    /* ========================================= */
     private boolean validateForm() {
+
         boolean valid = true;
 
         if (typeBox.getValue() == null) {
@@ -144,61 +254,12 @@ public class DonationController {
             valid = false;
         }
 
-        if (nomField.getText() == null || nomField.getText().trim().isEmpty()) {
-            errorNom.setText("Nom obligatoire");
-            valid = false;
-        }
-
-        String email = emailField.getText() != null ? emailField.getText().trim() : "";
-        if (email.isEmpty()) {
-            errorEmail.setText("Email obligatoire");
-            valid = false;
-        } else if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            errorEmail.setText("Email invalide");
-            valid = false;
-        }
-
-        String phone = phoneField.getText() != null ? phoneField.getText().trim() : "";
-        if (phone.isEmpty()) {
-            errorPhone.setText("Téléphone obligatoire");
-            valid = false;
-        } else if (!phone.matches("\\d{8,15}")) {
-            errorPhone.setText("Numéro invalide");
-            valid = false;
-        }
-
-        if ("Argent".equals(typeBox.getValue())) {
-            String montant = montantField.getText() != null ? montantField.getText().trim() : "";
-
-            if (montant.isEmpty()) {
-                errorMontant.setText("Montant obligatoire");
-                valid = false;
-            } else {
-                try {
-                    double m = Double.parseDouble(montant);
-                    if (m <= 0) {
-                        errorMontant.setText("Montant invalide");
-                        valid = false;
-                    }
-                } catch (Exception e) {
-                    errorMontant.setText("Nombre invalide");
-                    valid = false;
-                }
-            }
-        }
-
-        if ("Matériel".equals(typeBox.getValue())) {
-            String desc = descriptionField.getText() != null ? descriptionField.getText().trim() : "";
-            if (desc.isEmpty()) {
-                errorDescription.setText("Décrire le matériel");
-                valid = false;
-            }
-        }
-
         return valid;
     }
 
+    /* ========================================= */
     private void clearErrors() {
+
         errorType.setText("");
         errorMontant.setText("");
         errorDescription.setText("");
@@ -207,17 +268,27 @@ public class DonationController {
         errorPhone.setText("");
     }
 
-    private void showError(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+    /* ========================================= */
+    private void showError(String title, String msg) {
+
+        Alert alert =
+                new Alert(Alert.AlertType.ERROR);
+
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(content);
+        alert.setContentText(msg);
         alert.showAndWait();
     }
 
+    /* ========================================= */
     @FXML
     private void close() {
-        Stage stage = (Stage) typeBox.getScene().getWindow();
+
+        Stage stage =
+                (Stage) typeBox
+                        .getScene()
+                        .getWindow();
+
         stage.close();
     }
 }

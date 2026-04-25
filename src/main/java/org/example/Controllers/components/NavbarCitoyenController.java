@@ -180,12 +180,45 @@ public class NavbarCitoyenController {
         navigate("/user/profile.fxml", "My Profile");
     }
 
+
+
     @FXML
     void goToDonations() {
-        if (loggedUser != null && loggedUser.getRoles() != null &&
-                loggedUser.getRoles().contains("ROLE_CITOYEN")) {
-            System.out.println("Open donations");
-            navigate("/donation/donationIndex.fxml", "My Donations");
+
+        try {
+
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/donation/donationIndexClient.fxml"
+                            )
+                    );
+
+            Parent root = loader.load();
+
+            /* ✅ IMPORTANT : GET CONTROLLER */
+            org.example.Controllers.association.DonationIndexClientController controller =
+                    loader.getController();
+
+            /* ✅ PASS CURRENT CONNECTED USER */
+            controller.setUser(loggedUser);
+
+            System.out.println(
+                    "OPEN DONATIONS USER ID = "
+                            + (loggedUser != null ? loggedUser.getId() : "NULL")
+            );
+
+            Stage stage =
+                    (Stage) btnHome.getScene().getWindow();
+
+            stage.setScene(new Scene(root));
+            stage.setTitle("My Donations");
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

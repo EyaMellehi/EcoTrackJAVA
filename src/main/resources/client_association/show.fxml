@@ -34,6 +34,32 @@
                 <Label fx:id="name" styleClass="show-title"/>
 
                 <Label fx:id="status" styleClass="badge-active"/>
+
+
+
+
+
+                <VBox alignment="CENTER"
+                      spacing="8"
+                      style="-fx-padding:15;
+                             -fx-background-color:white;
+                             -fx-background-radius:18;
+                             -fx-border-color:#e5e7eb;
+                             -fx-border-radius:18;">
+
+                    <Label text="📱 Scanner QR"
+                           style="-fx-font-size:14px;
+                                  -fx-font-weight:bold;
+                                  -fx-text-fill:#1f5130;"/>
+
+                    <ImageView fx:id="qrImage"
+                               fitWidth="170"
+                               fitHeight="170"
+                               preserveRatio="true"/>
+
+                </VBox>
+
+
             </VBox>
 
             <!-- 📄 RIGHT DETAILS -->
