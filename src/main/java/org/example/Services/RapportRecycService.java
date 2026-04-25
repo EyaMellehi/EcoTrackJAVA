@@ -10,6 +10,9 @@ import java.sql.*;
 
 public class RapportRecycService {
 
+
+
+
     private Connection cnx;
 
     public RapportRecycService() {
