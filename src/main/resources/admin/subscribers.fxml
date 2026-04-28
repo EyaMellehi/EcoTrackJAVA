@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.Controllers.admin.SubscribersController"
+      prefWidth="1500" prefHeight="900"
+      style="-fx-background-color: #f5f7fb;">
+
+    <children>
+
+        <!-- SIDEBAR -->
+        <!-- SIDEBAR -->
+        <VBox prefWidth="290" minWidth="290" maxWidth="290"
+              style="-fx-background-color: linear-gradient(to bottom, #0f172a, #132043); -fx-padding: 24 14 24 14;">
+            <children>
+
+                <!-- HEADER -->
+                <VBox spacing="4" style="-fx-padding: 10 14 20 14;">
+                    <children>
+                        <Label text="EcoTrack"
+                               style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;"/>
+                        <Label text="Admin Dashboard"
+                               style="-fx-text-fill: #94a3b8; -fx-font-size: 14px;"/>
+                    </children>
+                </VBox>
+
+                <Separator style="-fx-opacity: 0.25; -fx-padding: 0 10 10 10;"/>
+
+                <!-- MENU -->
+                <VBox spacing="10" style="-fx-padding: 12 4 12 4;">
+                    <children>
+
+                        <Button text="Dashboard"
+                                onAction="#goToDashboard"
+                                style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
+
+                        <Button text="Subscribers"
+                                onAction="#goToSubscribers"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
+
+                        <Button text="Municipal Agents"
+                                onAction="#goToMunicipalAgents"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
+
+                        <Button text="Field Agents"
+                                onAction="#goToFieldAgents"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
+
+                        <Button text="Categories"
+                                onAction="#goToCategories"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
+
+                        <Button text="Associations"
+                                onAction="#goToAssociation"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
+
+                        <Button text="Donation"
+                                onAction="#goToDonation"
+                                style="-fx-background-color: transparent; -fx-text-fill: #dbe4ff; -fx-font-size: 15px; -fx-alignment: CENTER-LEFT; -fx-padding: 14 18; -fx-pref-width: 260; -fx-background-radius: 14; -fx-cursor: hand;"/>
+
+                    </children>
+                </VBox>
+
+                <Pane VBox.vgrow="ALWAYS"/>
+
+
+
+            </children>
+        </VBox>
+
+        <!-- RIGHT SIDE -->
+        <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: #f5f7fb;">
+            <children>
+
+                <!-- TOP -->
+                <HBox alignment="CENTER_RIGHT"
+                      prefHeight="70"
+                      style="-fx-background-color: white; -fx-padding: 0 18 0 18; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;">
+                    <children>
+                        <Pane HBox.hgrow="ALWAYS"/>
+
+                        <MenuButton text="👤" fx:id="menuAdmin"
+                                    style="-fx-background-color: #f3f4f6; -fx-font-size: 18px; -fx-background-radius: 6; -fx-padding: 8 12;">
+                            <items>
+                                <MenuItem text="Logout" onAction="#logout"/>
+                            </items>
+                        </MenuButton>
+                    </children>
+                </HBox>
+
+                <!-- CONTENT -->
+                <VBox spacing="20" style="-fx-padding: 26;">
+                    <Label text="Subscribers"
+                           style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #1f2a44;"/>
+
+                    <VBox spacing="14"
+                          style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e5e7eb;">
+
+                        <HBox spacing="12">
+                            <children>
+                                <TextField fx:id="tfSearch" promptText="Name or email..." prefWidth="300"/>
+                                <ComboBox fx:id="cbRegion" promptText="All regions" prefWidth="200"/>
+                                <ComboBox fx:id="cbStatus" promptText="All" prefWidth="160"/>
+                                <Button text="Filter" onAction="#filterSubscribers"
+                                        style="-fx-background-color: #121b3a; -fx-text-fill: white; -fx-padding: 10 18;"/>
+                            </children>
+                        </HBox>
+
+                        <TableView fx:id="tableSubscribers" prefHeight="520">
+                            <columns>
+                                <TableColumn fx:id="colNum" text="#" prefWidth="60"/>
+                                <TableColumn fx:id="colName" text="NAME" prefWidth="220"/>
+                                <TableColumn fx:id="colEmail" text="EMAIL" prefWidth="280"/>
+                                <TableColumn fx:id="colPhone" text="PHONE" prefWidth="180"/>
+                                <TableColumn fx:id="colRegion" text="REGION" prefWidth="180"/>
+                                <TableColumn fx:id="colStatus" text="STATUS" prefWidth="120"/>
+                                <TableColumn fx:id="colActions" text="ACTIONS" prefWidth="160"/>
+                            </columns>
+                        </TableView>
+
+                    </VBox>
+                </VBox>
+
+            </children>
+        </VBox>
+
+    </children>
+</HBox>

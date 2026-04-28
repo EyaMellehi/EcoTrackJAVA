@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.PointsConnectedController"
+            prefWidth="1450" prefHeight="900"
+            style="-fx-background-color: #f5f7f5;">
+
+    <top>
+        <fx:include fx:id="navbar" source="/components/navbar_citoyen.fxml"/>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="28" style="-fx-background-color: #f5f7f5;">
+
+                    <!-- HERO -->
+                    <StackPane prefHeight="220">
+                        <children>
+                            <ImageView fitHeight="220" preserveRatio="false" StackPane.alignment="CENTER">
+                                <image>
+                                    <Image url="@/images/carousel-1.jpg"/>
+                                </image>
+                                <viewport>
+                                    <javafx.geometry.Rectangle2D width="1500" height="220"/>
+                                </viewport>
+                            </ImageView>
+
+                            <Pane style="-fx-background-color: rgba(0,0,0,0.45);"/>
+
+                            <VBox alignment="CENTER" spacing="10">
+                                <children>
+                                    <Label text="EcoTrack"
+                                           style="-fx-text-fill: #6ed46e; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+                                    <Label text="Points de recyclage"
+                                           style="-fx-text-fill: white; -fx-font-size: 46px; -fx-font-weight: bold;"/>
+                                    <Label text="Déclarez vos matériaux à recycler et suivez leur traitement."
+                                           style="-fx-text-fill: #e8f5e9; -fx-font-size: 16px;"/>
+                                </children>
+                            </VBox>
+                        </children>
+                    </StackPane>
+
+                    <VBox spacing="24" style="-fx-padding: 0 60 40 60;">
+
+                        <!-- STATS -->
+                        <HBox spacing="18" alignment="CENTER">
+                            <children>
+                                <VBox prefWidth="220" spacing="10"
+                                      style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14; -fx-border-color: #eef2ee; -fx-border-radius: 14;">
+                                    <children>
+                                        <Label text="Total"
+                                               style="-fx-text-fill: #5f6b63; -fx-font-size: 15px;"/>
+                                        <Label fx:id="lblTotal" text="0"
+                                               style="-fx-text-fill: #0f3d23; -fx-font-size: 40px; -fx-font-weight: bold;"/>
+                                    </children>
+                                </VBox>
+
+                                <VBox prefWidth="220" spacing="10"
+                                      style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14; -fx-border-color: #eef2ee; -fx-border-radius: 14;">
+                                    <children>
+                                        <Label text="Pending"
+                                               style="-fx-text-fill: #5f6b63; -fx-font-size: 15px;"/>
+                                        <Label fx:id="lblPending" text="0"
+                                               style="-fx-text-fill: #0f3d23; -fx-font-size: 40px; -fx-font-weight: bold;"/>
+                                    </children>
+                                </VBox>
+
+                                <VBox prefWidth="220" spacing="10"
+                                      style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14; -fx-border-color: #eef2ee; -fx-border-radius: 14;">
+                                    <children>
+                                        <Label text="In progress"
+                                               style="-fx-text-fill: #5f6b63; -fx-font-size: 15px;"/>
+                                        <Label fx:id="lblInProgress" text="0"
+                                               style="-fx-text-fill: #0f3d23; -fx-font-size: 40px; -fx-font-weight: bold;"/>
+                                    </children>
+                                </VBox>
+
+                                <VBox prefWidth="220" spacing="10"
+                                      style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 14; -fx-border-color: #eef2ee; -fx-border-radius: 14;">
+                                    <children>
+                                        <Label text="Collecté"
+                                               style="-fx-text-fill: #5f6b63; -fx-font-size: 15px;"/>
+                                        <Label fx:id="lblCollecte" text="0"
+                                               style="-fx-text-fill: #0f3d23; -fx-font-size: 40px; -fx-font-weight: bold;"/>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+
+                        <!-- SECTION TITLE -->
+                        <VBox alignment="CENTER" spacing="6">
+                            <children>
+                                <Label text="Tracking"
+                                       style="-fx-text-fill: #37a93d; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                <Label text="Mes points de recyclage"
+                                       style="-fx-text-fill: #104b2c; -fx-font-size: 34px; -fx-font-weight: bold;"/>
+                                <Label text="Vous voyez uniquement vos propres points déclarés."
+                                       style="-fx-text-fill: #7a8087; -fx-font-size: 15px;"/>
+                            </children>
+                        </VBox>
+
+                        <!-- FILTER BAR -->
+                        <VBox spacing="14"
+                              style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 14; -fx-border-color: #eef2ee; -fx-border-radius: 14;">
+                            <children>
+                                <HBox spacing="12" alignment="CENTER_LEFT">
+                                    <children>
+                                        <TextField fx:id="tfSearch"
+                                                   promptText="Rechercher par adresse, catégorie ou statut..."
+                                                   prefWidth="420"
+                                                   style="-fx-background-color: #edf7ee; -fx-background-radius: 8; -fx-padding: 10 12;"/>
+
+                                        <ComboBox fx:id="cbStatus"
+                                                  promptText="Tous les statuts"
+                                                  prefWidth="220"
+                                                  style="-fx-background-color: #edf7ee; -fx-background-radius: 8;"/>
+
+                                        <Button text="Filtrer"
+                                                onAction="#filterPoints"
+                                                style="-fx-background-color: white; -fx-border-color: #2e7d32; -fx-text-fill: #2e7d32; -fx-font-weight: bold; -fx-padding: 10 18;"/>
+
+                                        <Button text="Reset"
+                                                onAction="#resetFilter"
+                                                style="-fx-background-color: #f3f4f6; -fx-text-fill: #111827; -fx-padding: 10 18;"/>
+
+                                        <Pane HBox.hgrow="ALWAYS"/>
+
+                                        <Button text="+ Nouveau point"
+                                                onAction="#goToAddPoint"
+                                                style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 8;"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <!-- TABLE CARD -->
+                        <VBox spacing="12"
+                              style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 14; -fx-border-color: #eef2ee; -fx-border-radius: 14;">
+                            <children>
+                                <TableView fx:id="tablePoints" prefHeight="520"
+                                           style="-fx-background-radius: 10; -fx-border-radius: 10;">
+                                    <columns>
+                                        <TableColumn fx:id="colId" text="#" prefWidth="70"/>
+                                        <TableColumn fx:id="colCategorie" text="Catégorie" prefWidth="150"/>
+                                        <TableColumn fx:id="colQuantite" text="Quantité" prefWidth="110"/>
+                                        <TableColumn fx:id="colAddress" text="Adresse" prefWidth="420"/>
+                                        <TableColumn fx:id="colDate" text="Date" prefWidth="130"/>
+                                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="140"/>
+                                        <TableColumn fx:id="colActions" text="Actions" prefWidth="260"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

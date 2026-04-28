@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.Controllers.signalement.ShowRapportSignalementController"
+           prefWidth="1450" prefHeight="900"
+           style="-fx-background-image: url('/images/carousel-1.jpg'); -fx-background-size: cover; -fx-background-position: center center;">
+
+    <children>
+        <Pane style="-fx-background-color: rgba(32,90,52,0.55);"/>
+
+        <BorderPane maxWidth="920" maxHeight="800"
+                    style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 25;">
+
+            <top>
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <VBox spacing="4">
+                            <children>
+                                <Label text="Intervention Report"
+                                       style="-fx-text-fill: #104b2c; -fx-font-size: 32px; -fx-font-weight: bold;"/>
+                                <Label text="Details of the intervention report."
+                                       style="-fx-text-fill: #7a8087; -fx-font-size: 14px;"/>
+                            </children>
+                        </VBox>
+
+                        <Pane HBox.hgrow="ALWAYS"/>
+
+                        <Button text="Back"
+                                onAction="#goBack"
+                                style="-fx-background-color: transparent; -fx-text-fill: #2e7d32; -fx-font-size: 16px;"/>
+                    </children>
+                </HBox>
+            </top>
+
+            <center>
+                <VBox spacing="18" style="-fx-padding: 20 0 0 0;">
+                    <children>
+
+                        <GridPane hgap="20" vgap="16"
+                                  style="-fx-background-color: #f8faf8; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e5e7eb; -fx-border-radius: 8;">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <children>
+                                <Label text="Report title:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblSignalementTitre" wrapText="true" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                                <Label text="Report type:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblSignalementType" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                                <Label text="Address:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblSignalementAddress" wrapText="true" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                                <Label text="Field agent:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblAgentName" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                                <Label text="Date intervention:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblDateIntervention" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                                <Label text="Comment:" GridPane.rowIndex="5" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="lblCommentaire" wrapText="true" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                            </children>
+                        </GridPane>
+
+                        <VBox spacing="10">
+                            <children>
+                                <Label text="Photos"
+                                       style="-fx-text-fill: #104b2c; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                <FlowPane fx:id="mediaContainer"
+                                          hgap="16" vgap="16"
+                                          prefWrapLength="880"/>
+                            </children>
+                        </VBox>
+
+                    </children>
+                </VBox>
+            </center>
+
+        </BorderPane>
+    </children>
+</StackPane>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.ChatbotDialogController"
+            prefWidth="820" prefHeight="620"
+            style="-fx-background-color: linear-gradient(to bottom, #f8faf8, #eef7ee);">
+
+    <top>
+        <VBox spacing="8"
+              style="-fx-padding: 18 20 18 20; -fx-background-color: white; -fx-border-color: #dbe5dc; -fx-border-width: 0 0 1 0;">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <children>
+                        <Label text="🤖"
+                               style="-fx-font-size: 24px;"/>
+                        <VBox spacing="2">
+                            <Label text="Assistant rédaction"
+                                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                            <Label text="Je t’aide uniquement à rédiger une description liée au point de recyclage."
+                                   wrapText="true"
+                                   style="-fx-text-fill: #6b7280; -fx-font-size: 13px;"/>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="14" style="-fx-padding: 18;">
+            <children>
+
+                <Label text="Discussion"
+                       style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+
+                <ScrollPane fx:id="spChat"
+                            fitToWidth="true"
+                            hbarPolicy="NEVER"
+                            vbarPolicy="AS_NEEDED"
+                            prefHeight="300"
+                            style="-fx-background-color: transparent; -fx-background: transparent;">
+                    <content>
+                        <VBox fx:id="vbMessages"
+                              spacing="12"
+                              style="-fx-padding: 8; -fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #dbe5dc; -fx-border-radius: 16;"/>
+                    </content>
+                </ScrollPane>
+
+                <VBox spacing="6">
+                    <Label text="Brouillon final"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #123524;"/>
+                    <TextArea fx:id="taDraftPreview"
+                              editable="false"
+                              wrapText="true"
+                              prefHeight="120"
+                              style="-fx-control-inner-background: white; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #dbe5dc; -fx-font-size: 13px;"/>
+                </VBox>
+
+                <HBox spacing="10">
+                    <children>
+                        <TextField fx:id="tfUserMessage"
+                                   promptText="Écris ton message…"
+                                   HBox.hgrow="ALWAYS"
+                                   style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #dbe5dc; -fx-padding: 12 14;"/>
+                        <Button text="Envoyer"
+                                onAction="#sendMessage"
+                                style="-fx-background-color: #2f9e44; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 12 20; -fx-background-radius: 12;"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT"
+              style="-fx-padding: 16 20 18 20; -fx-background-color: white; -fx-border-color: #dbe5dc; -fx-border-width: 1 0 0 0;">
+            <children>
+                <Button text="Réinitialiser"
+                        onAction="#resetChat"
+                        style="-fx-background-color: white; -fx-border-color: #dc2626; -fx-text-fill: #dc2626; -fx-font-weight: bold; -fx-padding: 10 16; -fx-background-radius: 10; -fx-border-radius: 10;"/>
+
+                <Button text="Insérer le brouillon"
+                        onAction="#insertDraft"
+                        style="-fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18; -fx-background-radius: 10;"/>
+
+                <Button text="Fermer"
+                        onAction="#closeDialog"
+                        style="-fx-background-color: white; -fx-border-color: #374151; -fx-text-fill: #374151; -fx-font-weight: bold; -fx-padding: 10 16; -fx-background-radius: 10; -fx-border-radius: 10;"/>
+            </children>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.Controllers.annonces.SignalerCommentaireController"
+      spacing="16" alignment="TOP_CENTER"
+      style="-fx-background-color: white; -fx-background-radius: 14; -fx-padding: 0;"
+      prefWidth="420" maxWidth="420">
+
+    <effect>
+        <DropShadow color="#40000000" radius="12" offsetY="4"/>
+    </effect>
+
+    <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 18 20 8 20;">
+        <Label text="Signaler ce commentaire"
+               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" HBox.hgrow="ALWAYS"/>
+        <Button text="✕" onAction="#onClose"
+                style="-fx-background-color: transparent; -fx-text-fill: #64748b; -fx-font-size: 16px; -fx-min-width: 36; -fx-min-height: 36; -fx-background-radius: 18;"/>
+    </HBox>
+
+    <Label text="Pourquoi signalez-vous ce commentaire ?"
+           style="-fx-font-size: 14px; -fx-text-fill: #374151; -fx-padding: 0 20 0 20;"/>
+
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                style="-fx-background-color: transparent; -fx-padding: 0 12 0 12;">
+        <VBox.margin>
+            <Insets left="8" right="8"/>
+        </VBox.margin>
+        <content>
+            <VBox fx:id="reasonsContainer" spacing="6" style="-fx-padding: 0 8 16 8;"/>
+        </content>
+    </ScrollPane>
+
+    <Label fx:id="lblFeedback" wrapText="true" maxWidth="380"
+           style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 0 20 20 20;"/>
+</VBox>
