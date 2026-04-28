@@ -17,11 +17,13 @@ import org.example.Services.EventService;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 public class EventsController {
 
     private static final String DEFAULT_EVENT_IMAGE = "/images/entretien-jardin-2.jpg";
+    private static final int EVENTS_PER_PAGE = 16;
 
     @FXML
     private TextField tfSearch;
@@ -38,6 +40,8 @@ public class EventsController {
     @FXML
     private VBox emptyContainer;
     @FXML
+    private Pagination paginationEvents;
+    @FXML
     private Label lblPoints;
     @FXML
     private Button btnHome;
@@ -51,6 +55,7 @@ public class EventsController {
     private EventService eventService;
     private User currentUser;
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private List<Event> currentEvents = Collections.emptyList();
 
     public void setLoggedUser(User user) {
         this.currentUser = user;
@@ -65,9 +70,14 @@ public class EventsController {
         // Vous devez avoir une classe pour gérer le contexte global
         loadEvents();
         updatePointsCounter();
+
+        if (paginationEvents != null) {
+            paginationEvents.currentPageIndexProperty().addListener((obs, oldIndex, newIndex) ->
+                    renderPage(newIndex.intValue())
+            );
+        }
         
         // Ajouter un listener sur les champs pour un filtrage en temps réel si nécessaire
-        tfSearch.setStyle("-fx-control-inner-background: white;");
     }
 
     private void updatePointsCounter() {
@@ -95,47 +105,83 @@ public class EventsController {
     }
 
     private void displayEvents(List<Event> events) {
-        eventsContainer.getChildren().clear();
-        
-        if (events.isEmpty()) {
+        currentEvents = events == null ? Collections.emptyList() : events;
+
+        if (currentEvents.isEmpty()) {
+            eventsContainer.getChildren().clear();
             emptyContainer.setVisible(true);
             eventsContainer.setVisible(false);
+            if (paginationEvents != null) {
+                paginationEvents.setVisible(false);
+                paginationEvents.setManaged(false);
+                paginationEvents.setPageCount(1);
+                paginationEvents.setCurrentPageIndex(0);
+            }
         } else {
             emptyContainer.setVisible(false);
             eventsContainer.setVisible(true);
-            
-            // Créer une grille pour afficher les événements
-            FlowPane flowPane = new FlowPane();
-            flowPane.setHgap(20);
-            flowPane.setVgap(20);
-            flowPane.setPadding(new Insets(0));
-            flowPane.setStyle("-fx-pref-wrap-length: 1300;");
 
-            for (Event event : events) {
-                VBox eventCard = createEventCard(event);
-                flowPane.getChildren().add(eventCard);
+            if (paginationEvents != null) {
+                int pageCount = (int) Math.ceil((double) currentEvents.size() / EVENTS_PER_PAGE);
+                paginationEvents.setPageCount(Math.max(pageCount, 1));
+                paginationEvents.setVisible(pageCount > 1);
+                paginationEvents.setManaged(pageCount > 1);
+                paginationEvents.setCurrentPageIndex(0);
+                renderPage(0);
+            } else {
+                renderPage(0);
             }
-
-            eventsContainer.getChildren().add(flowPane);
-            
-            // Ajouter les statistiques en bas
-            VBox statsBox = createStatsBox(events.size());
-            eventsContainer.getChildren().add(statsBox);
         }
+    }
+
+    private void renderPage(int pageIndex) {
+        eventsContainer.getChildren().clear();
+
+        if (currentEvents == null || currentEvents.isEmpty()) {
+            return;
+        }
+
+        int safePageIndex = Math.max(0, pageIndex);
+        int fromIndex = safePageIndex * EVENTS_PER_PAGE;
+        if (fromIndex >= currentEvents.size()) {
+            fromIndex = 0;
+            safePageIndex = 0;
+            if (paginationEvents != null && paginationEvents.getCurrentPageIndex() != 0) {
+                paginationEvents.setCurrentPageIndex(0);
+            }
+        }
+
+        int toIndex = Math.min(fromIndex + EVENTS_PER_PAGE, currentEvents.size());
+        List<Event> pageEvents = currentEvents.subList(fromIndex, toIndex);
+
+        FlowPane flowPane = new FlowPane();
+        flowPane.setHgap(20);
+        flowPane.setVgap(20);
+        flowPane.setPadding(new Insets(0));
+        flowPane.setPrefWrapLength(1300);
+
+        for (Event event : pageEvents) {
+            VBox eventCard = createEventCard(event);
+            flowPane.getChildren().add(eventCard);
+        }
+
+        eventsContainer.getChildren().add(flowPane);
+
+        int totalPages = (int) Math.ceil((double) currentEvents.size() / EVENTS_PER_PAGE);
+        VBox statsBox = createStatsBox(pageEvents.size(), currentEvents.size(), safePageIndex + 1, Math.max(totalPages, 1));
+        eventsContainer.getChildren().add(statsBox);
     }
 
     private VBox createEventCard(Event event) {
         VBox card = new VBox();
         card.setPrefWidth(320);
-        card.setStyle("-fx-background-color: white; -fx-border-color: #e5e5e5; -fx-border-width: 1; " +
-                      "-fx-border-radius: 8; -fx-padding: 0; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);");
+        card.getStyleClass().add("event-card");
         card.setCursor(javafx.scene.Cursor.HAND);
 
         // Image de couverture
         HBox imageBox = new HBox();
         imageBox.setPrefHeight(160);
-        imageBox.setStyle("-fx-background-color: linear-gradient(135deg, #667eea, #764ba2); " +
-                          "-fx-background-radius: 8 8 0 0;");
+        imageBox.getStyleClass().add("event-card-image");
         imageBox.setAlignment(javafx.geometry.Pos.CENTER);
 
         if (event.getCoverMediaPath() != null && !event.getCoverMediaPath().isEmpty()) {
@@ -158,11 +204,11 @@ public class EventsController {
         VBox contentBox = new VBox();
         contentBox.setSpacing(10);
         contentBox.setPadding(new Insets(20));
-        contentBox.setStyle("-fx-background-color: white;");
+        contentBox.getStyleClass().add("event-card-body");
 
         // Titre
         Label titleLabel = new Label(event.getTitre());
-        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #104b2c;");
+        titleLabel.getStyleClass().add("event-card-title");
         titleLabel.setWrapText(true);
         contentBox.getChildren().add(titleLabel);
 
@@ -176,7 +222,7 @@ public class EventsController {
         lieuBox.setAlignment(javafx.geometry.Pos.TOP_LEFT);
         Label iconLieu = new Label("📍");
         Label lieuLabel = new Label(event.getLieu());
-        lieuLabel.setStyle("-fx-text-fill: #666; -fx-font-size: 12px;");
+        lieuLabel.getStyleClass().add("event-meta");
         lieuBox.getChildren().addAll(iconLieu, lieuLabel);
         infoBox.getChildren().add(lieuBox);
 
@@ -187,7 +233,7 @@ public class EventsController {
             dateBox.setAlignment(javafx.geometry.Pos.TOP_LEFT);
             Label iconDate = new Label("📅");
             Label dateLabel = new Label(event.getDateDeb().format(dateFormatter));
-            dateLabel.setStyle("-fx-text-fill: #666; -fx-font-size: 12px;");
+            dateLabel.getStyleClass().add("event-meta");
             dateBox.getChildren().addAll(iconDate, dateLabel);
             infoBox.getChildren().add(dateBox);
         }
@@ -202,7 +248,7 @@ public class EventsController {
             capacityStr += " / " + event.getCapaciteMax();
         }
         Label participantsLabel = new Label(capacityStr);
-        participantsLabel.setStyle("-fx-text-fill: #666; -fx-font-size: 12px;");
+        participantsLabel.getStyleClass().add("event-meta");
         participantsBox.getChildren().addAll(iconParticipants, participantsLabel);
         infoBox.getChildren().add(participantsBox);
 
@@ -215,7 +261,7 @@ public class EventsController {
                 desc = desc.substring(0, 80) + "...";
             }
             Label descLabel = new Label(desc);
-            descLabel.setStyle("-fx-text-fill: #999; -fx-font-size: 12px;");
+            descLabel.getStyleClass().add("event-meta");
             descLabel.setWrapText(true);
             contentBox.getChildren().add(descLabel);
         }
@@ -223,16 +269,14 @@ public class EventsController {
         // Points
         if (event.getPointGain() > 0) {
             Label pointsLabel = new Label("⭐ " + event.getPointGain() + " points");
-            pointsLabel.setStyle("-fx-background-color: #ffc107; -fx-text-fill: #000; " +
-                                "-fx-padding: 5 10; -fx-border-radius: 3; -fx-background-radius: 3;");
+            pointsLabel.getStyleClass().add("event-points");
             contentBox.getChildren().add(pointsLabel);
         }
 
         // Bouton d'action
         Button btnSeeEvent = new Button("Voir et participer");
         btnSeeEvent.setPrefWidth(Double.MAX_VALUE);
-        btnSeeEvent.setStyle("-fx-background-color: #2e7d32; -fx-text-fill: white; " +
-                            "-fx-font-size: 14px; -fx-padding: 10; -fx-border-radius: 4;");
+        btnSeeEvent.getStyleClass().add("event-primary-button");
         btnSeeEvent.setOnAction(e -> goToEventDetails(event.getId()));
         contentBox.getChildren().add(btnSeeEvent);
 
@@ -265,15 +309,16 @@ public class EventsController {
         }
     }
 
-    private VBox createStatsBox(int totalEvents) {
+    private VBox createStatsBox(int displayedEvents, int totalEvents, int currentPage, int totalPages) {
         VBox statsBox = new VBox();
-        statsBox.setStyle("-fx-background-color: #f5f5f5; -fx-padding: 20; -fx-border-color: #e5e5e5; -fx-border-width: 1;");
+        statsBox.getStyleClass().add("event-stat-box");
         statsBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        
-        Label statsLabel = new Label("Affichage de " + totalEvents + " événement(s)");
-        statsLabel.setStyle("-fx-text-fill: #666; -fx-font-size: 12px;");
+
+        Label statsLabel = new Label("Affichage de " + displayedEvents + " sur " + totalEvents
+                + " événement(s) - Page " + currentPage + "/" + totalPages);
+        statsLabel.getStyleClass().add("event-stat-text");
         statsBox.getChildren().add(statsLabel);
-        
+
         return statsBox;
     }
 

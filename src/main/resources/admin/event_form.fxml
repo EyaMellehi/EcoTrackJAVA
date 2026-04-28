@@ -5,17 +5,21 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.Controllers.admin.EventFormController"
             prefWidth="1000" prefHeight="720"
-            style="-fx-background-color: #f5f5f5;">
+            styleClass="event-page">
+
+    <stylesheets>
+        <URL value="@../style.css"/>
+    </stylesheets>
 
     <top>
-        <VBox spacing="8" style="-fx-background-color: white; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+        <VBox spacing="8" styleClass="topbar">
             <children>
-                <HBox alignment="CENTER_LEFT" spacing="20"
-                      style="-fx-background-color: white; -fx-padding: 16 20 16 20; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+                <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <children>
@@ -24,29 +28,25 @@
                                         <Image url="@/images/logoeco.png"/>
                                     </image>
                                 </ImageView>
-                                <Label text="EcoTrack"
-                                       style="-fx-text-fill: #2e7d32; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                                <Label text="EcoTrack" styleClass="logo"/>
                             </children>
                         </HBox>
 
                         <Pane HBox.hgrow="ALWAYS"/>
 
-                        <Button fx:id="btnHome" text="Home" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 16px;"/>
-                        <Button text="Events Management" style="-fx-background-color: transparent; -fx-text-fill: #2e7d32; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        <Button fx:id="btnHome" text="Home" styleClass="event-secondary-button"/>
+                        <Button text="Events Management" styleClass="event-outline-button"/>
                     </children>
                 </HBox>
 
                 <VBox style="-fx-padding: 12 16 0 16;">
                     <children>
-                <Label text="Accueil > Gestion des evenements > Nouveau"
-                       style="-fx-text-fill: #6b7280; -fx-font-size: 13px;"/>
+                <Label text="Accueil > Gestion des evenements > Nouveau" styleClass="event-page-subtitle"/>
                 <HBox alignment="CENTER_LEFT" spacing="12">
                     <children>
-                        <Label fx:id="lblTitle" text="Nouvel evenement ecologique"
-                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                        <Label fx:id="lblTitle" text="Nouvel evenement ecologique" styleClass="event-page-title"/>
                         <Pane HBox.hgrow="ALWAYS"/>
-                        <Button text="Retour" onAction="#cancel"
-                                style="-fx-background-color: transparent; -fx-border-color: #6b7280; -fx-text-fill: #374151;"/>
+                        <Button text="Retour" onAction="#cancel" styleClass="event-outline-button"/>
                     </children>
                 </HBox>
                     </children>
@@ -58,17 +58,17 @@
     <center>
         <ScrollPane fitToWidth="true">
             <content>
-                <VBox spacing="14" style="-fx-padding: 20;">
+                <VBox spacing="14" styleClass="content">
                     <children>
                         <Label fx:id="lblFormError" visible="false" managed="false"
-                               style="-fx-background-color: #fee2e2; -fx-text-fill: #991b1b; -fx-padding: 10; -fx-background-radius: 6;"/>
+                               styleClass="event-alert"/>
 
-                        <VBox spacing="8" style="-fx-background-color: #e8f1ff; -fx-padding: 12; -fx-background-radius: 8;">
+                        <VBox spacing="8" styleClass="event-section">
                             <children>
-                                <Label text="Suggestion IA (date/heure optimale)" style="-fx-font-weight: bold; -fx-text-fill: #1e40af;"/>
-                                <Label fx:id="lblSuggestion" text="-" style="-fx-text-fill: #334155;"/>
+                                <Label text="Suggestion IA (date/heure optimale)" styleClass="section-title"/>
+                                <Label fx:id="lblSuggestion" text="-" styleClass="event-page-subtitle"/>
                                 <Button text="Appliquer" onAction="#applySuggestion"
-                                        style="-fx-background-color: transparent; -fx-border-color: #2563eb; -fx-text-fill: #2563eb;"/>
+                                        styleClass="event-outline-button"/>
                             </children>
                         </VBox>
 
@@ -138,9 +138,9 @@
                         <HBox alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 10 0 0 0;">
                             <children>
                                 <Button text="Annuler" onAction="#cancel"
-                                        style="-fx-background-color: #6b7280; -fx-text-fill: white;"/>
+                                        styleClass="event-secondary-button"/>
                                 <Button fx:id="btnSubmit" text="Creer l'evenement" onAction="#saveEvent"
-                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+                                        styleClass="event-primary-button"/>
                             </children>
                         </HBox>
                     </children>

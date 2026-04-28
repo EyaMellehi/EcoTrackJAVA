@@ -9,6 +9,7 @@ public class MyConnection {
     String username="root";
     String password="";
     Connection connection;
+    private String lastError;
     public static MyConnection instance;
 
     public static MyConnection getInstance() {
@@ -19,14 +20,34 @@ public class MyConnection {
     }
 
     private MyConnection() {
+        connect();
+    }
+
+    private synchronized void connect() {
         try {
             connection= DriverManager.getConnection(url,username,password);
+            lastError = null;
             System.out.println("Connected to database successfully");
         }catch(SQLException e){
-            System.out.println("Connection Failed!");
+            connection = null;
+            lastError = e.getMessage();
+            System.out.println("Connection Failed! " + e.getMessage());
         }
     }
-    public Connection getConnection() {
+
+    public synchronized Connection getConnection() {
+        try {
+            if (connection == null || connection.isClosed()) {
+                connect();
+            }
+        } catch (SQLException e) {
+            connection = null;
+            lastError = e.getMessage();
+        }
         return connection;
+    }
+
+    public String getLastError() {
+        return lastError;
     }
 }

@@ -2,30 +2,34 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.Controllers.admin.EventParticipantsController"
             prefWidth="920" prefHeight="560"
-            style="-fx-background-color: #f6f7f6;">
+            styleClass="event-page">
+
+    <stylesheets>
+        <URL value="@../style.css"/>
+    </stylesheets>
 
     <top>
-        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 16 18; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+        <VBox spacing="10" styleClass="topbar">
             <children>
                 <HBox spacing="8" alignment="CENTER_LEFT">
                     <children>
-                        <Label text="Accueil" style="-fx-text-fill: #2e7d32;"/>
-                        <Label text=">" style="-fx-text-fill: #9ca3af;"/>
-                        <Label text="Gestion des evenements" style="-fx-text-fill: #2e7d32;"/>
-                        <Label text=">" style="-fx-text-fill: #9ca3af;"/>
-                        <Label fx:id="lblBreadcrumbEvent" text="Evenement" style="-fx-text-fill: #111827; -fx-font-weight: bold;"/>
-                        <Label text=">" style="-fx-text-fill: #9ca3af;"/>
-                        <Label text="Participations" style="-fx-text-fill: #111827;"/>
+                        <Label text="Accueil" styleClass="card-sub"/>
+                        <Label text=">" styleClass="card-sub"/>
+                        <Label text="Gestion des evenements" styleClass="card-sub"/>
+                        <Label text=">" styleClass="card-sub"/>
+                        <Label fx:id="lblBreadcrumbEvent" text="Evenement" styleClass="event-card-title"/>
+                        <Label text=">" styleClass="card-sub"/>
+                        <Label text="Participations" styleClass="event-card-title"/>
                     </children>
                 </HBox>
-                <Label fx:id="lblTitle" text="Participations"
-                       style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
-                <Label fx:id="lblEventMeta" text="Événement : ..." style="-fx-text-fill: #6b7280;"/>
-                <Label fx:id="lblInfo" text="Chargement..." style="-fx-text-fill: #6b7280;"/>
+                <Label fx:id="lblTitle" text="Participations" styleClass="event-page-title"/>
+                <Label fx:id="lblEventMeta" text="Événement : ..." styleClass="event-page-subtitle"/>
+                <Label fx:id="lblInfo" text="Chargement..." styleClass="event-page-subtitle"/>
             </children>
         </VBox>
     </top>
@@ -34,7 +38,7 @@
         <VBox style="-fx-padding: 16;">
             <children>
                 <TableView fx:id="tableParticipants" VBox.vgrow="ALWAYS"
-                           style="-fx-background-color: white; -fx-border-color: #dde7dd; -fx-border-radius: 10; -fx-background-radius: 10;">
+                           styleClass="event-table">
                     <columns>
                         <TableColumn fx:id="colIndex" text="#" prefWidth="50"/>
                         <TableColumn fx:id="colName" text="Citoyen" prefWidth="180"/>
@@ -42,6 +46,7 @@
                         <TableColumn fx:id="colPhone" text="Telephone" prefWidth="150"/>
                         <TableColumn fx:id="colDate" text="Date d'inscription" prefWidth="170"/>
                         <TableColumn fx:id="colStatus" text="Statut" prefWidth="130"/>
+                        <TableColumn fx:id="colActions" text="Actions" prefWidth="410"/>
                     </columns>
                 </TableView>
             </children>

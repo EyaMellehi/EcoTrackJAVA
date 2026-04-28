@@ -44,11 +44,10 @@ public class EventService {
         }
 
         String query = "SELECT e.*" + participationCountSelectSql() + " FROM " + eventTable + " e " +
-                "WHERE e.statut = ? " +
+                "WHERE LOWER(TRIM(e.statut)) IN ('publie','publi') " +
                 "ORDER BY e.date_deb ASC";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, "publie");
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Event event = mapResultSetToEvent(resultSet);
@@ -77,11 +76,14 @@ public class EventService {
 
         // Filtre sur le statut
         if (statut != null && !statut.isEmpty()) {
-            sql.append("AND e.statut = ? ");
-            params.add(statut);
+            if ("publie".equalsIgnoreCase(statut)) {
+                sql.append("AND LOWER(TRIM(e.statut)) IN ('publie','publi') ");
+            } else {
+                sql.append("AND e.statut = ? ");
+                params.add(statut);
+            }
         } else {
-            sql.append("AND e.statut = ? ");
-            params.add("publie");
+            sql.append("AND LOWER(TRIM(e.statut)) IN ('publie','publi') ");
         }
 
         // Filtre sur la recherche

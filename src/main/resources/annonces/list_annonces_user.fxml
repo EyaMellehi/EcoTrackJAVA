@@ -15,15 +15,15 @@
             <content>
                 <VBox spacing="24.0" style="-fx-background-color: #f6f7f6; -fx-padding: 36 56 44 56;">
 
-                    <HBox spacing="18" alignment="CENTER_LEFT" style="-fx-background-color: linear-gradient(to right, #e8f5e9, #f6fff6); -fx-padding: 24; -fx-background-radius: 20; -fx-border-color: #d1fae5; -fx-border-radius: 20;">
+                    <HBox spacing="18" alignment="CENTER_LEFT" style="-fx-background-color: linear-gradient(to right, #e8f5e9, #f6fff6); -fx-padding: 24; -fx-background-radius: 20; -fx-border-color: #a7f3d0; -fx-border-radius: 20;">
                         <VBox spacing="8" HBox.hgrow="ALWAYS">
-                            <Label text="EcoTrack Blogs" style="-fx-text-fill: #37a93d; -fx-font-size: 16px; -fx-font-weight: bold;" />
+                            <Label text="EcoTrack Blogs" style="-fx-text-fill: #1f7a2e; -fx-font-size: 16px; -fx-font-weight: bold;" />
                             <Label text="📰 Découvrez les annonces de votre région" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" wrapText="true" />
-                            <Label text="Consultez les annonces publiées avec image, badges de catégorie et compteur de commentaires." style="-fx-text-fill: #6b7280; -fx-font-size: 15px;" wrapText="true" />
+                            <Label text="Consultez les annonces publiées avec image, badges de catégorie et compteur de commentaires." style="-fx-text-fill: #374151; -fx-font-size: 15px;" wrapText="true" />
                         </VBox>
                         <VBox spacing="6" alignment="CENTER" style="-fx-background-color: white; -fx-padding: 18 22; -fx-background-radius: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 18;">
                             <Label fx:id="lblTotalAnnonces" text="0" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
-                            <Label text="annonces visibles" style="-fx-font-size: 12px; -fx-text-fill: #6b7280;" />
+                            <Label text="annonces visibles" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
                         </VBox>
                     </HBox>
 
@@ -32,11 +32,11 @@
 
                         <HBox spacing="16.0">
                             <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="Recherche" style="-fx-font-size: 12px; -fx-text-fill: #6b7280;" />
+                                <Label text="Recherche" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
                                 <TextField fx:id="tfSearchAnnonce" promptText="Titre ou contenu..." style="-fx-padding: 11; -fx-font-size: 13px; -fx-background-radius: 999; -fx-border-radius: 999; -fx-border-color: #d1d5db;" />
                             </VBox>
                             <VBox spacing="5.0">
-                                <Label text="Catégorie" style="-fx-font-size: 12px; -fx-text-fill: #6b7280;" />
+                                <Label text="Catégorie" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
                                 <ComboBox fx:id="cbCategorieFilter" prefWidth="280" style="-fx-padding: 10; -fx-font-size: 13px; -fx-background-radius: 999; -fx-border-radius: 999;" promptText="Toutes les catégories" />
                             </VBox>
                         </HBox>

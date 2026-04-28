@@ -51,26 +51,39 @@ public class EditPointRecyclageController {
         if (navbarController != null) {
             navbarController.setLoggedUser(user);
         }
+
+        if (currentPoint != null && currentPoint.getCitoyen() == null && user != null) {
+            currentPoint.setCitoyen(user);
+        }
     }
 
     public void setPoint(PointRecyclage point) {
-        this.currentPoint = point;
+        if (point == null) {
+            this.currentPoint = null;
+            return;
+        }
 
-        if (point != null) {
-            lblTitle.setText("Modifier point #" + point.getId());
-            tfQuantite.setText(String.valueOf(point.getQuantite()));
-            tfAddress.setText(point.getAddress());
-            tfLatitude.setText(String.format(Locale.US, "%.6f", point.getLatitude()));
-            tfLongitude.setText(String.format(Locale.US, "%.6f", point.getLongitude()));
-            taDescription.setText(point.getDescription() != null ? point.getDescription() : "");
+        try {
+            PointRecyclage fullPoint = pointService.getPointById(point.getId());
+            this.currentPoint = fullPoint != null ? fullPoint : point;
+        } catch (SQLException e) {
+            this.currentPoint = point;
+            e.printStackTrace();
+        }
+
+        if (currentPoint != null) {
+            lblTitle.setText("Modifier point #" + currentPoint.getId());
+            tfQuantite.setText(String.valueOf(currentPoint.getQuantite()));
+            tfAddress.setText(currentPoint.getAddress());
+            tfLatitude.setText(String.format(Locale.US, "%.6f", currentPoint.getLatitude()));
+            tfLongitude.setText(String.format(Locale.US, "%.6f", currentPoint.getLongitude()));
+            taDescription.setText(currentPoint.getDescription() != null ? currentPoint.getDescription() : "");
             lblPickInfo.setText("Point : "
-                    + String.format(Locale.US, "%.6f", point.getLatitude())
+                    + String.format(Locale.US, "%.6f", currentPoint.getLatitude())
                     + ", "
-                    + String.format(Locale.US, "%.6f", point.getLongitude()));
+                    + String.format(Locale.US, "%.6f", currentPoint.getLongitude()));
 
-            if (cbCategorie.getItems() != null) {
-                cbCategorie.getSelectionModel().select(point.getCategorie());
-            }
+            selectCategory(currentPoint.getCategorie());
         }
     }
 
@@ -220,7 +233,16 @@ public class EditPointRecyclageController {
         }
 
         try {
-            currentPoint.setCategorie(cbCategorie.getValue());
+            Categorie selectedCategorie = cbCategorie.getValue();
+            if (selectedCategorie == null) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez choisir une catégorie.");
+                return;
+            }
+
+            currentPoint.setCategorie(selectedCategorie);
+            if (currentPoint.getCitoyen() == null) {
+                currentPoint.setCitoyen(loggedUser);
+            }
             currentPoint.setQuantite(Double.parseDouble(tfQuantite.getText().trim()));
             currentPoint.setAddress(tfAddress.getText().trim());
             currentPoint.setLatitude(Double.parseDouble(tfLatitude.getText().trim().replace(",", ".")));
@@ -262,5 +284,16 @@ public class EditPointRecyclageController {
         a.setHeaderText(null);
         a.setContentText(content);
         a.showAndWait();
+    }
+
+    private void selectCategory(Categorie categorie) {
+        if (categorie == null || cbCategorie.getItems() == null) {
+            return;
+        }
+
+        cbCategorie.getItems().stream()
+                .filter(item -> item != null && item.getId() == categorie.getId())
+                .findFirst()
+                .ifPresent(item -> cbCategorie.getSelectionModel().select(item));
     }
 }

@@ -18,6 +18,22 @@ public class UserService {
         cnx = MyConnection.getInstance().getConnection();
     }
 
+    private Connection getRequiredConnection() throws SQLException {
+        if (cnx == null || cnx.isClosed()) {
+            cnx = MyConnection.getInstance().getConnection();
+        }
+
+        if (cnx == null) {
+            String detail = MyConnection.getInstance().getLastError();
+            if (detail == null || detail.isBlank()) {
+                throw new SQLException("Connexion base de donnees indisponible.");
+            }
+            throw new SQLException("Connexion base de donnees indisponible: " + detail);
+        }
+
+        return cnx;
+    }
+
     public boolean emailExists(String email) throws SQLException {
         String sql = "SELECT id FROM user WHERE email = ?";
         PreparedStatement ps = cnx.prepareStatement(sql);
@@ -48,7 +64,7 @@ public class UserService {
 
     public User login(String email, String plainPassword) throws SQLException {
         String sql = "SELECT * FROM user WHERE email = ?";
-        PreparedStatement ps = cnx.prepareStatement(sql);
+        PreparedStatement ps = getRequiredConnection().prepareStatement(sql);
         ps.setString(1, email);
 
         ResultSet rs = ps.executeQuery();
@@ -135,6 +151,54 @@ public class UserService {
 
         return users;
     }
+
+    public List<User> getCitoyensByRegion(String region) throws SQLException {
+        List<User> users = new ArrayList<>();
+        if (region == null || region.isBlank()) {
+            return users;
+        }
+
+        String sql = "SELECT * FROM `user` "
+                + "WHERE roles LIKE '%ROLE_CITOYEN%' "
+                + "AND is_active = 1 "
+                + "AND phone IS NOT NULL "
+                + "AND TRIM(phone) <> '' "
+                + "AND ("
+                + "LOWER(TRIM(region)) = LOWER(TRIM(?)) "
+                + "OR LOWER(TRIM(delegation)) = LOWER(TRIM(?)) "
+                + "OR LOWER(TRIM(region)) LIKE CONCAT('%', LOWER(TRIM(?)), '%') "
+                + "OR LOWER(TRIM(?)) LIKE CONCAT('%', LOWER(TRIM(region)), '%')"
+                + ") "
+                + "ORDER BY id ASC";
+
+        try (PreparedStatement ps = getRequiredConnection().prepareStatement(sql)) {
+            ps.setString(1, region);
+            ps.setString(2, region);
+            ps.setString(3, region);
+            ps.setString(4, region);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setEmail(rs.getString("email"));
+                    user.setRoles(rs.getString("roles"));
+                    user.setPassword(rs.getString("password"));
+                    user.setName(rs.getString("name"));
+                    user.setPhone(rs.getString("phone"));
+                    user.setRegion(rs.getString("region"));
+                    user.setPoints(rs.getInt("points"));
+                    user.setActive(rs.getBoolean("is_active"));
+                    user.setImage(rs.getString("image"));
+                    user.setDelegation(rs.getString("delegation"));
+                    user.setFaceioId(rs.getString("faceio_id"));
+                    users.add(user);
+                }
+            }
+        }
+
+        return users;
+    }
+
     public void deleteUser(int id) throws SQLException {
         String sql = "DELETE FROM `user` WHERE id = ?";
         PreparedStatement ps = cnx.prepareStatement(sql);

@@ -85,8 +85,11 @@ public class LoginController {
                 showAlert(Alert.AlertType.ERROR, "Error", "Unknown role.");
             }
 
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Connexion a la base indisponible. Verifiez que MySQL est demarre.");
+            e.printStackTrace();
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue pendant la connexion.");
             e.printStackTrace();
         }
     }

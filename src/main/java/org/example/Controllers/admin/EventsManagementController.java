@@ -160,9 +160,9 @@ public class EventsManagementController {
             private final HBox box = new HBox(8, btnParticipants, btnEdit, btnDelete);
 
             {
-                btnEdit.setStyle("-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold;");
-                btnDelete.setStyle("-fx-background-color: #b91c1c; -fx-text-fill: white; -fx-font-weight: bold;");
-                btnParticipants.setStyle("-fx-background-color: #0ea5a4; -fx-text-fill: white; -fx-font-weight: bold;");
+                btnEdit.getStyleClass().add("event-primary-button");
+                btnDelete.getStyleClass().addAll("event-primary-button", "btn-danger");
+                btnParticipants.getStyleClass().add("event-secondary-button");
 
                 btnEdit.setOnAction(event -> {
                     Event selected = getTableView().getItems().get(getIndex());

@@ -4,6 +4,7 @@
 <?import javafx.geometry.Pos?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
+<?import java.net.URL?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.Image?>
@@ -12,12 +13,15 @@
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.Controllers.EventsController"
             prefWidth="1400" prefHeight="800"
-            style="-fx-background-color: #f5f5f5;">
+            styleClass="event-page">
+
+    <stylesheets>
+        <URL value="@style.css"/>
+    </stylesheets>
 
     <!-- TOP: Barre de navigation -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20"
-              style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="10">
                     <children>
@@ -26,52 +30,45 @@
                                 <Image url="@/images/logoeco.png"/>
                             </image>
                         </ImageView>
-                        <Label text="EcoTrack"
-                               style="-fx-text-fill: #2e7d32; -fx-font-size: 26px; -fx-font-weight: bold;"/>
+                        <Label text="EcoTrack" styleClass="logo"/>
                     </children>
                 </HBox>
 
                 <Pane HBox.hgrow="ALWAYS"/>
 
-                <Button text="Home" fx:id="btnHome" onAction="#goHome"
-                        style="-fx-background-color: transparent; -fx-text-fill: #2e7d32; -fx-font-size: 18px;"/>
-                <Button text="Events" style="-fx-background-color: transparent; -fx-text-fill: #2e7d32; -fx-font-size: 18px; -fx-font-weight: bold;"/>
-                <Button text="Blogs" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
-                <Button text="Associations" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
-                <Button text="Recycling" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
+                <Button text="Home" fx:id="btnHome" onAction="#goHome" styleClass="event-secondary-button"/>
+                <Button text="Events" styleClass="event-outline-button"/>
+                <Button text="Blogs" styleClass="event-secondary-button"/>
+                <Button text="Associations" styleClass="event-secondary-button"/>
+                <Button text="Recycling" styleClass="event-secondary-button"/>
 
                 <Button text="Profile" fx:id="btnProfile" onAction="#goProfile"
-                        style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 18px;"/>
-                <Button text="Logout" fx:id="btnLogout" onAction="#logout"
-                        style="-fx-background-color: #c73030; -fx-text-fill: white; -fx-font-size: 18px; -fx-padding: 12 24;"/>
+                        styleClass="event-secondary-button"/>
+
             </children>
         </HBox>
     </top>
 
     <!-- CENTER: Contenu principal -->
     <center>
-        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: #f5f5f5;">
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="event-page">
             <content>
-                <VBox spacing="30" style="-fx-background-color: #f5f5f5; -fx-padding: 40;">
+                <VBox spacing="30" styleClass="content">
 
                     <!-- En-tête -->
-                    <VBox alignment="CENTER" spacing="15" style="-fx-padding: 0 0 20 0;">
-                        <Label text="Événements Écologiques"
-                               style="-fx-text-fill: #104b2c; -fx-font-size: 42px; -fx-font-weight: bold;"/>
+                    <VBox alignment="CENTER" spacing="15" styleClass="event-hero">
+                        <Label text="Événements Écologiques" styleClass="event-hero-title"/>
                         <Label text="Rejoignez nos initiatives environnementales et participez à un avenir durable."
-                               style="-fx-text-fill: #6b7280; -fx-font-size: 16px;"/>
+                               styleClass="event-hero-subtitle"/>
                         <HBox alignment="CENTER" spacing="15" style="-fx-padding: 15 0 0 0;">
-                            <Label fx:id="lblPoints" text="Points: 0"
-                                   style="-fx-background-color: #ffc107; -fx-text-fill: #000; -fx-padding: 10 15; -fx-border-radius: 5; -fx-background-radius: 5;"/>
-                            <Button text="Mon historique" fx:id="btnHistory" onAction="#goHistory"
-                                    style="-fx-background-color: transparent; -fx-border-color: #2e7d32; -fx-text-fill: #2e7d32; -fx-font-size: 14px; -fx-padding: 8 16;"/>
+                            <Label fx:id="lblPoints" text="Points: 0" styleClass="event-chip"/>
+                            <Button text="Mon historique" fx:id="btnHistory" onAction="#goHistory" styleClass="event-outline-button"/>
                         </HBox>
                     </VBox>
 
                     <!-- Filtrage -->
-                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 25; -fx-border-radius: 8;">
-                        <Label text="Filtrer les événements"
-                               style="-fx-text-fill: #104b2c; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                    <VBox spacing="15" styleClass="event-filter-panel">
+                        <Label text="Filtrer les événements" styleClass="section-title"/>
                         <GridPane hgap="15" vgap="15" style="-fx-padding: 0;">
                             <columnConstraints>
                                 <ColumnConstraints hgrow="ALWAYS" />
@@ -83,16 +80,14 @@
 
                             <!-- Recherche -->
                             <VBox spacing="5" GridPane.columnIndex="0">
-                                <Label text="Recherche"
-                                       style="-fx-text-fill: #666; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                                <Label text="Recherche" styleClass="card-sub"/>
                                 <TextField fx:id="tfSearch" promptText="Titre, lieu, description..."
                                           style="-fx-padding: 10; -fx-font-size: 14px;"/>
                             </VBox>
 
                             <!-- Statut -->
                             <VBox spacing="5" GridPane.columnIndex="1">
-                                <Label text="Statut"
-                                       style="-fx-text-fill: #666; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                                <Label text="Statut" styleClass="card-sub"/>
                                 <ComboBox fx:id="cbStatut" style="-fx-padding: 10; -fx-font-size: 14px;">
                                     <items>
                                         <FXCollections fx:factory="observableArrayList">
@@ -108,8 +103,7 @@
 
                             <!-- Tri par -->
                             <VBox spacing="5" GridPane.columnIndex="2">
-                                <Label text="Trier par"
-                                       style="-fx-text-fill: #666; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                                <Label text="Trier par" styleClass="card-sub"/>
                                 <ComboBox fx:id="cbSortBy" style="-fx-padding: 10; -fx-font-size: 14px;">
                                     <items>
                                         <FXCollections fx:factory="observableArrayList">
@@ -126,8 +120,7 @@
 
                             <!-- Ordre -->
                             <VBox spacing="5" GridPane.columnIndex="3">
-                                <Label text="Ordre"
-                                       style="-fx-text-fill: #666; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                                <Label text="Ordre" styleClass="card-sub"/>
                                 <ComboBox fx:id="cbOrder" style="-fx-padding: 10; -fx-font-size: 14px;">
                                     <items>
                                         <FXCollections fx:factory="observableArrayList">
@@ -144,7 +137,7 @@
                             <!-- Bouton Filtrer -->
                             <Button text="Filtrer" fx:id="btnFilter" onAction="#filterEvents"
                                     GridPane.columnIndex="4"
-                                    style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+                                    styleClass="event-primary-button"/>
                         </GridPane>
                     </VBox>
 
@@ -153,12 +146,16 @@
                         <!-- Les événements seront ajoutés dynamiquement ici -->
                     </VBox>
 
+                    <Pagination fx:id="paginationEvents"
+                                maxPageIndicatorCount="7"
+                                pageCount="1"
+                                currentPageIndex="0"
+                                styleClass="pagination"/>
+
                     <!-- Message vide -->
-                    <VBox fx:id="emptyContainer" alignment="CENTER" spacing="15" style="-fx-padding: 80 0;">
-                        <Label text="Aucun événement trouvé"
-                               style="-fx-text-fill: #999; -fx-font-size: 20px;"/>
-                        <Label text="Essayez de modifier vos critères de recherche"
-                               style="-fx-text-fill: #999; -fx-font-size: 14px;"/>
+                    <VBox fx:id="emptyContainer" alignment="CENTER" spacing="15" styleClass="event-empty-state">
+                        <Label text="Aucun événement trouvé" styleClass="show-title"/>
+                        <Label text="Essayez de modifier vos critères de recherche" styleClass="event-hero-subtitle"/>
                     </VBox>
 
                 </VBox>

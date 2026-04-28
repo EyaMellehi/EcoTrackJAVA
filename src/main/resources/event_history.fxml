@@ -2,38 +2,58 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.Controllers.EventHistoryController"
             prefWidth="1200" prefHeight="760"
-            style="-fx-background-color: #f5f5f5;">
+            styleClass="event-page">
+
+    <stylesheets>
+        <URL value="@style.css"/>
+    </stylesheets>
 
     <top>
-        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 16 20; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+        <VBox spacing="10" styleClass="topbar">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="12">
                     <children>
-                        <Label text="Mon Historique d'Evenements" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                        <Label text="Mon Historique d'Evenements" styleClass="event-hero-title"/>
                         <Pane HBox.hgrow="ALWAYS"/>
-                        <Button text="Home" onAction="#goHome" style="-fx-background-color: transparent; -fx-text-fill: #1f5130;"/>
+                        <Button text="Home" onAction="#goHome" styleClass="event-secondary-button"/>
                     </children>
                 </HBox>
-                <Label fx:id="lblInfo" text="Consultez tous les evenements auxquels vous avez participe." style="-fx-text-fill: #6b7280;"/>
+                <Label fx:id="lblInfo" text="Consultez tous les evenements auxquels vous avez participe." styleClass="event-hero-subtitle"/>
             </children>
         </VBox>
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+        <ScrollPane fitToWidth="true" styleClass="event-page">
             <content>
-                <VBox spacing="14" style="-fx-padding: 20;">
+                <VBox spacing="14" styleClass="content">
                     <children>
-                        <Button text="Retour aux evenements" onAction="#goBack" style="-fx-background-color: transparent; -fx-border-color: #6b7280; -fx-text-fill: #374151;"/>
+                        <Button text="Retour aux evenements" onAction="#goBack" styleClass="event-outline-button"/>
 
-                        <VBox fx:id="emptyBox" alignment="CENTER" spacing="10" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 40; -fx-border-color: #e5e7eb; -fx-border-radius: 12;">
+                        <VBox spacing="10" styleClass="event-filter-panel">
                             <children>
-                                <Label text="Vous n'avez pas encore participe a des evenements." style="-fx-text-fill: #6b7280; -fx-font-size: 18px;"/>
-                                <Button text="Decouvrir les evenements" onAction="#goBack" style="-fx-background-color: #2563eb; -fx-text-fill: white;"/>
+                                <Label text="Rechercher et filtrer" styleClass="section-title"/>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <children>
+                                        <TextField fx:id="tfSearch" promptText="Titre ou lieu..." onKeyReleased="#applyFilters" HBox.hgrow="ALWAYS"/>
+                                        <ComboBox fx:id="cbStatus" onAction="#applyFilters" prefWidth="170"/>
+                                        <ComboBox fx:id="cbSort" onAction="#applyFilters" prefWidth="170"/>
+                                        <Button text="Reinitialiser" onAction="#resetFilters" styleClass="event-secondary-button"/>
+                                    </children>
+                                </HBox>
+                                <Label fx:id="lblSummary" text="0 resultat" styleClass="event-meta"/>
+                            </children>
+                        </VBox>
+
+                        <VBox fx:id="emptyBox" alignment="CENTER" spacing="10" styleClass="event-empty-state">
+                            <children>
+                                <Label text="Vous n'avez pas encore participe a des evenements." styleClass="event-hero-subtitle"/>
+                                <Button text="Decouvrir les evenements" onAction="#goBack" styleClass="event-primary-button"/>
                             </children>
                         </VBox>
 

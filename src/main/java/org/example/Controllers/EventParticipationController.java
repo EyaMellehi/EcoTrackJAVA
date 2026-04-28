@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.Entities.Event;
 import org.example.Entities.User;
+import org.example.Services.EmailService;
 import org.example.Services.ParticipationService;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ public class EventParticipationController {
     private Button btnBackList;
 
     private final ParticipationService participationService = new ParticipationService();
+    private final EmailService emailService = new EmailService();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private User currentUser;
@@ -69,8 +71,11 @@ public class EventParticipationController {
         if (btnConfirm != null) {
             btnConfirm.setOnAction(e -> confirmParticipation());
         }
-        lblAlert.setVisible(false);
-        lblAlert.setManaged(false);
+        if (lblAlert != null) {
+            lblAlert.getStyleClass().add("event-alert");
+            lblAlert.setVisible(false);
+            lblAlert.setManaged(false);
+        }
     }
 
     private void refreshUserLabel() {
@@ -111,10 +116,8 @@ public class EventParticipationController {
 
         boolean ok = participationService.registerParticipation(currentUser, event);
         if (ok) {
-            if (event.getPointGain() > 0) {
-                currentUser.setPoints(currentUser.getPoints() + event.getPointGain());
-            }
-            showAlert("Votre inscription a été enregistrée avec succès.", false);
+            sendCheckinEmail();
+            showAlert("Inscription enregistree. Les points seront attribues apres validation de presence.", false);
             showSuccessDialog();
             btnConfirm.setDisable(true);
             btnConfirm.setText("Inscrit");
@@ -142,6 +145,24 @@ public class EventParticipationController {
         success.setTitle("Inscription validee");
         success.setHeaderText(null);
         success.showAndWait();
+    }
+
+    private void sendCheckinEmail() {
+        if (currentUser == null || currentUser.getEmail() == null || currentUser.getEmail().isBlank() || event == null) {
+            return;
+        }
+
+        try {
+            String qrPayload = participationService.buildAttendanceQrPayload(event, currentUser.getId());
+            emailService.sendEventCheckinQr(
+                    currentUser.getEmail(),
+                    currentUser.getName(),
+                    event.getTitre(),
+                    qrPayload
+            );
+        } catch (Exception ignored) {
+            // L'inscription reste valide meme si l'email n'a pas pu etre envoye.
+        }
     }
 
     @FXML
@@ -188,9 +209,8 @@ public class EventParticipationController {
         lblAlert.setText(message);
         lblAlert.setVisible(true);
         lblAlert.setManaged(true);
-        lblAlert.setStyle(error
-                ? "-fx-background-color: #fee2e2; -fx-text-fill: #991b1b; -fx-padding: 10 12; -fx-background-radius: 8;"
-                : "-fx-background-color: #d1fae5; -fx-text-fill: #065f46; -fx-padding: 10 12; -fx-background-radius: 8;");
+        lblAlert.getStyleClass().removeAll("event-alert-error", "event-alert-success");
+        lblAlert.getStyleClass().add(error ? "event-alert-error" : "event-alert-success");
     }
 }
 

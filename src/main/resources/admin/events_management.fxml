@@ -5,17 +5,21 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.Controllers.admin.EventsManagementController"
             prefWidth="1280" prefHeight="760"
-            style="-fx-background-color: #f6f7f6;">
+            styleClass="event-page">
+
+    <stylesheets>
+        <URL value="@../style.css"/>
+    </stylesheets>
 
     <top>
-        <VBox spacing="10" style="-fx-background-color: white; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+        <VBox spacing="10" styleClass="topbar">
             <children>
-                <HBox alignment="CENTER_LEFT" spacing="20"
-                      style="-fx-background-color: white; -fx-padding: 16 20 16 20; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+                <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <children>
@@ -24,29 +28,27 @@
                                         <Image url="@/images/logoeco.png"/>
                                     </image>
                                 </ImageView>
-                                <Label text="EcoTrack"
-                                       style="-fx-text-fill: #2e7d32; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                                <Label text="EcoTrack" styleClass="logo"/>
                             </children>
                         </HBox>
 
                         <Pane HBox.hgrow="ALWAYS"/>
 
-                        <Button fx:id="btnHome" text="Home" style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 16px; -fx-font-weight: bold;"/>
-                        <Button text="Events Management" style="-fx-background-color: #eaf5ea; -fx-text-fill: #2e7d32; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 6 14;"/>
+                        <Button fx:id="btnHome" text="Home" styleClass="event-secondary-button"/>
+                        <Button text="Events Management" styleClass="event-outline-button"/>
                     </children>
                 </HBox>
 
                 <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 0 20 0 20;">
                     <children>
-                        <Label text="Gestion des evenements"
-                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #104b2c;"/>
+                        <Label text="Gestion des evenements" styleClass="event-page-title"/>
                         <Pane HBox.hgrow="ALWAYS"/>
                         <Button text="Nouvel evenement" onAction="#openCreateForm"
-                                style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 14;"/>
+                                styleClass="event-primary-button"/>
                     </children>
                 </HBox>
 
-                <GridPane hgap="10" vgap="8" style="-fx-background-color: #f8fbf8; -fx-padding: 14 20 16 20; -fx-border-color: #e5efe5; -fx-border-width: 1 0 0 0;">
+                <GridPane hgap="10" vgap="8" styleClass="event-filter-panel">
                     <columnConstraints>
                         <ColumnConstraints hgrow="ALWAYS"/>
                         <ColumnConstraints hgrow="ALWAYS"/>
@@ -56,29 +58,29 @@
                     </columnConstraints>
 
                     <VBox spacing="4" GridPane.columnIndex="0">
-                        <Label text="Recherche"/>
+                        <Label text="Recherche" styleClass="card-sub"/>
                         <TextField fx:id="tfSearch" promptText="Titre, lieu, description..."/>
                     </VBox>
 
                     <VBox spacing="4" GridPane.columnIndex="1">
-                        <Label text="Statut"/>
+                        <Label text="Statut" styleClass="card-sub"/>
                         <ComboBox fx:id="cbStatut"/>
                     </VBox>
 
                     <VBox spacing="4" GridPane.columnIndex="2">
-                        <Label text="Tri"/>
+                        <Label text="Tri" styleClass="card-sub"/>
                         <ComboBox fx:id="cbSort"/>
                     </VBox>
 
                     <VBox spacing="4" GridPane.columnIndex="3">
-                        <Label text="Ordre"/>
+                        <Label text="Ordre" styleClass="card-sub"/>
                         <ComboBox fx:id="cbOrder"/>
                     </VBox>
 
                     <VBox spacing="4" GridPane.columnIndex="4">
                         <Label text=" "/>
                         <Button text="Filtrer" onAction="#filterEvents"
-                                style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"/>
+                                styleClass="event-primary-button"/>
                     </VBox>
                 </GridPane>
             </children>
@@ -89,7 +91,7 @@
         <VBox style="-fx-padding: 16;">
             <children>
                 <TableView fx:id="tableEvents" VBox.vgrow="ALWAYS"
-                           style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #dde7dd; -fx-border-radius: 12; -fx-padding: 4;">
+                           styleClass="event-table">
                     <columns>
                         <TableColumn fx:id="colId" text="#" prefWidth="60"/>
                         <TableColumn fx:id="colTitre" text="Titre" prefWidth="220"/>

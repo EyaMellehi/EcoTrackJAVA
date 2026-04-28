@@ -2,6 +2,7 @@ package org.example.Services;
 
 import org.example.Entities.Event;
 import org.example.Entities.User;
+import org.example.Utils.AttendanceCodeUtils;
 import org.example.Utils.MyConnection;
 
 import java.sql.Connection;
@@ -52,9 +53,11 @@ public class ParticipationService {
 
         String statusExpr = statusColumn != null ? "p." + statusColumn : "'inscrit'";
         String dateExpr = dateColumn != null ? "p." + dateColumn : "e.date_deb";
+        String pointsExpr = "CASE WHEN LOWER(COALESCE(" + statusExpr + ", '')) = 'present' THEN e.point_gain ELSE 0 END";
 
         String sql = "SELECT e.id AS event_id, e.titre, e.lieu, e.date_deb, e.date_fin, e.point_gain, " +
                 statusExpr + " AS participation_status, " +
+                pointsExpr + " AS earned_points, " +
                 dateExpr + " AS participation_date " +
                 "FROM " + participationTable + " p " +
                 "JOIN " + eventTable + " e ON p." + eventFkColumn + " = e.id " +
@@ -76,7 +79,7 @@ public class ParticipationService {
                     }
 
                     item.setParticipationStatus(rs.getString("participation_status"));
-                    item.setPointGain(rs.getInt("point_gain"));
+                    item.setPointGain(rs.getInt("earned_points"));
 
                     Timestamp participationTs = rs.getTimestamp("participation_date");
                     if (participationTs != null) {
@@ -218,12 +221,105 @@ public class ParticipationService {
                 }
             }
 
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            lastError = e.getMessage();
+            return false;
+        } finally {
+            try {
+                connection.setAutoCommit(oldAutoCommit);
+            } catch (SQLException ignored) {
+            }
+        }
+    }
+
+    public boolean updateParticipationStatus(Event event, int userId, String newStatus) {
+        return updateParticipationStatus(event, userId, newStatus, null);
+    }
+
+    public boolean updateParticipationStatus(Event event, int userId, String newStatus, String attendanceCode) {
+        lastError = null;
+
+        if (event == null) {
+            lastError = "Evenement invalide.";
+            return false;
+        }
+        if (statusColumn == null || participationTable == null || eventFkColumn == null || userFkColumn == null) {
+            lastError = "Le statut de participation n'est pas configurable dans la base.";
+            return false;
+        }
+        if (!"present".equals(newStatus) && !"absent".equals(newStatus)) {
+            lastError = "Statut invalide.";
+            return false;
+        }
+        if ("present".equals(newStatus) && !isValidAttendanceCode(event, userId, attendanceCode)) {
+            lastError = "Code de presence invalide. Verifiez le code a 5 chiffres du citoyen.";
+            return false;
+        }
+        if (event.getDateFin() == null || !LocalDateTime.now().isAfter(event.getDateFin())) {
+            lastError = "Le marquage de presence est autorise uniquement apres la date de fin de l'evenement.";
+            return false;
+        }
+
+        boolean oldAutoCommit = true;
+        try {
+            oldAutoCommit = connection.getAutoCommit();
+            connection.setAutoCommit(false);
+
+            String currentStatus;
+            String readSql = "SELECT " + statusColumn + " FROM " + participationTable +
+                    " WHERE " + eventFkColumn + " = ? AND " + userFkColumn + " = ? FOR UPDATE";
+            try (PreparedStatement readStatement = connection.prepareStatement(readSql)) {
+                readStatement.setInt(1, event.getId());
+                readStatement.setInt(2, userId);
+                try (ResultSet rs = readStatement.executeQuery()) {
+                    if (!rs.next()) {
+                        connection.rollback();
+                        lastError = "Participation introuvable pour ce citoyen.";
+                        return false;
+                    }
+                    currentStatus = rs.getString(1);
+                }
+            }
+
+            String normalizedCurrent = currentStatus == null || currentStatus.isBlank()
+                    ? "inscrit"
+                    : currentStatus.trim().toLowerCase();
+
+            if (newStatus.equals(normalizedCurrent)) {
+                connection.commit();
+                return true;
+            }
+
+            if ("present".equals(normalizedCurrent) && "absent".equals(newStatus)) {
+                connection.rollback();
+                lastError = "Ce citoyen est deja confirme present. Le statut ne peut pas revenir a absent.";
+                return false;
+            }
+
+            String updateSql = "UPDATE " + participationTable + " SET " + statusColumn + " = ?" +
+                    " WHERE " + eventFkColumn + " = ? AND " + userFkColumn + " = ?";
+            try (PreparedStatement updateStatement = connection.prepareStatement(updateSql)) {
+                updateStatement.setString(1, newStatus);
+                updateStatement.setInt(2, event.getId());
+                updateStatement.setInt(3, userId);
+                updateStatement.executeUpdate();
+            }
+
+            boolean shouldAwardPoints = "present".equals(newStatus) && !"present".equals(normalizedCurrent);
             int pointsToAdd = Math.max(0, event.getPointGain());
-            if (pointsToAdd > 0 && userTable != null && userPointsColumn != null) {
-                String updatePointsSql = "UPDATE " + userTable + " SET " + userPointsColumn + " = COALESCE(" + userPointsColumn + ", 0) + ? WHERE id = ?";
-                try (PreparedStatement pointsStatement = connection.prepareStatement(updatePointsSql)) {
+            if (shouldAwardPoints && pointsToAdd > 0 && userTable != null && userPointsColumn != null) {
+                String pointsSql = "UPDATE " + userTable +
+                        " SET " + userPointsColumn + " = COALESCE(" + userPointsColumn + ", 0) + ? WHERE id = ?";
+                try (PreparedStatement pointsStatement = connection.prepareStatement(pointsSql)) {
                     pointsStatement.setInt(1, pointsToAdd);
-                    pointsStatement.setInt(2, user.getId());
+                    pointsStatement.setInt(2, userId);
                     pointsStatement.executeUpdate();
                 }
             }
@@ -245,6 +341,28 @@ public class ParticipationService {
             }
         }
     }
+
+    public String generateAttendanceCode(Event event, int userId) {
+        return AttendanceCodeUtils.generateFiveDigitCode(event, userId);
+    }
+
+    public String buildAttendanceQrPayload(Event event, int userId) {
+        return AttendanceCodeUtils.buildQrPayload(event, userId);
+    }
+
+    private boolean isValidAttendanceCode(Event event, int userId, String attendanceCode) {
+        if (attendanceCode == null || attendanceCode.isBlank()) {
+            return false;
+        }
+
+        String normalized = attendanceCode.trim();
+        if (!normalized.matches("\\d{5}")) {
+            return false;
+        }
+
+        return AttendanceCodeUtils.matches(event, userId, normalized);
+    }
+
 
     private String resolveExistingTable(String... candidates) {
         for (String candidate : candidates) {
