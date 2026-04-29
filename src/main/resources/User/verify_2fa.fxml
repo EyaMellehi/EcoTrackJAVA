@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.Controllers.User.Verify2FAController"
+      alignment="CENTER"
+      spacing="18"
+      prefWidth="500"
+      prefHeight="400"
+      style="-fx-background-color: white; -fx-padding: 40;">
+
+    <children>
+        <Label text="Two-Factor Authentication"
+               style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+
+        <Label text="Enter the 6-digit code from your authenticator app"
+               style="-fx-text-fill: #667085; -fx-font-size: 15px;"/>
+
+        <TextField fx:id="tfOtpCode"
+                   promptText="6-digit code"
+                   maxWidth="250"
+                   prefWidth="250"/>
+
+        <Label fx:id="lblError"
+               text=""
+               style="-fx-text-fill: red;"/>
+
+        <Button text="Verify"
+                onAction="#verifyOtp"
+                prefWidth="250"
+                style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-size: 15px; -fx-background-radius: 8;"/>
+
+        <Button text="Back"
+                onAction="#goBack"
+                prefWidth="250"
+                style="-fx-background-color: transparent; -fx-border-color: #2e7d32; -fx-text-fill: #2e7d32; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+    </children>
+</VBox>

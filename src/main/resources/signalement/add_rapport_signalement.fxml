@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.Controllers.signalement.AddRapportSignalementController"
+           prefWidth="1450" prefHeight="900"
+           style="-fx-background-image: url('/images/carousel-1.jpg'); -fx-background-size: cover; -fx-background-position: center center;">
+
+    <children>
+        <Pane style="-fx-background-color: rgba(32,90,52,0.55);"/>
+
+        <BorderPane maxWidth="900" maxHeight="760"
+                    style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 25;">
+
+            <top>
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <VBox spacing="4">
+                            <children>
+                                <Label text="Create Intervention Report"
+                                       style="-fx-text-fill: #104b2c; -fx-font-size: 32px; -fx-font-weight: bold;"/>
+                                <Label text="Complete the report for the selected signalement."
+                                       style="-fx-text-fill: #7a8087; -fx-font-size: 14px;"/>
+                            </children>
+                        </VBox>
+
+                        <Pane HBox.hgrow="ALWAYS"/>
+
+                        <Button text="Back"
+                                onAction="#goBack"
+                                style="-fx-background-color: transparent; -fx-text-fill: #2e7d32; -fx-font-size: 16px;"/>
+                    </children>
+                </HBox>
+            </top>
+
+            <center>
+                <VBox spacing="16" style="-fx-padding: 20 0 0 0;">
+                    <children>
+
+                        <!-- Selected signalement info -->
+                        <VBox spacing="12"
+                              style="-fx-background-color: #f8faf8; -fx-padding: 18; -fx-background-radius: 8; -fx-border-color: #e5e7eb; -fx-border-radius: 8;">
+                            <children>
+                                <HBox spacing="12" alignment="CENTER_LEFT">
+                                    <children>
+                                        <Label text="Signalement ID:"
+                                               style="-fx-text-fill: #6b7280; -fx-font-size: 14px;"/>
+                                        <TextField fx:id="tfSignalementId"
+                                                   editable="false"
+                                                   prefWidth="120"
+                                                   style="-fx-background-color: white;"/>
+                                    </children>
+                                </HBox>
+
+                                <VBox spacing="5">
+                                    <children>
+                                        <Label text="Address"
+                                               style="-fx-text-fill: #6b7280; -fx-font-size: 13px;"/>
+                                        <Label fx:id="lblAddress"
+                                               text="Address will appear here"
+                                               wrapText="true"
+                                               style="-fx-text-fill: #111827; -fx-font-size: 15px; -fx-font-weight: bold;"/>
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="5">
+                                    <children>
+                                        <Label text="Description"
+                                               style="-fx-text-fill: #6b7280; -fx-font-size: 13px;"/>
+                                        <TextArea fx:id="taSignalementDescription"
+                                                  editable="false"
+                                                  wrapText="true"
+                                                  prefHeight="110"
+                                                  style="-fx-control-inner-background: #ffffff;"/>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+
+                        <!-- Rapport form -->
+                        <VBox spacing="12"
+                              style="-fx-background-color: white; -fx-padding: 5;">
+                            <children>
+
+                                <Label text="Comment"
+                                       style="-fx-text-fill: #104b2c; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                <TextArea fx:id="taCommentaire"
+                                          promptText="Describe the intervention, actions taken, results..."
+                                          prefHeight="180"
+                                          wrapText="true"/>
+
+                                <!-- Photos -->
+                                <VBox spacing="8">
+                                    <children>
+                                        <Label text="Photos (optional)"
+                                               style="-fx-text-fill: #104b2c; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                        <HBox spacing="10" alignment="CENTER_LEFT">
+                                            <children>
+                                                <Button text="Choose Photos"
+                                                        onAction="#choosePhotos"
+                                                        style="-fx-background-color: white; -fx-border-color: #2e7d32; -fx-text-fill: #2e7d32; -fx-padding: 10 18;"/>
+                                                <Label fx:id="lblSelectedPhotos"
+                                                       text="No photos selected"
+                                                       style="-fx-text-fill: #7a8087; -fx-font-size: 14px;"/>
+                                            </children>
+                                        </HBox>
+
+                                        <Label text="You can select multiple images."
+                                               style="-fx-text-fill: #8b9197; -fx-font-size: 13px;"/>
+                                    </children>
+                                </VBox>
+
+                                <HBox alignment="CENTER_RIGHT" spacing="12" style="-fx-padding: 10 0 0 0;">
+                                    <children>
+                                        <Button text="Cancel"
+                                                onAction="#goBack"
+                                                style="-fx-background-color: #e5e7eb; -fx-text-fill: #111827; -fx-padding: 10 18;"/>
+
+                                        <Button text="Save report"
+                                                onAction="#addRapport"
+                                                style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-size: 15px; -fx-padding: 10 22;"/>
+                                    </children>
+                                </HBox>
+
+                            </children>
+                        </VBox>
+
+                    </children>
+                </VBox>
+            </center>
+
+        </BorderPane>
+    </children>
+</StackPane>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.Controllers.components.NavbarMunicipalController"
+      alignment="CENTER_LEFT"
+      spacing="20"
+      style="-fx-background-color: white; -fx-padding: 15 25; -fx-border-color: #e5e5e5; -fx-border-width: 0 0 1 0;">
+
+    <children>
+        <Label text="EcoTrack"
+               style="-fx-text-fill: #2e7d32; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+        <Pane HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="btnHome" text="Home" onAction="#goHome"
+                style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 16px;"/>
+
+        <Button fx:id="btnReport" text="Report" onAction="#goReport"
+                style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 16px;"/>
+
+        <Button fx:id="btnAnnouncements" text="Announcements Management" onAction="#goAnnouncements"
+                style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 16px;"/>
+
+        <Button fx:id="btnAssociations" text="Associations" onAction="#goAssociations"
+                style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 16px;"/>
+
+        <Button fx:id="btnRecycling" text="Recycling" onAction="#goRecycling"
+                style="-fx-background-color: transparent; -fx-text-fill: #2e7d32; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+        <Button fx:id="btnEvents" text="Events Management" onAction="#goEvents"
+                style="-fx-background-color: transparent; -fx-text-fill: #1f5130; -fx-font-size: 16px;"/>
+
+        <MenuButton text="👤"
+                    style="-fx-background-color: #4da64f; -fx-text-fill: white; -fx-font-size: 16px;">
+            <items>
+                <MenuItem fx:id="menuProfile" text="Profile" onAction="#goProfile"/>
+                <MenuItem fx:id="menuLogout" text="Logout" onAction="#logout"/>
+            </items>
+        </MenuButton>
+    </children>
+</HBox>

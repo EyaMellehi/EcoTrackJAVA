@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.recyclage.ShowRapportRecycTerrainController"
+            prefWidth="1200" prefHeight="800"
+            style="-fx-background-color: #f6f7f6;">
+
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="22" style="-fx-padding: 35;">
+            <children>
+
+                <!-- HEADER -->
+                <HBox alignment="CENTER_LEFT" spacing="20" prefWidth="950">
+                    <children>
+                        <VBox spacing="6">
+                            <Label text="Agent de terrain"
+                                   style="-fx-text-fill: #2f9e44; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                            <Label fx:id="lblTitle"
+                                   text="Rapport"
+                                   style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #0f3d23;"/>
+                            <Label fx:id="lblAddress"
+                                   text="Adresse"
+                                   wrapText="true"
+                                   style="-fx-text-fill: #667085; -fx-font-size: 15px;"/>
+                        </VBox>
+
+                        <Pane HBox.hgrow="ALWAYS"/>
+
+                        <Button text="Retour au point"
+                                onAction="#goBackToPoint"
+                                style="-fx-background-color: white; -fx-border-color: #374151; -fx-text-fill: #374151; -fx-padding: 10 18; -fx-background-radius: 8; -fx-border-radius: 8;"/>
+                    </children>
+                </HBox>
+
+                <!-- MAIN CARD -->
+                <VBox spacing="18" prefWidth="950"
+                      style="-fx-background-color: white; -fx-padding: 28; -fx-background-radius: 16; -fx-border-color: #e5e7eb; -fx-border-radius: 16;">
+                    <children>
+
+                        <!-- row 1 -->
+                        <HBox spacing="16">
+                            <children>
+                                <VBox prefWidth="290" spacing="6"
+                                      style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                    <Label text="Category" style="-fx-text-fill: #667085;"/>
+                                    <Label fx:id="lblCategorie" text="-" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                </VBox>
+
+                                <VBox prefWidth="290" spacing="6"
+                                      style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                    <Label text="Declared quantity" style="-fx-text-fill: #667085;"/>
+                                    <Label fx:id="lblQuantiteDeclaree" text="-" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                </VBox>
+
+                                <VBox prefWidth="290" spacing="6"
+                                      style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                    <Label text="Point status" style="-fx-text-fill: #667085;"/>
+                                    <Label fx:id="lblStatut" text="-" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                </VBox>
+                            </children>
+                        </HBox>
+
+                        <!-- row 2 -->
+                        <HBox spacing="16">
+                            <children>
+                                <VBox prefWidth="290" spacing="6"
+                                      style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                    <Label text="Creation date" style="-fx-text-fill: #667085;"/>
+                                    <Label fx:id="lblDateCreation" text="-" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                </VBox>
+
+                                <VBox prefWidth="290" spacing="6"
+                                      style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                    <Label text="Collection date" style="-fx-text-fill: #667085;"/>
+                                    <Label fx:id="lblDateCollecte" text="-" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                </VBox>
+
+                                <VBox prefWidth="290" spacing="6"
+                                      style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                    <Label text="Collected quantity" style="-fx-text-fill: #667085;"/>
+                                    <Label fx:id="lblQuantiteCollectee" text="-" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                </VBox>
+                            </children>
+                        </HBox>
+
+                        <!-- row 3 -->
+                        <HBox spacing="16">
+                            <children>
+                                <VBox prefWidth="290" spacing="6"
+                                      style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                    <Label text="Field agent" style="-fx-text-fill: #667085;"/>
+                                    <Label fx:id="lblAgent" text="-" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                </VBox>
+
+                                <VBox prefWidth="290" spacing="6"
+                                      style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                    <Label text="Assigned point" style="-fx-text-fill: #667085;"/>
+                                    <Label fx:id="lblPointAttribue" text="-" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                </VBox>
+
+                                <VBox prefWidth="290" spacing="6"
+                                      style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                                    <Label text="Processing time" style="-fx-text-fill: #667085;"/>
+                                    <Label fx:id="lblTempsTraitement" text="-" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                </VBox>
+                            </children>
+                        </HBox>
+
+                        <!-- descriptions -->
+                        <VBox spacing="6"
+                              style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                            <Label text="Point description" style="-fx-text-fill: #667085;"/>
+                            <Label fx:id="lblDescriptionPoint" text="-" wrapText="true" style="-fx-font-size: 16px;"/>
+                        </VBox>
+
+                        <VBox spacing="6"
+                              style="-fx-background-color: #edf7ee; -fx-padding: 16; -fx-background-radius: 10;">
+                            <Label text="Report comment" style="-fx-text-fill: #667085;"/>
+                            <Label fx:id="lblCommentaire" text="-" wrapText="true" style="-fx-font-size: 16px;"/>
+                        </VBox>
+
+                        <Label text="Rapport enregistré avec succès. Statut du point : COLLECTE"
+                               style="-fx-background-color: #e8f5e9; -fx-text-fill: #2e7d32; -fx-padding: 14; -fx-background-radius: 10; -fx-font-weight: bold;"/>
+                    </children>
+                </VBox>
+
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

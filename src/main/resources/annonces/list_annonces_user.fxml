@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.Controllers.annonces.ListAnnonceUserController"
+            prefWidth="1500" prefHeight="950" style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <fx:include fx:id="navbar" source="/components/navbar_citoyen.fxml"/>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="24.0" style="-fx-background-color: #f6f7f6; -fx-padding: 36 56 44 56;">
+
+                    <HBox spacing="18" alignment="CENTER_LEFT" style="-fx-background-color: linear-gradient(to right, #e8f5e9, #f6fff6); -fx-padding: 24; -fx-background-radius: 20; -fx-border-color: #d1fae5; -fx-border-radius: 20;">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label text="EcoTrack Blogs" style="-fx-text-fill: #37a93d; -fx-font-size: 16px; -fx-font-weight: bold;" />
+                            <Label text="📰 Découvrez les annonces de votre région" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" wrapText="true" />
+                            <Label text="Consultez les annonces publiées avec image, badges de catégorie et compteur de commentaires." style="-fx-text-fill: #6b7280; -fx-font-size: 15px;" wrapText="true" />
+                        </VBox>
+                        <VBox spacing="6" alignment="CENTER" style="-fx-background-color: white; -fx-padding: 18 22; -fx-background-radius: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 18;">
+                            <Label fx:id="lblTotalAnnonces" text="0" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+                            <Label text="annonces visibles" style="-fx-font-size: 12px; -fx-text-fill: #6b7280;" />
+                        </VBox>
+                    </HBox>
+
+                    <VBox spacing="12.0" style="-fx-border-color: #e5e7eb; -fx-border-radius: 18; -fx-padding: 20; -fx-background-color: white; -fx-background-radius: 18;">
+                        <Label text="🔍 Rechercher et filtrer" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+                        <Label fx:id="lblRecommendationInfo" text="Tri personnalise indisponible." style="-fx-font-size: 12px; -fx-text-fill: #2563eb;" wrapText="true" />
+                        <Button text="⭐ Recommendation annonces" onAction="#goToRecommendedAnnonces" style="-fx-background-color: linear-gradient(to right, #2563eb, #1d4ed8); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 10 18;" />
+
+                        <HBox spacing="16.0">
+                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                <Label text="Recherche" style="-fx-font-size: 12px; -fx-text-fill: #6b7280;" />
+                                <TextField fx:id="tfSearchAnnonce" promptText="Titre ou contenu..." style="-fx-padding: 11; -fx-font-size: 13px; -fx-background-radius: 999; -fx-border-radius: 999; -fx-border-color: #d1d5db;" />
+                            </VBox>
+                            <VBox spacing="5.0">
+                                <Label text="Catégorie" style="-fx-font-size: 12px; -fx-text-fill: #6b7280;" />
+                                <ComboBox fx:id="cbCategorieFilter" prefWidth="280" style="-fx-padding: 10; -fx-font-size: 13px; -fx-background-radius: 999; -fx-border-radius: 999;" promptText="Toutes les catégories" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <FlowPane fx:id="annonceCardsContainer" hgap="24" vgap="24" prefWrapLength="1380" style="-fx-padding: 0 0 10 0;" />
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

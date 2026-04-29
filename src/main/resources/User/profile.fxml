@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.User.ProfileController"
+            prefWidth="1400" prefHeight="850"
+            style="-fx-background-color: #f6f7f6;">
+
+    <top>
+        <StackPane>
+            <children>
+
+                <fx:include fx:id="navbarCitoyen" source="/components/navbar_citoyen.fxml"/>
+
+                <fx:include fx:id="navbarMunicipal" source="/components/navbar_municipal.fxml"/>
+
+            </children>
+        </StackPane>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <HBox alignment="TOP_CENTER" spacing="30" style="-fx-padding: 35 60 35 60; -fx-background-color: #f6f7f6;">
+                    <children>
+
+                        <!-- LEFT CARD -->
+                        <VBox prefWidth="320" spacing="20"
+                              style="-fx-background-color: white; -fx-padding: 22; -fx-border-color: #e8e8e8; -fx-background-radius: 8; -fx-border-radius: 8;">
+
+                            <VBox alignment="CENTER" spacing="12"
+                                  style="-fx-background-color: #eaf5f7; -fx-padding: 30;">
+                                <StackPane prefWidth="140" prefHeight="140">
+                                    <children>
+                                        <ImageView fx:id="imgAvatar"
+                                                   fitWidth="140"
+                                                   fitHeight="140"
+                                                   preserveRatio="true"
+                                                   smooth="true"/>
+
+                                        <Label fx:id="lblAvatar"
+                                               text="E"
+                                               style="-fx-background-color: #6b4637; -fx-text-fill: white; -fx-font-size: 46px; -fx-font-weight: bold; -fx-background-radius: 100; -fx-padding: 30 38;"/>
+                                    </children>
+                                </StackPane>
+                                <Label fx:id="lblNameCard"
+                                       text="USER NAME"
+                                       style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #123b2c;"/>
+
+                                <Label fx:id="lblEmailCard"
+                                       text="user@email.com"
+                                       style="-fx-text-fill: #667085; -fx-font-size: 14px;"/>
+
+                                <HBox alignment="CENTER" spacing="10">
+                                    <Label text="Citizen"
+                                           style="-fx-text-fill: white; -fx-background-color: #dbe7dc; -fx-padding: 6 12; -fx-background-radius: 20;"/>
+                                    <Label fx:id="lblRegionChip"
+                                           text="Region"
+                                           style="-fx-text-fill: white; -fx-background-color: #dbe7dc; -fx-padding: 6 12; -fx-background-radius: 20;"/>
+                                </HBox>
+                            </VBox>
+
+                            <HBox alignment="CENTER" spacing="18">
+                                <VBox alignment="CENTER" prefWidth="135"
+                                      style="-fx-border-color: #e8e8e8; -fx-background-color: white; -fx-padding: 18;">
+                                    <Label fx:id="lblPoints" text="0"
+                                           style="-fx-font-size: 30px; -fx-font-weight: bold;"/>
+                                    <Label text="Points" style="-fx-font-size: 15px;"/>
+                                </VBox>
+
+                                <VBox alignment="CENTER" prefWidth="135"
+                                      style="-fx-border-color: #e8e8e8; -fx-background-color: white; -fx-padding: 18;">
+                                    <Label text="Active"
+                                           style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                                    <Label text="Status" style="-fx-font-size: 15px;"/>
+                                </VBox>
+                            </HBox>
+
+                            <Button text="Update Profile"
+                                    onAction="#updateProfile"
+                                    prefWidth="220"
+                                    style="-fx-background-color: transparent; -fx-border-color: #2e7d32; -fx-border-radius: 6; -fx-background-radius: 6; -fx-text-fill: #2e7d32; -fx-font-size: 16px; -fx-padding: 12 18;"/>
+                        </VBox>
+
+                        <!-- RIGHT SIDE -->
+                        <VBox prefWidth="760" spacing="22">
+
+                            <HBox alignment="CENTER_LEFT">
+                                <children>
+                                    <VBox spacing="6">
+                                        <Label text="Security"
+                                               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #123b2c;"/>
+                                        <Label text="Manage your password and two-factor authentication."
+                                               style="-fx-text-fill: #667085;"/>
+                                    </VBox>
+
+                                    <Pane HBox.hgrow="ALWAYS"/>
+
+                                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                                        <children>
+                                            <Label fx:id="lbl2FAStatus"
+                                                   text="2FA inactive"
+                                                   style="-fx-text-fill: #b42318; -fx-background-color: #fee4e2; -fx-padding: 8 14; -fx-background-radius: 18; -fx-font-weight: bold;"/>
+
+                                            <Button fx:id="btnEnable2FA"
+                                                    text="Activate 2FA"
+                                                    onAction="#activate2FA"
+                                                    prefWidth="150"
+                                                    style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-size: 15px; -fx-background-radius: 6; -fx-padding: 12 18;"/>
+
+                                            <Button fx:id="btnDisable2FA"
+                                                    text="Disable 2FA"
+                                                    onAction="#disable2FA"
+                                                    prefWidth="150"
+                                                    visible="false"
+                                                    managed="false"
+                                                    style="-fx-background-color: transparent; -fx-border-color: #b42318; -fx-border-radius: 6; -fx-background-radius: 6; -fx-text-fill: #b42318; -fx-font-size: 15px; -fx-padding: 12 18;"/>
+
+                                            <Button text="Enable Face Login"
+                                                    onAction="#face_id"
+                                                    prefWidth="190"
+                                                    style="-fx-background-color: #eef8f0;
+                                                               -fx-border-color: #2e7d32;
+                                                               -fx-border-radius: 10;
+                                                               -fx-background-radius: 10;
+                                                               -fx-text-fill: #1f5f2b;
+                                                               -fx-font-size: 15px;
+                                                               -fx-font-weight: bold;
+                                                               -fx-padding: 12 18;"/>
+                                        </children>
+                                    </HBox>
+                                </children>
+                            </HBox>
+
+                            <VBox spacing="18"
+                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #e8e8e8; -fx-background-radius: 8; -fx-border-radius: 8;">
+                                <HBox>
+                                    <children>
+                                        <Label text="Personal Information"
+                                               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #123b2c;"/>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                        <Label text="Automatically updated"
+                                               style="-fx-text-fill: #98a2b3;"/>
+                                    </children>
+                                </HBox>
+
+                                <GridPane hgap="20" vgap="20">
+                                    <children>
+                                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                              spacing="8" prefWidth="240"
+                                              style="-fx-border-color: #e8e8e8; -fx-background-color: white; -fx-padding: 18; -fx-border-radius: 6; -fx-background-radius: 6;">
+                                            <Label text="Full Name" style="-fx-text-fill: #667085;"/>
+                                            <Label fx:id="lblFullName" text="name"/>
+                                        </VBox>
+
+                                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                              spacing="8" prefWidth="240"
+                                              style="-fx-border-color: #e8e8e8; -fx-background-color: white; -fx-padding: 18; -fx-border-radius: 6; -fx-background-radius: 6;">
+                                            <Label text="Email Address" style="-fx-text-fill: #667085;"/>
+                                            <Label fx:id="lblEmail" text="email"/>
+                                        </VBox>
+
+                                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                              spacing="8" prefWidth="240"
+                                              style="-fx-border-color: #e8e8e8; -fx-background-color: white; -fx-padding: 18; -fx-border-radius: 6; -fx-background-radius: 6;">
+                                            <Label text="Phone Number" style="-fx-text-fill: #667085;"/>
+                                            <Label fx:id="lblPhone" text="phone"/>
+                                        </VBox>
+
+                                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                              spacing="8" prefWidth="240"
+                                              style="-fx-border-color: #e8e8e8; -fx-background-color: white; -fx-padding: 18; -fx-border-radius: 6; -fx-background-radius: 6;">
+                                            <Label text="Region" style="-fx-text-fill: #667085;"/>
+                                            <Label fx:id="lblRegion" text="region"/>
+                                        </VBox>
+                                    </children>
+                                </GridPane>
+
+                                <Separator/>
+
+                                <HBox alignment="CENTER_LEFT">
+                                    <children>
+                                        <VBox spacing="6">
+                                            <Label text="Security"
+                                                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #123b2c;"/>
+                                            <Label text="Update your account password to keep your profile secure."
+                                                   style="-fx-text-fill: #667085;"/>
+                                        </VBox>
+
+                                        <Pane HBox.hgrow="ALWAYS"/>
+
+                                        <Button text="Change Password"
+                                                onAction="#changePassword"
+                                                prefWidth="180"
+                                                style="-fx-background-color: transparent; -fx-border-color: #123b2c; -fx-border-radius: 6; -fx-background-radius: 6; -fx-text-fill: #123b2c; -fx-font-size: 16px; -fx-padding: 12 18;"/>
+                                    </children>
+                                </HBox>
+                            </VBox>
+
+                            <VBox spacing="18"
+                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #e8e8e8; -fx-background-radius: 8; -fx-border-radius: 8;">
+                                <Label text="Your EcoTrack Impact"
+                                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #123b2c;"/>
+                                <Label text="Track your environmental contributions and progress."
+                                       style="-fx-text-fill: #667085;"/>
+
+                                <HBox spacing="20" alignment="CENTER_LEFT">
+                                    <VBox alignment="CENTER" prefWidth="150"
+                                          style="-fx-border-color: #e8e8e8; -fx-padding: 18;">
+                                        <Label text="0"
+                                               style="-fx-font-size: 30px; -fx-font-weight: bold;"/>
+                                        <Label text="Reports"/>
+                                    </VBox>
+
+                                    <VBox alignment="CENTER" prefWidth="150"
+                                          style="-fx-border-color: #e8e8e8; -fx-padding: 18;">
+                                        <Label text="0"
+                                               style="-fx-font-size: 30px; -fx-font-weight: bold;"/>
+                                        <Label text="Recycling requests"/>
+                                    </VBox>
+
+                                    <VBox alignment="CENTER" prefWidth="150"
+                                          style="-fx-border-color: #e8e8e8; -fx-padding: 18;">
+                                        <Label fx:id="lblEcoPoints" text="0"
+                                               style="-fx-font-size: 30px; -fx-font-weight: bold;"/>
+                                        <Label text="Eco Points"/>
+                                    </VBox>
+                                </HBox>
+                            </VBox>
+
+                        </VBox>
+                    </children>
+                </HBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.association.AssocationClientIndex"
+            stylesheets="@../style.css">
+
+    <!-- TOP -->
+    <top>
+        <VBox>
+
+            <fx:include fx:id="navbar"
+                        source="/components/navbar_citoyen.fxml"/>
+
+            <HBox spacing="10"
+                  alignment="CENTER_LEFT"
+                  style="-fx-padding:15; -fx-background-color:white;">
+
+                <!-- SEARCH -->
+                <TextField fx:id="searchField"
+                           promptText="Search..."
+                           onKeyReleased="#onSearch"
+                           prefWidth="250"/>
+
+                <!-- REGION -->
+                <ComboBox fx:id="regionFilter"
+                          onAction="#onFilter"
+                          prefWidth="180"/>
+
+                <!-- AI INPUT -->
+                <TextArea fx:id="aiDescribeField"
+                          prefRowCount="2"
+                          promptText="Describe your situation..."
+                          prefWidth="300"/>
+
+                <!-- AI BUTTON -->
+                <Button fx:id="aiDescribeBtn"
+                        text="AI Search"
+                        style="-fx-background-color:#16a34a; -fx-text-fill:white;"/>
+
+                <!-- AI RESPONSE -->
+                <Label fx:id="aiResponseLabel"
+                       visible="false"
+                       wrapText="true"
+                       style="-fx-text-fill:#64748b;"/>
+
+            </HBox>
+
+        </VBox>
+    </top>
+
+    <!-- CENTER -->
+    <center>
+        <ScrollPane fitToWidth="true">
+
+            <FlowPane fx:id="cardContainer"
+                      hgap="20"
+                      vgap="20"
+                      prefWrapLength="1100"
+                      style="-fx-padding:20"/>
+
+        </ScrollPane>
+    </center>
+
+    <!-- BOTTOM -->
+    <bottom>
+        <HBox spacing="15"
+              alignment="CENTER"
+              style="-fx-padding:15; -fx-background-color:white;">
+
+            <Button text="⬅ Prev" onAction="#prevPage"/>
+            <Label fx:id="pageLabel" text="1 / 1"/>
+            <Button text="Next ➡" onAction="#nextPage"/>
+
+        </HBox>
+    </bottom>
+
+</BorderPane>

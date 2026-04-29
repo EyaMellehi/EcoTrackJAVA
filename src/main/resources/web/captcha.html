@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>
+        function onCaptchaSuccess(token) {
+            fetch("/token?value=" + encodeURIComponent(token))
+                .catch(err => console.log(err));
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 8px;
+            background: white;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div class="g-recaptcha"
+     data-sitekey="6Lci0cIsAAAAABi8cuxVVOyIk_H1_2OJHXkYVDxC"
+     data-callback="onCaptchaSuccess"></div>
+</body>
+</html>

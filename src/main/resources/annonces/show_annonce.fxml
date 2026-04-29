@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.Controllers.annonces.ShowAnnonceController"
+            prefWidth="1000" prefHeight="800" style="-fx-background-color: linear-gradient(to bottom, #f6fbf7, #f2f6f3);">
+
+    <top>
+        <VBox spacing="14.0" style="-fx-background-color: white; -fx-padding: 30 40 22 40; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0; -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.10), 20, 0.15, 0, 5);">
+            <Label text="Annonce locale" style="-fx-background-color: #e8f5e9; -fx-text-fill: #166534; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 5 11; -fx-background-radius: 999;" />
+            <Label fx:id="lblTitre" text="Titre de l'Annonce" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #0f5132;" wrapText="true" />
+            <HBox spacing="12.0">
+                <Label fx:id="lblCategorie" text="Catégorie:" style="-fx-background-color: #f0fdf4; -fx-text-fill: #166534; -fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 5 10; -fx-background-radius: 999;" />
+                <Label fx:id="lblRegion" text="Région:" style="-fx-background-color: #eff6ff; -fx-text-fill: #1d4ed8; -fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 5 10; -fx-background-radius: 999;" />
+                <Label fx:id="lblDate" text="Date:" style="-fx-background-color: #f8fafc; -fx-text-fill: #475569; -fx-font-size: 12px; -fx-padding: 5 10; -fx-background-radius: 999;" />
+                <Label fx:id="lblAuteur" text="Par:" style="-fx-background-color: #f8fafc; -fx-text-fill: #475569; -fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 5 10; -fx-background-radius: 999;" />
+            </HBox>
+            <HBox spacing="12.0" alignment="CENTER_LEFT">
+                <Label fx:id="lblCommentStatus" text="Commentaires visibles mis à jour" style="-fx-background-color: #e8f5e9; -fx-text-fill: #166534; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 5 10; -fx-background-radius: 999;" />
+                <Label fx:id="lblCommentCount" text="0 commentaire(s) visible(s)" style="-fx-background-color: #eff6ff; -fx-text-fill: #1d4ed8; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 5 10; -fx-background-radius: 999;" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="24.0" style="-fx-background-color: transparent; -fx-padding: 30 40;">
+
+                    <VBox spacing="14.0" style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #e5e7eb; -fx-border-radius: 14; -fx-background-radius: 14; -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 16, 0.12, 0, 4);">
+                        <ImageView fx:id="imgMedia" fitWidth="900" fitHeight="400" preserveRatio="true" />
+                        <Label text="Description" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #166534;" />
+                        <Label fx:id="lblContenu" text="Contenu de l'annonce" style="-fx-font-size: 14px; -fx-text-fill: #475569; -fx-line-spacing: 4;" wrapText="true" />
+                        <HBox spacing="10.0" alignment="CENTER_LEFT">
+                            <Button fx:id="btnSummarize" text="Resumer en 3 phrases" style="-fx-background-color: linear-gradient(to right, #2563eb, #1d4ed8); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 8 14;" />
+                            <Label fx:id="lblResumeStatus" text="" style="-fx-font-size: 12px; -fx-text-fill: #475569;" />
+                        </HBox>
+                        <Label text="Resume simplifie" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #166534;" />
+                        <Label fx:id="lblResumeSimple" text="Cliquez sur le bouton pour generer un resume." wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #334155; -fx-background-color: #f8fafc; -fx-padding: 10; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10;" />
+
+                        <VBox spacing="10.0" style="-fx-padding: 4 0 0 0;">
+                            <Label text="🌐 Traduction" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;" />
+                            <HBox spacing="12.0" alignment="CENTER_LEFT">
+                                <Button fx:id="btnTranslateAr" text="🇹🇳 Traduire en Arabe" style="-fx-background-color: #1d4ed8; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 8 16;" />
+                                <Button fx:id="btnTranslateEn" text="🇬🇧 Traduire en Anglais" style="-fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 8 16;" />
+                            </HBox>
+                            <Label fx:id="lblTranslationStatus" text="" style="-fx-font-size: 12px; -fx-text-fill: #64748b; -fx-font-style: italic;" wrapText="true" />
+                            <Label fx:id="lblTranslationResult" text="Choisissez une langue pour traduire le titre et le contenu de l'annonce." wrapText="true" maxWidth="600" prefWidth="600"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #1a1a1a; -fx-background-color: #f0fdf4; -fx-padding: 10; -fx-background-radius: 10; -fx-border-color: #bbf7d0; -fx-border-radius: 10;" />
+                        </VBox>
+
+                        <HBox spacing="10.0" alignment="CENTER_LEFT">
+                            <Button fx:id="btnLike" text="👍 Like" style="-fx-background-color: #e8f5e9; -fx-text-fill: #166534; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 6 12;" />
+                            <Button fx:id="btnDislike" text="👎 Dislike" style="-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 6 12;" />
+                            <Label fx:id="lblLikeCount" text="0 like(s)" style="-fx-background-color: #f0fdf4; -fx-text-fill: #166534; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 5 10; -fx-background-radius: 999;" />
+                            <Label fx:id="lblDislikeCount" text="0 dislike(s)" style="-fx-background-color: #fef2f2; -fx-text-fill: #b91c1c; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 5 10; -fx-background-radius: 999;" />
+                        </HBox>
+                    </VBox>
+
+                    <VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 22; -fx-border-color: #e5e7eb; -fx-border-radius: 14; -fx-background-radius: 14; -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 16, 0.12, 0, 4);">
+                        <Label text="💬 Commentaires" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+
+                        <VBox spacing="10.0" style="-fx-background-color: #f9fafb; -fx-padding: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 10; -fx-background-radius: 10;">
+                            <Label text="Ajouter un commentaire" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #104b2c;" />
+                            <TextArea fx:id="taCommentaire" prefHeight="100.0" promptText="Écrivez votre commentaire ici..." style="-fx-padding: 10; -fx-font-size: 12px; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #cbd5e1;" wrapText="true" />
+                            <HBox alignment="CENTER_RIGHT">
+                                <Button fx:id="btnPostComment" text="Publier le commentaire" style="-fx-background-color: linear-gradient(to right, #2e7d32, #43a047); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 10 20;" />
+                            </HBox>
+                            <Label fx:id="lblCommentFeedback" text="" wrapText="true" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #166534;" />
+                        </VBox>
+
+                        <Label text="Commentaires approuvés" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #64748b;" />
+                        <ScrollPane fx:id="scrollComments" style="-fx-control-inner-background: transparent; -fx-background-color: transparent;" fitToWidth="true" prefHeight="300">
+                            <VBox fx:id="commentsContainer" spacing="12.0" style="-fx-padding: 0;" />
+                        </ScrollPane>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

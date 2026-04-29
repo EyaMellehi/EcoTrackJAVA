@@ -1,0 +1,5 @@
+# Copy this file to twilio_sms.local.txt and fill the values.
+TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_FROM_NUMBER=+12183192973
+TWILIO_DEFAULT_COUNTRY_CODE=+216
