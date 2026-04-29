@@ -24,8 +24,7 @@ public class StripePaymentService {
     /* ===================================================== */
     /* STRIPE SECRET KEY                                     */
     /* ===================================================== */
-    private static final String SECRET_KEY =
-            "";
+    private static final String SECRET_KEY = System.getenv("STRIPE_SECRET_KEY");
 
     /* ===================================================== */
     private static HttpServer server;
